@@ -179,7 +179,7 @@
   <div class="AuthManager-card">
     <div class="AuthManager-logo">
       <a href="index.php" style="text-decoration:none;">
-        <h1>🎓 TestPlatform</h1>
+        <h1><img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="32" height="32"> TestPlatform</h1>
       </a>
       <p id="pageSubtitle">Войдите по коду подтверждения</p>
     </div>

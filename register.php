@@ -36,7 +36,7 @@
   <div class="auth-card">
     <div class="auth-logo">
       <a href="index.php" style="text-decoration:none;">
-        <h1>🎓 TestPlatform</h1>
+        <h1><img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="32" height="32"> TestPlatform</h1>
       </a>
       <p data-i18n="auth.register.subtitle">Создайте аккаунт</p>
     </div>

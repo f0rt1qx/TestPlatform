@@ -18,7 +18,7 @@
 <nav class="navbar" id="navbar">
   <div class="container">
     <a href="index.php" class="navbar-brand">
-      <span>🎓</span> TestPlatform
+      <img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="24" height="24"> TestPlatform
     </a>
     <ul class="navbar-nav" id="mainNav">
       <li><a href="dashboard.php">Кабинет</a></li>
