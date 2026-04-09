@@ -183,7 +183,7 @@ var AntiCheat = (function() {
   return AntiCheat;
 })();
 
-;(function injectStyles() {
+;(function injectAntiCheatStyles() {
   const styleTag = document.createElement('style');
   styleTag.textContent =
     '.no-select{-webkit-user-select:none;-moz-user-select:none;user-select:none;}' +
@@ -192,3 +192,7 @@ var AntiCheat = (function() {
     '#ac-ok:hover{opacity:.85}';
   document.head.appendChild(styleTag);
 })();
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = AntiCheat;
+}

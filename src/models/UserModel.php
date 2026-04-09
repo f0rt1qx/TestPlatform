@@ -33,7 +33,7 @@ class UserModel {
         );
         $stmt->execute([
             ':username'       => $data['username'],
-            ':email'          => strtolower($data['email']), 
+            ':email'          => strtolower($data['email']),
             ':password_hash'  => password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => BCRYPT_COST]),
             ':first_name'     => $data['first_name'] ?? '',
             ':last_name'      => $data['last_name'] ?? '',
@@ -113,7 +113,7 @@ class UserModel {
         $pdo = $this->db;
 
         $stats = $pdo->prepare(
-            'SELECT 
+            'SELECT
                 COUNT(*) as tests_taken,
                 COALESCE(AVG(percentage), 0) as avg_score,
                 SUM(CASE WHEN passed = 1 THEN 1 ELSE 0 END) as passed_count
@@ -129,7 +129,7 @@ class UserModel {
         ];
     }
 
-    
+
     public function updateLastLogin(int $userId): void {
         $stmt = $this->db->prepare(
             'UPDATE users SET last_login = NOW() WHERE id = ?'

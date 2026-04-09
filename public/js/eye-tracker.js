@@ -79,35 +79,27 @@ var EyeTracker = (function() {
   };
 
   EyeTracker.prototype._loadWebGazer = function() {
-    return new Promise(function(resolve, reject) {
-      var script = document.createElement('script');
-      script.src = 'https:
-      script.onload = resolve;
-      script.onerror = function() {
-        reject(new Error('Failed to load WebGazer.js'));
-      };
-      document.head.appendChild(script);
+    return new Promise((resolve, reject) => {
+      const scriptTag = document.createElement('script');
+      scriptTag.src = 'https://webgazer.cs.brown.edu/webgazer.js';
+      scriptTag.onload = resolve;
+      scriptTag.onerror = () => reject(new Error('Failed to load WebGazer.js'));
+      document.head.appendChild(scriptTag);
     });
   };
 
   EyeTracker.prototype._startCalibration = function() {
-    var self = this;
+    const trackerCtx = this;
 
-    
-    return new Promise(function(resolve) {
-      self._showCalibrationUI(function() {
-        self.isCalibrated = true;
-        
-        
-        self._hideCalibrationPoints();
-        
-        
-        self._showGazeOverlay();
+    return new Promise(resolve => {
+      trackerCtx._showCalibrationUI(() => {
+        trackerCtx.isCalibrated = true;
 
-        if (self.onCalibrationComplete) {
-          self.onCalibrationComplete();
-        }
+        trackerCtx._hideCalibrationPoints();
 
+        trackerCtx._showGazeOverlay();
+
+        trackerCtx.onCalibrationComplete?.();
         resolve();
       });
     });
@@ -288,38 +280,29 @@ var EyeTracker = (function() {
   };
 
   EyeTracker.prototype._startLogFlush = function() {
-    var self = this;
-    this._logInterval = setInterval(function() {
-      self._flushData();
-    }, 5000);
+    const trackerCtx = this;
+    this._logInterval = setInterval(() => trackerCtx._flushData(), 5000);
   };
 
   EyeTracker.prototype._flushData = function() {
     if (this._gazePoints.length === 0 && this._fixations.length === 0) return;
 
-    var fixationsToFlush = this._fixations.slice();
-    var pointsCount = this._gazePoints.length;
+    const fixationsToFlush = this._fixations.slice();
+    const pointsCount = this._gazePoints.length;
 
-    
     this._fixations = [];
 
-    
     if (fixationsToFlush.length > 0 && this.attemptId) {
-      if (typeof API !== 'undefined') {
-        API.logEvent({
-          attempt_id: this.attemptId,
-          event_type: 'eye_fixations',
-          data: {
-            fixations: fixationsToFlush,
-            count: fixationsToFlush.length
-          }
-        }).catch(function(err) {
-          console.error('[EyeTracker] Failed to log fixations:', err);
-        });
-      }
+      typeof API !== 'undefined' && API.logEvent({
+        attempt_id: this.attemptId,
+        event_type: 'eye_fixations',
+        data: {
+          fixations: fixationsToFlush,
+          count: fixationsToFlush.length
+        }
+      }).catch(err => console.error('[EyeTracker] Failed to log fixations:', err));
     }
 
-    
     console.log('[EyeTracker] Flushed:', pointsCount, 'points,', fixationsToFlush.length, 'fixations');
   };
 
