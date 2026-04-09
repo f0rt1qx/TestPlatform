@@ -30,15 +30,15 @@
       <span>🎓</span> TestPlatform
     </a>
     <ul class="navbar-nav" id="mainNav">
-      <li><a href="dashboard.php"><i class="fas fa-grid-2"></i> Кабинет</a></li>
-      <li><a href="admin.php" class="active"><i class="fas fa-shield-halved"></i> Админ</a></li>
-      <li><a href="#" onclick="AuthManager.logout()"><i class="fas fa-right-from-bracket"></i> Выйти</a></li>
+      <li><a href="dashboard.php"><img src="https://img.icons8.com/ios/18/dashboard.png" alt="" width="18" height="18"> Кабинет</a></li>
+      <li><a href="admin.php" class="active"><img src="https://img.icons8.com/ios/18/admin-settings-male.png" alt="" width="18" height="18"> Админ</a></li>
+      <li><a href="#" onclick="AuthManager.logout()"><img src="https://img.icons8.com/ios/18/exit.png" alt="" width="18" height="18"> Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>
         </div>
       </li>
-      <li><button class="theme-toggle" data-theme-toggle title="Тема"><i class="fas fa-circle-half-stroke"></i></button></li>
+      <li><button class="theme-toggle" data-theme-toggle title="Тема"><img src="https://img.icons8.com/ios/18/crescent-moon.png" alt="" width="18" height="18"></button></li>
     </ul>
     <button class="burger" id="burgerBtn">
       <span></span><span></span><span></span>
@@ -763,7 +763,7 @@
                 <td style="font-size:.85rem;">${avgDuration}ms</td>
                 <td>
                   <button class="btn btn-sm btn-outline" onclick="viewFixationDetails(${log.id})" style="padding:6px 12px;font-size:.8rem;">
-                    <i class="fas fa-eye"></i> Детали
+                    <img src="https://img.icons8.com/ios/18/visible.png" alt="" width="18" height="18"> Детали
                   </button>
                 </td>
               </tr>

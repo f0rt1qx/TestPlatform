@@ -40,7 +40,7 @@
 
     <div class="text-center mt-3">
       <a href="login-otp.php" style="color: var(--gradient-start); font-weight: 600; font-size: 0.9rem;">
-        <i class="fas fa-key"></i> Войти по коду (без пароля)
+        <img src="https://img.icons8.com/ios/18/key--v1.png" alt="" width="18" height="18"> Войти по коду (без пароля)
       </a>
     </div>
 

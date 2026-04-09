@@ -20,16 +20,16 @@
       <span>🎓</span> TestPlatform
     </a>
     <ul class="navbar-nav" id="mainNav">
-      <li><a href="dashboard.php" class="active"><i class="fas fa-grid-2"></i> Кабинет</a></li>
-      <li><a href="profile.php"><i class="fas fa-circle-user"></i> Профиль</a></li>
-      <li data-admin class="hidden"><a href="admin.php"><i class="fas fa-shield-halved"></i> Админ</a></li>
-      <li><a href="#" onclick="AuthManager.logout()"><i class="fas fa-right-from-bracket"></i> Выйти</a></li>
+      <li><a href="dashboard.php" class="active"><img src="https://img.icons8.com/ios/18/dashboard.png" alt="" width="18" height="18"> Кабинет</a></li>
+      <li><a href="profile.php"><img src="https://img.icons8.com/ios/18/user.png" alt="" width="18" height="18"> Профиль</a></li>
+      <li data-admin class="hidden"><a href="admin.php"><img src="https://img.icons8.com/ios/18/admin-settings-male.png" alt="" width="18" height="18"> Админ</a></li>
+      <li><a href="#" onclick="AuthManager.logout()"><img src="https://img.icons8.com/ios/18/exit.png" alt="" width="18" height="18"> Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>
         </div>
       </li>
-      <li><button class="theme-toggle" data-theme-toggle title="Тема"><i class="fas fa-circle-half-stroke"></i></button></li>
+      <li><button class="theme-toggle" data-theme-toggle title="Тема"><img src="https://img.icons8.com/ios/18/crescent-moon.png" alt="" width="18" height="18"></button></li>
     </ul>
     <button class="burger" id="burgerBtn">
       <span></span><span></span><span></span>

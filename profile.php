@@ -21,16 +21,16 @@
       <span>🎓</span> TestPlatform
     </a>
     <ul class="navbar-nav" id="mainNav">
-      <li><a href="dashboard.php"><i class="fas fa-grid-2"></i> Кабинет</a></li>
-      <li><a href="profile.php" class="active"><i class="fas fa-circle-user"></i> Профиль</a></li>
-      <li data-admin class="hidden"><a href="admin.php"><i class="fas fa-shield-halved"></i> Админ</a></li>
-      <li><a href="#" onclick="AuthManager.logout()"><i class="fas fa-right-from-bracket"></i> Выйти</a></li>
+      <li><a href="dashboard.php"><img src="https://img.icons8.com/ios/18/dashboard.png" alt="" width="18" height="18"> Кабинет</a></li>
+      <li><a href="profile.php" class="active"><img src="https://img.icons8.com/ios/18/user.png" alt="" width="18" height="18"> Профиль</a></li>
+      <li data-admin class="hidden"><a href="admin.php"><img src="https://img.icons8.com/ios/18/admin-settings-male.png" alt="" width="18" height="18"> Админ</a></li>
+      <li><a href="#" onclick="AuthManager.logout()"><img src="https://img.icons8.com/ios/18/exit.png" alt="" width="18" height="18"> Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>
         </div>
       </li>
-      <li><button class="theme-toggle" data-theme-toggle title="Тема"><i class="fas fa-circle-half-stroke"></i></button></li>
+      <li><button class="theme-toggle" data-theme-toggle title="Тема"><img src="https://img.icons8.com/ios/18/crescent-moon.png" alt="" width="18" height="18"></button></li>
     </ul>
     <button class="burger" id="burgerBtn">
       <span></span><span></span><span></span>
@@ -73,10 +73,10 @@
   <!-- Tabs -->
   <div class="profile-tabs">
     <button class="profile-tab active" onclick="switchTab('info')"><i class="fas fa-circle-user-edit"></i> Информация</button>
-    <button class="profile-tab" onclick="switchTab('security')"><i class="fas fa-lock"></i> Безопасность</button>
-    <button class="profile-tab" onclick="switchTab('avatar')"><i class="fas fa-image"></i> Аватарка</button>
-    <button class="profile-tab" onclick="switchTab('achievements')"><i class="fas fa-trophy"></i> Достижения</button>
-    <button class="profile-tab" onclick="switchTab('activity')"><i class="fas fa-chart-line"></i> Активность</button>
+    <button class="profile-tab" onclick="switchTab('security')"><img src="https://img.icons8.com/ios/18/lock--v1.png" alt="" width="18" height="18"> Безопасность</button>
+    <button class="profile-tab" onclick="switchTab('avatar')"><img src="https://img.icons8.com/ios/18/image.png" alt="" width="18" height="18"> Аватарка</button>
+    <button class="profile-tab" onclick="switchTab('achievements')"><img src="https://img.icons8.com/ios/18/trophy--v1.png" alt="" width="18" height="18"> Достижения</button>
+    <button class="profile-tab" onclick="switchTab('activity')"><img src="https://img.icons8.com/ios/18/increasing-chart.png" alt="" width="18" height="18"> Активность</button>
   </div>
 
   <!-- Tab: Info -->
@@ -128,12 +128,12 @@
           <input class="form-control" id="socialTg" placeholder="@username">
         </div>
       </div>
-      <button type="submit" class="btn btn-primary" id="saveProfileBtn"><i class="fas fa-floppy-disk"></i> Сохранить</button>
+      <button type="submit" class="btn btn-primary" id="saveProfileBtn"><img src="https://img.icons8.com/ios/18/save.png" alt="" width="18" height="18"> Сохранить</button>
     </form>
 
     <hr style="margin: 32px 0; border: none; border-top: 1px solid #e2e8f0;">
 
-    <div class="section-title"><i class="fas fa-envelope"></i> Контактная информация</div>
+    <div class="section-title"><img src="https://img.icons8.com/ios/18/email.png" alt="" width="18" height="18"> Контактная информация</div>
     <form id="contactForm">
       <div class="form-grid">
         <div class="form-group">
@@ -145,13 +145,13 @@
           <input class="form-control" type="email" id="email" required>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary" id="saveContactBtn"><i class="fas fa-floppy-disk"></i> Сохранить</button>
+      <button type="submit" class="btn btn-primary" id="saveContactBtn"><img src="https://img.icons8.com/ios/18/save.png" alt="" width="18" height="18"> Сохранить</button>
     </form>
   </div>
 
   <!-- Tab: Security -->
   <div id="tab-security" class="profile-section hidden">
-    <div class="section-title"><i class="fas fa-key"></i> Смена пароля</div>
+    <div class="section-title"><img src="https://img.icons8.com/ios/18/key--v1.png" alt="" width="18" height="18"> Смена пароля</div>
     <form id="passwordForm" style="max-width: 500px;">
       <div class="form-group">
         <label class="form-label">Текущий пароль</label>
@@ -166,13 +166,13 @@
         <label class="form-label">Подтверждение пароля</label>
         <input class="form-control" type="password" id="confirmPassword" required>
       </div>
-      <button type="submit" class="btn btn-primary" id="changePasswordBtn"><i class="fas fa-key"></i> Изменить пароль</button>
+      <button type="submit" class="btn btn-primary" id="changePasswordBtn"><img src="https://img.icons8.com/ios/18/key--v1.png" alt="" width="18" height="18"> Изменить пароль</button>
     </form>
   </div>
 
   <!-- Tab: Avatar -->
   <div id="tab-avatar" class="profile-section hidden">
-    <div class="section-title"><i class="fas fa-image"></i> Управление аватаркой</div>
+    <div class="section-title"><img src="https://img.icons8.com/ios/18/image.png" alt="" width="18" height="18"> Управление аватаркой</div>
     <div class="avatar-upload">
       <img src="" alt="Avatar" class="avatar-preview" id="avatarPreview">
       <div class="avatar-actions">
@@ -190,18 +190,18 @@
 
   <!-- Tab: Achievements -->
   <div id="tab-achievements" class="profile-section hidden">
-    <div class="section-title"><i class="fas fa-trophy"></i> Ваши достижения</div>
+    <div class="section-title"><img src="https://img.icons8.com/ios/18/trophy--v1.png" alt="" width="18" height="18"> Ваши достижения</div>
     <div class="achievements-grid" id="achievementsGrid"></div>
   </div>
 
   <!-- Tab: Activity -->
   <div id="tab-activity" class="profile-section hidden">
-    <div class="section-title"><i class="fas fa-chart-line"></i> Активность за <span id="activityDays">30</span> дней</div>
+    <div class="section-title"><img src="https://img.icons8.com/ios/18/increasing-chart.png" alt="" width="18" height="18"> Активность за <span id="activityDays">30</span> дней</div>
     <div class="activity-heatmap" id="activityHeatmap"></div>
 
     <hr style="margin: 32px 0; border: none; border-top: 1px solid #e2e8f0;">
 
-    <div class="section-title"><i class="fas fa-list"></i> Последние результаты</div>
+    <div class="section-title"><img src="https://img.icons8.com/ios/18/list.png" alt="" width="18" height="18"> Последние результаты</div>
     <table class="results-table">
       <thead>
         <tr>

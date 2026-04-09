@@ -199,11 +199,11 @@
 
         <div class="method-selector">
           <button type="button" class="method-btn active" data-method="email" onclick="selectMethod('email')">
-            <i class="fas fa-envelope"></i>
+            <img src="https://img.icons8.com/ios/18/email.png" alt="" width="18" height="18">
             Email
           </button>
           <button type="button" class="method-btn" data-method="sms" onclick="selectMethod('sms')">
-            <i class="fas fa-comment-sms"></i>
+            <img src="https://img.icons8.com/ios/18/sms.png" alt="" width="18" height="18">
             SMS
           </button>
         </div>
@@ -215,7 +215,7 @@
 
       <p class="text-center mt-3" style="font-size:.95rem; color: var(--text-gray);">
         <a href="login.php" class="back-to-login">
-          <i class="fas fa-arrow-left"></i>
+          <img src="https://img.icons8.com/ios/18/back.png" alt="" width="18" height="18">
           Вернуться ко входу
         </a>
       </p>
@@ -258,7 +258,7 @@
 
       <p class="text-center mt-3" style="font-size:.95rem; color: var(--text-gray);">
         <a href="#" class="back-to-login" onclick="backToEmail(); return false;">
-          <i class="fas fa-arrow-left"></i>
+          <img src="https://img.icons8.com/ios/18/back.png" alt="" width="18" height="18">
           Изменить email
         </a>
       </p>
