@@ -2,24 +2,24 @@
 
 
 class SMTPMailer {
-    private string $host;
-    private int $port;
-    private string $username;
-    private string $password;
-    private string $from;
-    private string $fromName;
+    private string $smtpHost;
+    private int $smtpPort;
+    private string $smtpUsername;
+    private string $smtpPassword;
+    private string $senderAddr;
+    private string $senderName;
     private bool $useTLS;
-    private $socket;
+    private $connection;
     private array $errors = [];
 
     public function __construct() {
-        $this->host = defined('MAIL_HOST') ? MAIL_HOST : 'smtp.gmail.com';
-        $this->port = defined('MAIL_PORT') ? MAIL_PORT : 587;
-        $this->username = defined('MAIL_USER') ? MAIL_USER : '';
-        $this->password = defined('MAIL_PASS') ? MAIL_PASS : '';
-        $this->from = defined('MAIL_FROM') ? MAIL_FROM : 'noreply@testplatform.local';
-        $this->fromName = defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : 'TestPlatform';
-        $this->useTLS = in_array($this->port, [465, 587]);
+        $this->smtpHost = defined('MAIL_HOST') ? MAIL_HOST : 'smtp.gmail.com';
+        $this->smtpPort = defined('MAIL_PORT') ? MAIL_PORT : 587;
+        $this->smtpUsername = defined('MAIL_USER') ? MAIL_USER : '';
+        $this->smtpPassword = defined('MAIL_PASS') ? MAIL_PASS : '';
+        $this->senderAddr = defined('MAIL_FROM') ? MAIL_FROM : 'noreply@testplatform.local';
+        $this->senderName = defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : 'TestPlatform';
+        $this->useTLS = in_array($this->smtpPort, [465, 587]);
     }
 
     

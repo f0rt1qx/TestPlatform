@@ -2,50 +2,49 @@
 
 
 class Database {
-    private static ?PDO $instance = null;
+    private static ?PDO $singletonInstance = null;
 
     public static function getInstance(): PDO {
-        if (self::$instance === null) {
-            $dsn = sprintf(
+        if (self::$singletonInstance === null) {
+            $connectionString = sprintf(
                 'mysql:host=%s;port=%s;dbname=%s;charset=%s',
                 DB_HOST, DB_PORT, DB_NAME, DB_CHARSET
             );
 
-            $options = [
+            $pdoOptions = [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES   => false,
                 PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
-                PDO::ATTR_PERSISTENT         => true, 
+                PDO::ATTR_PERSISTENT         => true,
             ];
 
             try {
-                self::$instance = new PDO($dsn, DB_USER, DB_PASS, $options);
-            } catch (PDOException $e) {
-                $errorMsg = 'Database connection failed. Please try again later.';
-                
-                
-                $logFile = __DIR__ . '/../../logs/error.log';
-                if (is_writable(dirname($logFile))) {
-                    error_log(date('Y-m-d H:i:s') . ' - DB Connection Error: ' . $e->getMessage() . PHP_EOL, 3, $logFile);
+                self::$singletonInstance = new PDO($connectionString, DB_USER, DB_PASS, $pdoOptions);
+            } catch (PDOException $dbException) {
+                $fallbackMsg = 'Database connection failed. Please try again later.';
+
+                $errorLogPath = __DIR__ . '/../../logs/error.log';
+                if (is_writable(dirname($errorLogPath))) {
+                    error_log(date('Y-m-d H:i:s') . ' - DB Connection Error: ' . $dbException->getMessage() . PHP_EOL, 3, $errorLogPath);
                 }
-                
+
                 if (APP_DEBUG) {
                     http_response_code(500);
                     header('Content-Type: application/json');
                     die(json_encode([
                         'error' => 'DB Connection failed',
-                        'details' => $e->getMessage(),
-                        'code' => $e->getCode()
+                        'details' => $dbException->getMessage(),
+                        'code' => $dbException->getCode()
                     ]));
                 }
-                
+
                 http_response_code(500);
                 header('Content-Type: application/json');
-                die(json_encode(['error' => $errorMsg]));
+                die(json_encode(['error' => $fallbackMsg]));
             }
         }
-        return self::$instance;
+        return self::$singletonInstance;
     }
 
     
