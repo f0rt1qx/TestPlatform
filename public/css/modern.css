@@ -528,27 +528,32 @@ textarea.form-control {
 }
 
 /* ============================================================
-   HEADER — Premium Glassmorphism Navbar
+   HEADER — Floating Pill Glassmorphism Navbar
    ============================================================ */
 .navbar {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 68px;
-  background: rgba(15, 23, 42, 0.65);
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 48px);
+  max-width: 1240px;
+  height: 60px;
+  background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   transition: all var(--transition-base);
 }
 
 .navbar.scrolled {
-  background: rgba(15, 23, 42, 0.85);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  top: 12px;
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.2);
+  height: 56px;
 }
 
 .navbar .container {
@@ -557,9 +562,9 @@ textarea.form-control {
   justify-content: space-between;
   height: 100%;
   width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 32px;
+  max-width: none;
+  margin: 0;
+  padding: 0 24px;
 }
 
 /* ── Brand ────────────────────────────────────────────── */
@@ -1647,7 +1652,15 @@ tbody tr:hover {
 
 @media (max-width: 768px) {
   .navbar {
-    height: 64px;
+    top: 12px;
+    width: calc(100% - 24px);
+    height: 56px;
+    border-radius: 16px;
+  }
+
+  .navbar.scrolled {
+    top: 8px;
+    height: 52px;
   }
 
   .navbar .container {
@@ -1655,32 +1668,31 @@ tbody tr:hover {
   }
 
   .navbar-brand {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
 
   .navbar-nav {
     position: fixed;
-    top: 64px;
-    left: 0;
-    right: 0;
+    top: 72px;
+    left: 12px;
+    right: 12px;
     background: rgba(15, 23, 42, 0.95);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     flex-direction: column;
-    padding: 24px 20px;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    transform: translateY(-100%);
+    transform: translateY(-20px) scale(0.95);
     opacity: 0;
     visibility: hidden;
     transition: all var(--transition-base);
-    max-height: calc(100vh - 64px);
-    overflow-y: auto;
     z-index: 999;
   }
 
   .navbar-nav.open {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
     visibility: visible;
   }
