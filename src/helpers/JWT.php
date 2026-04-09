@@ -1,10 +1,9 @@
 <?php
 
-
 class JWT {
 
     public static function encode(array $tokenBody, ?string $signingKey = null, int $ttl = 0): string {
-        $signingKey = $signingKey ?? JWT_SECRET;
+        $signingKey ??= JWT_SECRET;
         $ttl = $ttl > 0 ? $ttl : JWT_EXPIRE;
 
         $headerSegment = self::base64urlEncode(json_encode(['typ' => 'JWT', 'alg' => 'HS256']));
@@ -20,42 +19,31 @@ class JWT {
         return $headerSegment . '.' . $payloadSegment . '.' . $sigSegment;
     }
 
-
     public static function decode(string $encodedToken, ?string $signingKey = null): array {
-        $signingKey = $signingKey ?? JWT_SECRET;
+        $signingKey ??= JWT_SECRET;
 
         $segments = explode('.', $encodedToken);
-        if (count($segments) !== 3) {
-            throw new RuntimeException('Invalid token structure');
-        }
+        count($segments) !== 3 && throw new RuntimeException('Invalid token structure');
 
         [$hdrB64, $bodyB64, $sigB64] = $segments;
 
         $expectedSig = self::computeSignature($hdrB64 . '.' . $bodyB64, $signingKey);
-        if (!hash_equals($expectedSig, $sigB64)) {
-            throw new RuntimeException('Invalid token signature');
-        }
+        !hash_equals($expectedSig, $sigB64) && throw new RuntimeException('Invalid token signature');
 
         $decodedBody = json_decode(self::base64urlDecode($bodyB64), true);
-        if (!$decodedBody) {
-            throw new RuntimeException('Invalid token payload');
-        }
+        !$decodedBody && throw new RuntimeException('Invalid token payload');
 
-        if (isset($decodedBody['exp']) && $decodedBody['exp'] < time()) {
-            throw new RuntimeException('Token expired');
-        }
+        $exp = $decodedBody['exp'] ?? null;
+        isset($exp) && $exp < time() && throw new RuntimeException('Token expired');
 
         return $decodedBody;
     }
 
-
     public static function getPayload(string $encodedToken): ?array {
         $segments = explode('.', $encodedToken);
         if (count($segments) !== 3) return null;
-        $decoded = json_decode(self::base64urlDecode($segments[1]), true);
-        return $decoded ?: null;
+        return json_decode(self::base64urlDecode($segments[1]), true) ?: null;
     }
-
 
     private static function computeSignature(string $rawData, string $signingKey): string {
         return self::base64urlEncode(hash_hmac('sha256', $rawData, $signingKey, true));

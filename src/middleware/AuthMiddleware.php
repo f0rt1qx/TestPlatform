@@ -1,19 +1,16 @@
 <?php
 
-
 class AuthMiddleware {
 
     public static function check(): ?array {
-        $authHeaderVal = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        $authHeaderVal ??= $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+
         if (preg_match('/Bearer\s+(.+)/i', $authHeaderVal, $matches)) {
             return self::validateToken($matches[1]);
         }
 
-        if (!empty($_COOKIE['auth_token'])) {
-            return self::validateToken($_COOKIE['auth_token']);
-        }
-
-        return null;
+        $cookieToken = $_COOKIE['auth_token'] ?? '';
+        return $cookieToken !== '' ? self::validateToken($cookieToken) : null;
     }
 
     public static function require(): array {
@@ -57,10 +54,11 @@ class AuthMiddleware {
             $stmt = $dbConn->prepare('SELECT is_blocked, is_active FROM users WHERE id = ?');
             $stmt->execute([$tokenBody['sub']]);
             $accountRecord = $stmt->fetch();
-            if (!$accountRecord || $accountRecord['is_blocked'] || !$accountRecord['is_active']) {
-                return null;
-            }
-            return $tokenBody;
+
+            $isBlocked = $accountRecord['is_blocked'] ?? true;
+            $isActive  = $accountRecord['is_active'] ?? false;
+
+            return (!$accountRecord || $isBlocked || !$isActive) ? null : $tokenBody;
         } catch (RuntimeException $e) {
             return null;
         }

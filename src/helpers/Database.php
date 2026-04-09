@@ -1,6 +1,5 @@
 <?php
 
-
 class Database {
     private static ?PDO $singletonInstance = null;
 
@@ -20,34 +19,40 @@ class Database {
             ];
 
             try {
-                self::$singletonInstance = new PDO($connectionString, DB_USER, DB_PASS, $pdoOptions);
+                self::$singletonInstance = new PDO(
+                    dsn: $connectionString,
+                    username: DB_USER,
+                    password: DB_PASS,
+                    options: $pdoOptions,
+                );
             } catch (PDOException $dbException) {
                 $fallbackMsg = 'Database connection failed. Please try again later.';
 
                 $errorLogPath = __DIR__ . '/../../logs/error.log';
-                if (is_writable(dirname($errorLogPath))) {
-                    error_log(date('Y-m-d H:i:s') . ' - DB Connection Error: ' . $dbException->getMessage() . PHP_EOL, 3, $errorLogPath);
-                }
+                is_writable(dirname($errorLogPath)) && error_log(
+                    date('Y-m-d H:i:s') . ' - DB Connection Error: ' . $dbException->getMessage() . PHP_EOL,
+                    3,
+                    $errorLogPath,
+                );
 
                 if (APP_DEBUG) {
                     http_response_code(500);
                     header('Content-Type: application/json');
                     die(json_encode([
-                        'error' => 'DB Connection failed',
+                        'error'   => 'DB Connection failed',
                         'details' => $dbException->getMessage(),
-                        'code' => $dbException->getCode()
-                    ]));
+                        'code'    => $dbException->getCode(),
+                    ], JSON_UNESCAPED_UNICODE));
                 }
 
                 http_response_code(500);
                 header('Content-Type: application/json');
-                die(json_encode(['error' => $fallbackMsg]));
+                die(json_encode(['error' => $fallbackMsg], JSON_UNESCAPED_UNICODE));
             }
         }
         return self::$singletonInstance;
     }
 
-    
     private function __construct() {}
     private function __clone() {}
     public function __wakeup() {

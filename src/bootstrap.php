@@ -124,3 +124,12 @@ function validateCsrfToken(?string $token): bool {
     }
     return hash_equals($_SESSION['csrf_token'], $token);
 }
+
+/**
+ * Call a callback with a value and return the original value.
+ * Useful for validation chains where you need to inspect/validate but return the original.
+ */
+function tap(mixed $value, callable $callback): mixed {
+    $callback($value);
+    return $value;
+}
