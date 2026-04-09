@@ -21,12 +21,12 @@
     </a>
 
     <ul class="navbar-nav" id="mainNav">
-      <li data-guest><a href="login.php" class="btn btn-primary btn-sm" data-i18n="nav.login"><img src="https://img.icons8.com/ios/18/login-rounded-right.png" alt="" width="18" height="18"> Войти</a></li>
-      <li data-guest><a href="register.php" class="btn btn-secondary btn-sm" data-i18n="nav.register"><img src="https://img.icons8.com/ios/18/add-user-male.png" alt="" width="18" height="18"> Регистрация</a></li>
-      <li data-user class="hidden"><a href="dashboard.php" data-i18n="nav.dashboard"><img src="https://img.icons8.com/ios/18/dashboard.png" alt="" width="18" height="18"> Кабинет</a></li>
-      <li data-user class="hidden"><a href="profile.php" data-i18n="nav.profile"><img src="https://img.icons8.com/ios/18/user.png" alt="" width="18" height="18"> Профиль</a></li>
-      <li data-admin class="hidden"><a href="admin.php" data-i18n="nav.admin"><img src="https://img.icons8.com/ios/48/security-checked.png" alt="" width="40" height="40"> Админ</a></li>
-      <li data-user class="hidden"><a href="#" onclick="AuthManager.logout()" data-i18n="nav.logout"><img src="https://img.icons8.com/ios/18/exit.png" alt="" width="18" height="18"> Выйти</a></li>
+      <li data-guest><a href="login.php" class="btn btn-primary btn-sm" data-i18n="nav.login">Войти</a></li>
+      <li data-guest><a href="register.php" class="btn btn-secondary btn-sm" data-i18n="nav.register">Регистрация</a></li>
+      <li data-user class="hidden"><a href="dashboard.php" data-i18n="nav.dashboard">Кабинет</a></li>
+      <li data-user class="hidden"><a href="profile.php" data-i18n="nav.profile">Профиль</a></li>
+      <li data-admin class="hidden"><a href="admin.php" data-i18n="nav.admin">Админ</a></li>
+      <li data-user class="hidden"><a href="#" onclick="AuthManager.logout()" data-i18n="nav.logout">Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>

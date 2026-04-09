@@ -21,10 +21,10 @@
       <span>🎓</span> TestPlatform
     </a>
     <ul class="navbar-nav" id="mainNav">
-      <li><a href="dashboard.php"><img src="https://img.icons8.com/ios/18/dashboard.png" alt="" width="18" height="18"> Кабинет</a></li>
-      <li><a href="profile.php" class="active"><img src="https://img.icons8.com/ios/18/user.png" alt="" width="18" height="18"> Профиль</a></li>
-      <li data-admin class="hidden"><a href="admin.php"><img src="https://img.icons8.com/ios/18/admin-settings-male.png" alt="" width="18" height="18"> Админ</a></li>
-      <li><a href="#" onclick="AuthManager.logout()"><img src="https://img.icons8.com/ios/18/exit.png" alt="" width="18" height="18"> Выйти</a></li>
+      <li><a href="dashboard.php">Кабинет</a></li>
+      <li><a href="profile.php" class="active">Профиль</a></li>
+      <li data-admin class="hidden"><a href="admin.php">Админ</a></li>
+      <li><a href="#" onclick="AuthManager.logout()">Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>
