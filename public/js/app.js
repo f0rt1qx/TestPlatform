@@ -116,12 +116,29 @@ const API = {
   delete(endpoint) { return this.request(endpoint, 'DELETE'); },
 
 
+  async _ensureCsrf() {
+    if (!localStorage.getItem('csrf_token')) {
+      try {
+        const resp = await fetch((window.APP_URL ?? '') + '/api/auth.php?action=csrf_token', {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          data.csrf_token && localStorage.setItem('csrf_token', data.csrf_token);
+        }
+      } catch (e) { /* ignore */ }
+    }
+  },
+
   async login(username, password) {
+    await this._ensureCsrf();
     const csrfVal = localStorage.getItem('csrf_token');
     return this.post('/auth.php?action=login', { login: username, password, csrf_token: csrfVal });
   },
 
   async register(regData) {
+    await this._ensureCsrf();
     const csrfVal = localStorage.getItem('csrf_token');
     return this.post('/auth.php?action=register', { ...regData, csrf_token: csrfVal });
   },
@@ -132,11 +149,13 @@ const API = {
   getTests() { return this.get('/test.php?action=list'); },
 
   async startTest(tid) {
+    await this._ensureCsrf();
     const csrfVal = localStorage.getItem('csrf_token');
     return this.post('/test.php?action=start', { test_id: tid, csrf_token: csrfVal });
   },
 
   async submitTest(submissionData) {
+    await this._ensureCsrf();
     const csrfVal = localStorage.getItem('csrf_token');
     return this.post('/test.php?action=submit', { ...submissionData, csrf_token: csrfVal });
   },
@@ -157,6 +176,7 @@ const API = {
   adminResults() { return this.get('/admin.php?action=results'); },
 
   async createTest(testData) {
+    await this._ensureCsrf();
     const csrfVal = localStorage.getItem('csrf_token');
     return this.post('/admin.php?action=create_test', { ...testData, csrf_token: csrfVal });
   },
@@ -164,16 +184,19 @@ const API = {
   deleteTest(tid) { return this.delete(`/admin.php?action=delete_test&test_id=${tid}`); },
 
   async toggleTest(tid, isActive) {
+    await this._ensureCsrf();
     const csrfVal = localStorage.getItem('csrf_token');
     return this.post('/admin.php?action=toggle_test', { test_id: tid, active: isActive, csrf_token: csrfVal });
   },
 
   async blockUser(uid, isBlocked) {
+    await this._ensureCsrf();
     const csrfVal = localStorage.getItem('csrf_token');
     return this.post('/admin.php?action=block_user', { user_id: uid, block: isBlocked, csrf_token: csrfVal });
   },
 
   async addQuestion(qData) {
+    await this._ensureCsrf();
     const csrfVal = localStorage.getItem('csrf_token');
     return this.post('/admin.php?action=add_question', { ...qData, csrf_token: csrfVal });
   },
