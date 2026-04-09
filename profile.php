@@ -72,7 +72,7 @@
 
   <!-- Tabs -->
   <div class="profile-tabs">
-    <button class="profile-tab active" onclick="switchTab('info')"><img src="https://img.icons8.com/ios/18/edit-user.png" alt="" width="18" height="18"> Информация</button>
+    <button class="profile-tab active" onclick="switchTab('info')"><img src="https://img.icons8.com/fluency-systems-regular/48/info-squared.png" alt="" width="18" height="18"> Информация</button>
     <button class="profile-tab" onclick="switchTab('security')"><img src="https://img.icons8.com/ios/18/lock--v1.png" alt="" width="18" height="18"> Безопасность</button>
     <button class="profile-tab" onclick="switchTab('avatar')"><img src="https://img.icons8.com/ios/18/image.png" alt="" width="18" height="18"> Аватарка</button>
     <button class="profile-tab" onclick="switchTab('achievements')"><img src="https://img.icons8.com/ios/18/trophy--v1.png" alt="" width="18" height="18"> Достижения</button>
