@@ -72,7 +72,7 @@
 
   <!-- Tabs -->
   <div class="profile-tabs">
-    <button class="profile-tab active" onclick="switchTab('info')"><i class="fas fa-circle-user-edit"></i> Информация</button>
+    <button class="profile-tab active" onclick="switchTab('info')"><img src="https://img.icons8.com/ios/18/edit-user.png" alt="" width="18" height="18"> Информация</button>
     <button class="profile-tab" onclick="switchTab('security')"><img src="https://img.icons8.com/ios/18/lock--v1.png" alt="" width="18" height="18"> Безопасность</button>
     <button class="profile-tab" onclick="switchTab('avatar')"><img src="https://img.icons8.com/ios/18/image.png" alt="" width="18" height="18"> Аватарка</button>
     <button class="profile-tab" onclick="switchTab('achievements')"><img src="https://img.icons8.com/ios/18/trophy--v1.png" alt="" width="18" height="18"> Достижения</button>
@@ -81,7 +81,7 @@
 
   <!-- Tab: Info -->
   <div id="tab-info" class="profile-section">
-    <div class="section-title"><i class="fas fa-circle-user-edit"></i> Личная информация</div>
+    <div class="section-title"><img src="https://img.icons8.com/ios/18/edit-user.png" alt="" width="18" height="18"> Личная информация</div>
     <form id="profileForm">
       <div class="form-grid">
         <div class="form-group">

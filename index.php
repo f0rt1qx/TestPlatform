@@ -21,18 +21,18 @@
     </a>
 
     <ul class="navbar-nav" id="mainNav">
-      <li data-guest><a href="login.php" class="btn btn-primary btn-sm" data-i18n="nav.login"><i class="fas fa-right-to-bracket"></i> Войти</a></li>
-      <li data-guest><a href="register.php" class="btn btn-secondary btn-sm" data-i18n="nav.register"><i class="fas fa-circle-user-plus"></i> Регистрация</a></li>
-      <li data-user class="hidden"><a href="dashboard.php" data-i18n="nav.dashboard"><i class="fas fa-grid-2"></i> Кабинет</a></li>
-      <li data-user class="hidden"><a href="profile.php" data-i18n="nav.profile"><i class="fas fa-circle-user"></i> Профиль</a></li>
+      <li data-guest><a href="login.php" class="btn btn-primary btn-sm" data-i18n="nav.login"><img src="https://img.icons8.com/ios/18/login-rounded-right.png" alt="" width="18" height="18"> Войти</a></li>
+      <li data-guest><a href="register.php" class="btn btn-secondary btn-sm" data-i18n="nav.register"><img src="https://img.icons8.com/ios/18/add-user-male.png" alt="" width="18" height="18"> Регистрация</a></li>
+      <li data-user class="hidden"><a href="dashboard.php" data-i18n="nav.dashboard"><img src="https://img.icons8.com/ios/18/dashboard.png" alt="" width="18" height="18"> Кабинет</a></li>
+      <li data-user class="hidden"><a href="profile.php" data-i18n="nav.profile"><img src="https://img.icons8.com/ios/18/user.png" alt="" width="18" height="18"> Профиль</a></li>
       <li data-admin class="hidden"><a href="admin.php" data-i18n="nav.admin"><img src="https://img.icons8.com/ios/48/security-checked.png" alt="" width="40" height="40"> Админ</a></li>
-      <li data-user class="hidden"><a href="#" onclick="AuthManager.logout()" data-i18n="nav.logout"><i class="fas fa-right-from-bracket"></i> Выйти</a></li>
+      <li data-user class="hidden"><a href="#" onclick="AuthManager.logout()" data-i18n="nav.logout"><img src="https://img.icons8.com/ios/18/exit.png" alt="" width="18" height="18"> Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>
         </div>
       </li>
-      <li><button class="theme-toggle" data-theme-toggle title="Сменить тему"><i class="fas fa-circle-half-stroke"></i></button></li>
+      <li><button class="theme-toggle" data-theme-toggle title="Сменить тему"><img src="https://img.icons8.com/ios/18/crescent-moon.png" alt="" width="18" height="18"></button></li>
     </ul>
 
     <button class="burger" aria-label="Меню" id="burgerBtn">
@@ -129,7 +129,7 @@
 
     <div class="steps">
       <div class="step fade-in">
-        <div class="step-num"><i class="fas fa-circle-user-plus"></i></div>
+        <div class="step-num"><img src="https://img.icons8.com/ios/18/add-user-male.png" alt="" width="18" height="18"></div>
         <h4 data-i18n="how.step1.title">Регистрация</h4>
         <p data-i18n="how.step1.desc">Создайте аккаунт за пару минут</p>
       </div>
