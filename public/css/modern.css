@@ -600,6 +600,13 @@ textarea.form-control {
   filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.4));
 }
 
+.navbar-brand img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(75%) sepia(48%) saturate(493%) hue-rotate(102deg) brightness(93%) contrast(89%);
+}
+
 .navbar-brand:hover {
   opacity: 0.85;
 }

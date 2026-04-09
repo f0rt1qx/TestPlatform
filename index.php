@@ -17,7 +17,7 @@
 <nav class="navbar" id="navbar">
   <div class="container">
     <a href="index.php" class="navbar-brand">
-      <i class="fas fa-graduation-cap"></i> TestPlatform
+      <img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="24" height="24"> TestPlatform
     </a>
 
     <ul class="navbar-nav" id="mainNav">
@@ -248,7 +248,7 @@
   <div class="container">
     <div class="footer-content">
       <div class="footer-brand">
-        <h3 data-i18n="footer.brand"><i class="fas fa-graduation-cap"></i> TestPlatform</h3>
+        <h3 data-i18n="footer.brand"><img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="24" height="24"> TestPlatform</h3>
         <p data-i18n="footer.description">Современная платформа для честного онлайн-тестирования</p>
         <div class="footer-social">
           <a href="#" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
@@ -260,18 +260,18 @@
       <div>
         <h4 class="footer-title" data-i18n="footer.platform">Платформа</h4>
         <ul class="footer-links">
-          <li><a href="#features" data-i18n="footer.features"><i class="fas fa-chevron-right"></i> Возможности</a></li>
-          <li><a href="#tests-preview" data-i18n="footer.tests"><i class="fas fa-chevron-right"></i> Тесты</a></li>
-          <li><a href="dashboard.php" data-i18n="nav.dashboard"><i class="fas fa-chevron-right"></i> Кабинет</a></li>
+          <li><a href="#features" data-i18n="footer.features"><img src="https://img.icons8.com/ios/16/chevron-right.png" alt="" width="14" height="14"> Возможности</a></li>
+          <li><a href="#tests-preview" data-i18n="footer.tests"><img src="https://img.icons8.com/ios/16/chevron-right.png" alt="" width="14" height="14"> Тесты</a></li>
+          <li><a href="dashboard.php" data-i18n="nav.dashboard"><img src="https://img.icons8.com/ios/16/chevron-right.png" alt="" width="14" height="14"> Кабинет</a></li>
         </ul>
       </div>
 
       <div>
         <h4 class="footer-title" data-i18n="footer.support">Поддержка</h4>
         <ul class="footer-links">
-          <li><a href="#" data-i18n="footer.help"><i class="fas fa-chevron-right"></i> Помощь</a></li>
-          <li><a href="#" data-i18n="footer.contacts"><i class="fas fa-chevron-right"></i> Контакты</a></li>
-          <li><a href="#" data-i18n="footer.faq"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+          <li><a href="#" data-i18n="footer.help"><img src="https://img.icons8.com/ios/16/chevron-right.png" alt="" width="14" height="14"> Помощь</a></li>
+          <li><a href="#" data-i18n="footer.contacts"><img src="https://img.icons8.com/ios/16/chevron-right.png" alt="" width="14" height="14"> Контакты</a></li>
+          <li><a href="#" data-i18n="footer.faq"><img src="https://img.icons8.com/ios/16/chevron-right.png" alt="" width="14" height="14"> FAQ</a></li>
         </ul>
       </div>
     </div>
