@@ -556,6 +556,12 @@ textarea.form-control {
   height: 56px;
 }
 
+.navbar.navbar-hidden {
+  top: -80px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .navbar .container {
   display: flex;
   align-items: center;

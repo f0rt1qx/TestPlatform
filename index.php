@@ -288,14 +288,27 @@
 <script src="public/js/i18n.js"></script>
 <script src="public/js/app.js"></script>
 <script>
-// Navbar scroll effect
+// Navbar hide on scroll down, show on scroll up
+let lastScrollY = window.scrollY;
+const navbar = document.getElementById('navbar');
+
 window.addEventListener('scroll', () => {
-  const navbar = document.getElementById('navbar');
-  if (navbar && window.scrollY > 50) {
+  if (!navbar) return;
+  const currentY = window.scrollY;
+
+  if (currentY > 50) {
     navbar.classList.add('scrolled');
-  } else if (navbar) {
+  } else {
     navbar.classList.remove('scrolled');
   }
+
+  if (currentY > lastScrollY && currentY > 120) {
+    navbar.classList.add('navbar-hidden');
+  } else {
+    navbar.classList.remove('navbar-hidden');
+  }
+
+  lastScrollY = currentY;
 });
 
 // Burger menu
