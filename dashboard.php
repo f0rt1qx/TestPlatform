@@ -41,10 +41,10 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <ul class="sidebar-menu">
-      <li><a href="#" class="active" onclick="showTab('overview'); return false;">📊 Обзор</a></li>
-      <li><a href="#" onclick="showTab('tests'); return false;">📝 Тесты</a></li>
-      <li><a href="#" onclick="showTab('history'); return false;">📋 История</a></li>
-      <li><a href="profile.php">👤 Профиль</a></li>
+      <li><a href="#" class="active" onclick="showTab('overview'); return false;"><img src="https://img.icons8.com/ios/18/bar-chart.png" alt="" width="18" height="18"> Обзор</a></li>
+      <li><a href="#" onclick="showTab('tests'); return false;"><img src="https://img.icons8.com/ios/18/test-document.png" alt="" width="18" height="18"> Тесты</a></li>
+      <li><a href="#" onclick="showTab('history'); return false;"><img src="https://img.icons8.com/ios/18/history.png" alt="" width="18" height="18"> История</a></li>
+      <li><a href="profile.php"><img src="https://img.icons8.com/ios/18/user.png" alt="" width="18" height="18"> Профиль</a></li>
     </ul>
   </aside>
 
@@ -229,7 +229,7 @@
       if (tests.length === 0) {
         grid.innerHTML = `
           <div class="empty-state">
-            <div class="empty-state-icon">📝</div>
+            <div class="empty-state-icon"><img src="https://img.icons8.com/ios/48/document.png" alt="" width="48" height="48"></div>
             <h3>Тестов пока нет</h3>
             <p>Обратитесь к администратору для добавления тестов</p>
           </div>
@@ -247,9 +247,9 @@
             </div>
           </div>
           <div class="test-card-meta">
-            <span class="test-meta-item">⏱️ ${t.time_limit} мин</span>
-            <span class="test-meta-item">📝 ${t.question_count} вопросов</span>
-            <span class="test-meta-item">🔄 ${t.max_attempts} поп.</span>
+            <span class="test-meta-item"><img src="https://img.icons8.com/ios/14/clock.png" alt="" width="14" height="14"> ${t.time_limit} мин</span>
+            <span class="test-meta-item"><img src="https://img.icons8.com/ios/14/question-mark.png" alt="" width="14" height="14"> ${t.question_count} вопросов</span>
+            <span class="test-meta-item"><img src="https://img.icons8.com/ios/14/refresh.png" alt="" width="14" height="14"> ${t.max_attempts} поп.</span>
           </div>
           <div class="test-card-actions">
             <button class="btn btn-primary btn-full" onclick="startTest(${t.id})">Начать тест →</button>

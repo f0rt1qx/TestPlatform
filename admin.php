@@ -51,11 +51,11 @@
 
   <!-- Tabs -->
   <div class="admin-tabs">
-    <button class="admin-tab active" onclick="switchTab('users')">👥 Пользователи</button>
-    <button class="admin-tab" onclick="switchTab('tests')">📝 Тесты</button>
-    <button class="admin-tab" onclick="switchTab('logs')">🔍 Логи</button>
-    <button class="admin-tab" onclick="switchTab('eye_tracking')">👁️ Eye-tracking</button>
-    <button class="admin-tab" onclick="switchTab('results')">📊 Результаты</button>
+    <button class="admin-tab active" onclick="switchTab('users')"><img src="https://img.icons8.com/ios/18/users.png" alt="" width="18" height="18"> Пользователи</button>
+    <button class="admin-tab" onclick="switchTab('tests')"><img src="https://img.icons8.com/ios/18/test-document.png" alt="" width="18" height="18"> Тесты</button>
+    <button class="admin-tab" onclick="switchTab('logs')"><img src="https://img.icons8.com/ios/18/log.png" alt="" width="18" height="18"> Логи</button>
+    <button class="admin-tab" onclick="switchTab('eye_tracking')"><img src="https://img.icons8.com/ios/18/visible.png" alt="" width="18" height="18"> Eye-tracking</button>
+    <button class="admin-tab" onclick="switchTab('results')"><img src="https://img.icons8.com/ios/18/bar-chart.png" alt="" width="18" height="18"> Результаты</button>
   </div>
 
   <!-- USERS TAB -->
