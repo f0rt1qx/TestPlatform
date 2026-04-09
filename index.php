@@ -173,9 +173,9 @@
           </div>
         </div>
         <div class="test-card-meta">
-          <span class="test-meta-item"><i class="fas fa-clock"></i> 30 <span data-i18n="tests.meta.minutes">мин</span></span>
-          <span class="test-meta-item"><i class="fas fa-circle-question"></i> 10 <span data-i18n="tests.meta.questions">вопросов</span></span>
-          <span class="test-meta-item"><i class="fas fa-arrows-rotate"></i> 1 <span data-i18n="tests.meta.attempts">попытка</span></span>
+          <span class="test-meta-item"><img src="https://img.icons8.com/ios/16/clock.png" alt="" width="14" height="14"> 30 <span data-i18n="tests.meta.minutes">мин</span></span>
+          <span class="test-meta-item"><img src="https://img.icons8.com/ios/16/question-mark.png" alt="" width="14" height="14"> 10 <span data-i18n="tests.meta.questions">вопросов</span></span>
+          <span class="test-meta-item"><img src="https://img.icons8.com/ios/16/refresh.png" alt="" width="14" height="14"> 1 <span data-i18n="tests.meta.attempts">попытка</span></span>
         </div>
         <div class="test-card-actions">
           <button class="btn btn-primary btn-full" data-guest disabled data-i18n="tests.btn.login-to-start">Войдите чтобы начать</button>
@@ -192,9 +192,9 @@
           </div>
         </div>
         <div class="test-card-meta">
-          <span class="test-meta-item"><i class="fas fa-clock"></i> 20 <span data-i18n="tests.meta.minutes">мин</span></span>
-          <span class="test-meta-item"><i class="fas fa-circle-question"></i> 15 <span data-i18n="tests.meta.questions">вопросов</span></span>
-          <span class="test-meta-item"><i class="fas fa-arrows-rotate"></i> 2 <span data-i18n="tests.meta.attempts">попытки</span></span>
+          <span class="test-meta-item"><img src="https://img.icons8.com/ios/16/clock.png" alt="" width="14" height="14"> 20 <span data-i18n="tests.meta.minutes">мин</span></span>
+          <span class="test-meta-item"><img src="https://img.icons8.com/ios/16/question-mark.png" alt="" width="14" height="14"> 15 <span data-i18n="tests.meta.questions">вопросов</span></span>
+          <span class="test-meta-item"><img src="https://img.icons8.com/ios/16/refresh.png" alt="" width="14" height="14"> 2 <span data-i18n="tests.meta.attempts">попытки</span></span>
         </div>
         <div class="test-card-actions">
           <button class="btn btn-primary btn-full" data-guest disabled data-i18n="tests.btn.login-to-start">Войдите чтобы начать</button>
@@ -211,9 +211,9 @@
           </div>
         </div>
         <div class="test-card-meta">
-          <span class="test-meta-item"><i class="fas fa-clock"></i> 45 <span data-i18n="tests.meta.minutes">мин</span></span>
-          <span class="test-meta-item"><i class="fas fa-circle-question"></i> 20 <span data-i18n="tests.meta.questions">вопросов</span></span>
-          <span class="test-meta-item"><i class="fas fa-arrows-rotate"></i> 1 <span data-i18n="tests.meta.attempts">попытка</span></span>
+          <span class="test-meta-item"><img src="https://img.icons8.com/ios/16/clock.png" alt="" width="14" height="14"> 45 <span data-i18n="tests.meta.minutes">мин</span></span>
+          <span class="test-meta-item"><img src="https://img.icons8.com/ios/16/question-mark.png" alt="" width="14" height="14"> 20 <span data-i18n="tests.meta.questions">вопросов</span></span>
+          <span class="test-meta-item"><img src="https://img.icons8.com/ios/16/refresh.png" alt="" width="14" height="14"> 1 <span data-i18n="tests.meta.attempts">попытка</span></span>
         </div>
         <div class="test-card-actions">
           <button class="btn btn-primary btn-full" data-guest disabled data-i18n="tests.btn.login-to-start">Войдите чтобы начать</button>
