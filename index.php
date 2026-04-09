@@ -166,7 +166,7 @@
     <div class="test-grid" id="testGrid">
       <div class="test-card fade-in">
         <div class="test-card-header">
-          <div class="test-card-icon"><i class="fas fa-calculator"></i></div>
+          <div class="test-card-icon"><img src="https://img.icons8.com/ios/48/calculator--v1.png" alt="Математика" width="48" height="48"></div>
           <div>
             <div class="test-card-title">Математика 5 класс</div>
             <div class="test-card-desc">Базовые арифметические операции</div>
@@ -185,7 +185,7 @@
 
       <div class="test-card fade-in">
         <div class="test-card-header">
-          <div class="test-card-icon"><i class="fas fa-flask"></i></div>
+          <div class="test-card-icon"><img src="https://img.icons8.com/ios/48/electronics.png" alt="Информатика" width="48" height="48"></div>
           <div>
             <div class="test-card-title">Основы информатики</div>
             <div class="test-card-desc">Компьютерные технологии</div>
@@ -204,7 +204,7 @@
 
       <div class="test-card fade-in">
         <div class="test-card-header">
-          <div class="test-card-icon"><i class="fas fa-book-open"></i></div>
+          <div class="test-card-icon"><img src="https://img.icons8.com/ios/48/fine-print.png" alt="Русский язык" width="48" height="48"></div>
           <div>
             <div class="test-card-title">Русский язык</div>
             <div class="test-card-desc">Грамматика и правописание</div>

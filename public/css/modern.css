@@ -1035,10 +1035,17 @@ textarea.form-control {
   font-size: 2rem;
   color: var(--gradient-start);
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .test-card-icon i {
   font-size: 2rem;
+}
+
+.test-card-icon img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .test-card-title {
