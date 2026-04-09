@@ -79,42 +79,20 @@ match (true) {
             return Result::fail('CSRF token invalid', 403);
         }
 
-        $pick = fn(?string $field): string => trim($input[$field] ?? '');
+        $pick = fn(?string $f): string => trim($input[$f] ?? '');
 
-        // Validation via Result — each check returns early on failure
-        if (isset($input['bio'])) {
-            $bio = $pick('bio');
-            if (strlen($bio) > 500) return Result::fail('О себе: максимум 500 символов', 422);
-        }
-        if (isset($input['phone'])) {
-            $phone = $pick('phone');
-            if ($phone && !preg_match('/^[\d\+\-\(\)\s]{10,20}$/', $phone)) {
-                return Result::fail('Некорректный номер телефона', 422);
-            }
-        }
-        if (isset($input['city'])) {
-            $city = $pick('city');
-            if (strlen($city) > 100) return Result::fail('Город: максимум 100 символов', 422);
-        }
-        if (isset($input['website'])) {
-            $website = $pick('website');
-            if ($website && !filter_var($website, FILTER_VALIDATE_URL)) {
-                return Result::fail('Некорректный URL веб-сайта', 422);
-            }
-        }
-        if (isset($input['birth_date'])) {
-            $bd = $pick('birth_date');
-            if ($bd && !DateTime::createFromFormat('Y-m-d', $bd)) {
-                return Result::fail('Некорректная дата рождения', 422);
-            }
-        }
-        if (isset($input['first_name'])) {
-            $fn = $pick('first_name');
-            if (strlen($fn) > 80) return Result::fail('Имя: максимум 80 символов', 422);
-        }
-        if (isset($input['last_name'])) {
-            $ln = $pick('last_name');
-            if (strlen($ln) > 80) return Result::fail('Фамилия: максимум 80 символов', 422);
+        // Combined validation — single pass through all checks
+        $validations = [
+            ['bio',         fn() => strlen($pick('bio')) <= 500, 'О себе: максимум 500 символов'],
+            ['phone',       fn() => !$pick('phone') || preg_match('/^[\d\+\-\(\)\s]{10,20}$/', $pick('phone')), 'Некорректный номер телефона'],
+            ['city',        fn() => strlen($pick('city')) <= 100, 'Город: максимум 100 символов'],
+            ['website',     fn() => !$pick('website') || filter_var($pick('website'), FILTER_VALIDATE_URL), 'Некорректный URL веб-сайта'],
+            ['birth_date',  fn() => !$pick('birth_date') || DateTime::createFromFormat('Y-m-d', $pick('birth_date')), 'Некорректная дата рождения'],
+            ['first_name',  fn() => strlen($pick('first_name')) <= 80, 'Имя: максимум 80 символов'],
+            ['last_name',   fn() => strlen($pick('last_name')) <= 80, 'Фамилия: максимум 80 символов'],
+        ];
+        foreach ($validations as [$field, $check, $msg]) {
+            if (isset($input[$field]) && !$check()) return Result::fail($msg, 422);
         }
 
         $incomingPayload = array_filter([
@@ -122,8 +100,8 @@ match (true) {
             'phone'      => isset($input['phone']) ? $pick('phone') : null,
             'city'       => isset($input['city']) ? $pick('city') : null,
             'website'    => isset($input['website']) ? $pick('website') : null,
-            'social_vk'  => isset($input['social_vk']) ? $pick('social_vk') : null,
-            'social_tg'  => isset($input['social_tg']) ? $pick('social_tg') : null,
+            'social_vk'  => $pick('social_vk') ?: null,
+            'social_tg'  => $pick('social_tg') ?: null,
             'birth_date' => isset($input['birth_date']) ? $pick('birth_date') : null,
             'first_name' => isset($input['first_name']) ? $pick('first_name') : null,
             'last_name'  => isset($input['last_name']) ? $pick('last_name') : null,
@@ -136,118 +114,60 @@ match (true) {
     })()->respond(),
 
     $action === 'change_email' && $method === 'POST' => (function () use ($input, $profileModel, $currentUser): Result {
-        if (!validateCsrfToken($input['csrf_token'] ?? '')) {
-            return Result::fail('CSRF token invalid', 403);
-        }
-
+        !validateCsrfToken($input['csrf_token'] ?? '') && Result::fail('CSRF token invalid', 403);
         $email = trim($input['email'] ?? '');
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return Result::fail('Некорректный email', 422);
-        }
-        if ($profileModel->isEmailTaken($email, $currentUser)) {
-            return Result::fail('Email уже занят', 409);
-        }
-
+        filter_var($email, FILTER_VALIDATE_EMAIL) || Result::fail('Некорректный email', 422);
+        $profileModel->isEmailTaken($email, $currentUser) && Result::fail('Email уже занят', 409);
         $updated = $profileModel->updateEmail($currentUser, $email);
-        return $updated
-            ? Result::ok(null, 200)
-            : Result::fail('Ошибка при обновлении email', 500);
+        return $updated ? Result::ok() : Result::fail('Ошибка при обновлении email', 500);
     })()->respond(),
 
     $action === 'change_username' && $method === 'POST' => (function () use ($input, $profileModel, $currentUser): Result {
-        if (!validateCsrfToken($input['csrf_token'] ?? '')) {
-            return Result::fail('CSRF token invalid', 403);
-        }
-
+        !validateCsrfToken($input['csrf_token'] ?? '') && Result::fail('CSRF token invalid', 403);
         $username = trim($input['username'] ?? '');
-        if (strlen($username) < 3 || strlen($username) > 50) {
-            return Result::fail('Имя пользователя: от 3 до 50 символов', 422);
-        }
-        if (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
-            return Result::fail('Имя пользователя: только латиница, цифры, _', 422);
-        }
-        if ($profileModel->isUsernameTaken($username, $currentUser)) {
-            return Result::fail('Имя пользователя занято', 409);
-        }
-
+        (strlen($username) < 3 || strlen($username) > 50) && Result::fail('Имя пользователя: от 3 до 50 символов', 422);
+        !preg_match('/^[a-zA-Z0-9_]+$/', $username) && Result::fail('Имя пользователя: только латиница, цифры, _', 422);
+        $profileModel->isUsernameTaken($username, $currentUser) && Result::fail('Имя пользователя занято', 409);
         $updated = $profileModel->updateUsername($currentUser, $username);
-        return $updated
-            ? Result::ok(null, 200)
-            : Result::fail('Ошибка при обновлении имени', 500);
+        return $updated ? Result::ok() : Result::fail('Ошибка при обновлении имени', 500);
     })()->respond(),
 
     $action === 'change_password' && $method === 'POST' => (function () use ($input, $profileModel, $currentUser): Result {
-        if (!validateCsrfToken($input['csrf_token'] ?? '')) {
-            return Result::fail('CSRF token invalid', 403);
-        }
-
-        $currentPassword = $input['current_password'] ?? '';
-        $newPassword     = $input['new_password'] ?? '';
-        $confirmPassword = $input['confirm_password'] ?? '';
-
-        if (!$currentPassword || !$newPassword || !$confirmPassword) {
-            return Result::fail('Заполните все поля', 422);
-        }
-        if (!$profileModel->verifyPassword($currentUser, $currentPassword)) {
-            return Result::fail('Неверный текущий пароль', 401);
-        }
-        if (strlen($newPassword) < 8) {
-            return Result::fail('Пароль: минимум 8 символов', 422);
-        }
-        if ($newPassword !== $confirmPassword) {
-            return Result::fail('Пароли не совпадают', 422);
-        }
-
-        $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
-        $updated = $profileModel->updatePassword($currentUser, $passwordHash);
-        return $updated
-            ? Result::ok(null, 200)
-            : Result::fail('Ошибка при смене пароля', 500);
+        !validateCsrfToken($input['csrf_token'] ?? '') && Result::fail('CSRF token invalid', 403);
+        [$curPwd, $newPwd, $confirmPwd] = [$input['current_password'] ?? '', $input['new_password'] ?? '', $input['confirm_password'] ?? ''];
+        (!$curPwd || !$newPwd || !$confirmPwd) && Result::fail('Заполните все поля', 422);
+        !$profileModel->verifyPassword($currentUser, $curPwd) && Result::fail('Неверный текущий пароль', 401);
+        strlen($newPwd) < 8 && Result::fail('Пароль: минимум 8 символов', 422);
+        $newPwd !== $confirmPwd && Result::fail('Пароли не совпадают', 422);
+        $hash = password_hash($newPwd, PASSWORD_DEFAULT);
+        $updated = $profileModel->updatePassword($currentUser, $hash);
+        return $updated ? Result::ok() : Result::fail('Ошибка при смене пароля', 500);
     })()->respond(),
 
     $action === 'upload_avatar' && $method === 'POST' => (function () use ($profileModel, $currentUser): Result {
-        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-            return Result::fail('CSRF token invalid', 403);
-        }
-        if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
-            return Result::fail('Файл не загружен', 400);
-        }
+        !validateCsrfToken($_POST['csrf_token'] ?? '') && Result::fail('CSRF token invalid', 403);
+        (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) && Result::fail('Файл не загружен', 400);
 
-        $file         = $_FILES['avatar'];
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        $maxSize      = 5 * 1024 * 1024;
-
-        $finfo    = finfo_open(FILEINFO_MIME_TYPE);
+        $file = $_FILES['avatar'];
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mimeType = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
 
-        if (!in_array($mimeType, $allowedTypes, true)) {
-            return Result::fail('Разрешены только JPG, PNG, GIF, WebP', 400);
-        }
-        if ($file['size'] > $maxSize) {
-            return Result::fail('Максимальный размер 5MB', 400);
-        }
+        in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'], true)
+            || Result::fail('Разрешены только JPG, PNG, GIF, WebP', 400);
+        $file['size'] <= 5 * 1024 * 1024 || Result::fail('Максимальный размер 5MB', 400);
 
         $uploadDir = __DIR__ . '/../uploads/avatars/';
         is_dir($uploadDir) || mkdir($uploadDir, 0755, true);
 
-        $extension   = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $newFilename = 'avatar_' . $currentUser . '_' . time() . '.' . $extension;
-        $destination = $uploadDir . $newFilename;
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $dest = $uploadDir . 'avatar_' . $currentUser . '_' . time() . '.' . $ext;
 
         $profileModel->removeAvatar($currentUser);
+        move_uploaded_file($file['tmp_name'], $dest) || Result::fail('Ошибка загрузки файла', 500);
 
-        if (!move_uploaded_file($file['tmp_name'], $destination)) {
-            return Result::fail('Ошибка загрузки файла', 500);
-        }
-
-        $avatarPath = 'uploads/avatars/' . $newFilename;
-        $saved = $profileModel->setAvatar($currentUser, $avatarPath);
-        if (!$saved) {
-            unlink($destination);
-            return Result::fail('Ошибка сохранения', 500);
-        }
-
+        $avatarPath = 'uploads/avatars/' . basename($dest);
+        $profileModel->setAvatar($currentUser, $avatarPath) || (unlink($dest) && Result::fail('Ошибка сохранения', 500));
         return Result::ok(['message' => 'Аватарка загружена', 'avatar_url' => $avatarPath]);
     })()->respond(),
 

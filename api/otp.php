@@ -101,7 +101,6 @@ match (true) {
     })(),
 
     $action === 'verify' && $method === 'POST' => (function () use ($input, $otpModel, $userModel): void {
-        // assert() for required fields
         assert('!empty($input["csrf_token"])', 'CSRF token требуется');
         validateCsrfToken($input['csrf_token'] ?? '') || jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
 
@@ -109,12 +108,9 @@ match (true) {
         $code  = sanitize($input['code'] ?? '');
         assert('!empty($email) && !empty($code)', 'Email и код обязательны');
 
-        // Rate limit guard
         $rateLimitId = 'otp_verify_' . ($_SERVER['REMOTE_ADDR'] ?? '');
         $guard = RateLimitGuard::check($rateLimitId, 10, 300);
-        if (!$guard['ok']) {
-            jsonResponse($guard['response'], $guard['code']);
-        }
+        $guard['ok'] || jsonResponse($guard['response'], $guard['code']);
 
         $result = $otpModel->verifyCode($email, $code);
         if (!$result['success']) {
@@ -124,9 +120,7 @@ match (true) {
                 'remaining_attempts' => $result['remaining_attempts'] ?? null,
             ], 401);
         }
-        if (!empty($result['is_blocked'])) {
-            jsonResponse(['success' => false, 'message' => 'Аккаунт заблокирован. Обратитесь в поддержку'], 403);
-        }
+        !empty($result['is_blocked']) && jsonResponse(['success' => false, 'message' => 'Аккаунт заблокирован. Обратитесь в поддержку'], 403);
 
         $userModel->updateLastLogin($result['user_id']);
 
@@ -154,41 +148,27 @@ match (true) {
         $email       = sanitize($input['email'] ?? '');
         $method_type = $input['method'] ?? 'email';
 
-        // assert() for email format
         assert('filter_var($email, FILTER_VALIDATE_EMAIL) !== false', 'Неверный формат email');
 
-        // Guard for cooldown
         $cooldown = $otpModel->checkResendCooldown($email);
-        if (!$cooldown['can_resend']) {
-            jsonResponse([
-                'success'            => false,
-                'message'            => $cooldown['message'],
-                'cooldown_remaining' => $cooldown['remaining_seconds'],
-            ], 429);
-        }
+        $cooldown['can_resend'] || jsonResponse([
+            'success'            => false,
+            'message'            => $cooldown['message'],
+            'cooldown_remaining' => $cooldown['remaining_seconds'],
+        ], 429);
 
-        // Rate limit guard
         $rateLimitId = 'otp_resend_' . ($_SERVER['REMOTE_ADDR'] ?? '');
-        $guard = RateLimitGuard::check($rateLimitId, 3, 300);
-        if (!$guard['ok']) {
-            jsonResponse($guard['response'], $guard['code']);
-        }
+        RateLimitGuard::check($rateLimitId, 3, 300)['ok'] || jsonResponse(['success' => false, 'message' => 'Слишком много запросов'], 429);
 
         $result = $otpModel->createOTP($email);
-        if (!$result['success']) {
-            jsonResponse($result, 404);
-        }
+        if (!$result['success']) jsonResponse($result, 404);
 
         $plainCode  = $result['code'] ?? '';
-        // try/catch ONLY for the external sendCode call
         try {
             $sendResult = $otpModel->sendCode($email, $plainCode, $method_type);
         } catch (Exception $e) {
             error_log('OTP resend send failed: ' . $e->getMessage());
-            $sendResult = [
-                'message'          => 'Код создан, но не отправлен',
-                'development_code' => $plainCode,
-            ];
+            $sendResult = ['message' => 'Код создан, но не отправлен', 'development_code' => $plainCode];
         }
 
         jsonResponse([
