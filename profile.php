@@ -21,16 +21,16 @@
       <span>🎓</span> TestPlatform
     </a>
     <ul class="navbar-nav" id="mainNav">
-      <li><a href="dashboard.php"><i class="fas fa-th-large"></i> Кабинет</a></li>
-      <li><a href="profile.php" class="active"><i class="fas fa-user"></i> Профиль</a></li>
-      <li data-admin class="hidden"><a href="admin.php"><i class="fas fa-shield-alt"></i> Админ</a></li>
-      <li><a href="#" onclick="AuthManager.logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+      <li><a href="dashboard.php"><i class="fas fa-grid-2"></i> Кабинет</a></li>
+      <li><a href="profile.php" class="active"><i class="fas fa-circle-user"></i> Профиль</a></li>
+      <li data-admin class="hidden"><a href="admin.php"><i class="fas fa-shield-halved"></i> Админ</a></li>
+      <li><a href="#" onclick="AuthManager.logout()"><i class="fas fa-right-from-bracket"></i> Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>
         </div>
       </li>
-      <li><button class="theme-toggle" data-theme-toggle title="Тема"><i class="fas fa-sun"></i></button></li>
+      <li><button class="theme-toggle" data-theme-toggle title="Тема"><i class="fas fa-circle-half-stroke"></i></button></li>
     </ul>
     <button class="burger" id="burgerBtn">
       <span></span><span></span><span></span>
@@ -72,7 +72,7 @@
 
   <!-- Tabs -->
   <div class="profile-tabs">
-    <button class="profile-tab active" onclick="switchTab('info')"><i class="fas fa-user-edit"></i> Информация</button>
+    <button class="profile-tab active" onclick="switchTab('info')"><i class="fas fa-circle-user-edit"></i> Информация</button>
     <button class="profile-tab" onclick="switchTab('security')"><i class="fas fa-lock"></i> Безопасность</button>
     <button class="profile-tab" onclick="switchTab('avatar')"><i class="fas fa-image"></i> Аватарка</button>
     <button class="profile-tab" onclick="switchTab('achievements')"><i class="fas fa-trophy"></i> Достижения</button>
@@ -81,7 +81,7 @@
 
   <!-- Tab: Info -->
   <div id="tab-info" class="profile-section">
-    <div class="section-title"><i class="fas fa-user-edit"></i> Личная информация</div>
+    <div class="section-title"><i class="fas fa-circle-user-edit"></i> Личная информация</div>
     <form id="profileForm">
       <div class="form-grid">
         <div class="form-group">
@@ -128,7 +128,7 @@
           <input class="form-control" id="socialTg" placeholder="@username">
         </div>
       </div>
-      <button type="submit" class="btn btn-primary" id="saveProfileBtn"><i class="fas fa-save"></i> Сохранить</button>
+      <button type="submit" class="btn btn-primary" id="saveProfileBtn"><i class="fas fa-floppy-disk"></i> Сохранить</button>
     </form>
 
     <hr style="margin: 32px 0; border: none; border-top: 1px solid #e2e8f0;">
@@ -145,7 +145,7 @@
           <input class="form-control" type="email" id="email" required>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary" id="saveContactBtn"><i class="fas fa-save"></i> Сохранить</button>
+      <button type="submit" class="btn btn-primary" id="saveContactBtn"><i class="fas fa-floppy-disk"></i> Сохранить</button>
     </form>
   </div>
 

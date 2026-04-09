@@ -30,15 +30,15 @@
       <span>🎓</span> TestPlatform
     </a>
     <ul class="navbar-nav" id="mainNav">
-      <li><a href="dashboard.php"><i class="fas fa-th-large"></i> Кабинет</a></li>
-      <li><a href="admin.php" class="active"><i class="fas fa-shield-alt"></i> Админ</a></li>
-      <li><a href="#" onclick="AuthManager.logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+      <li><a href="dashboard.php"><i class="fas fa-grid-2"></i> Кабинет</a></li>
+      <li><a href="admin.php" class="active"><i class="fas fa-shield-halved"></i> Админ</a></li>
+      <li><a href="#" onclick="AuthManager.logout()"><i class="fas fa-right-from-bracket"></i> Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>
         </div>
       </li>
-      <li><button class="theme-toggle" data-theme-toggle title="Тема"><i class="fas fa-sun"></i></button></li>
+      <li><button class="theme-toggle" data-theme-toggle title="Тема"><i class="fas fa-circle-half-stroke"></i></button></li>
     </ul>
     <button class="burger" id="burgerBtn">
       <span></span><span></span><span></span>

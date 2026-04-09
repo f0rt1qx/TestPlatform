@@ -203,7 +203,7 @@
             Email
           </button>
           <button type="button" class="method-btn" data-method="sms" onclick="selectMethod('sms')">
-            <i class="fas fa-sms"></i>
+            <i class="fas fa-comment-sms"></i>
             SMS
           </button>
         </div>
