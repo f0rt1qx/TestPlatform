@@ -340,14 +340,17 @@
     return d.innerHTML;
   }
 
-  // Navbar scroll effect
+  // Navbar hide on scroll down, show on scroll up
+  let lastScrollY = window.scrollY;
+  const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
-    const navbar = document.getElementById('navbar');
-    if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
+    if (!navbar) return;
+    const currentY = window.scrollY;
+    if (currentY > 50) navbar.classList.add('scrolled');
+    else navbar.classList.remove('scrolled');
+    if (currentY > lastScrollY && currentY > 120) navbar.classList.add('navbar-hidden');
+    else navbar.classList.remove('navbar-hidden');
+    lastScrollY = currentY;
   });
 
   // Burger menu
