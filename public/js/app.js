@@ -116,19 +116,27 @@ const API = {
   delete(endpoint) { return this.request(endpoint, 'DELETE'); },
 
 
+  _csrfPromise: null,
+
   async _ensureCsrf() {
-    if (!localStorage.getItem('csrf_token')) {
+    if (localStorage.getItem('csrf_token')) return;
+    if (this._csrfPromise) { await this._csrfPromise; return; }
+    this._csrfPromise = (async () => {
       try {
         const resp = await fetch((window.APP_URL ?? '') + '/api/auth.php?action=csrf_token', {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' }
+          credentials: 'include'
         });
         if (resp.ok) {
-          const data = await resp.json();
-          data.csrf_token && localStorage.setItem('csrf_token', data.csrf_token);
+          const ct = resp.headers.get('content-type') || '';
+          if (ct.includes('application/json')) {
+            const d = await resp.json();
+            d.csrf_token && localStorage.setItem('csrf_token', d.csrf_token);
+          }
         }
       } catch (e) { /* ignore */ }
-    }
+      finally { this._csrfPromise = null; }
+    })();
+    await this._csrfPromise;
   },
 
   async login(username, password) {
@@ -302,20 +310,7 @@ document.addEventListener('click', e => {
 });
 
 async function initCsrfToken() {
-  try {
-    const resp = await fetch((window.APP_URL ?? '') + '/api/auth.php?action=csrf_token', {
-      method: 'GET',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    if (resp.ok) {
-      const data = await resp.json();
-      data.csrf_token && localStorage.setItem('csrf_token', data.csrf_token);
-    }
-  } catch (err) {
-    console.warn('[CSRF] Failed to load token:', err.message);
-  }
+  await API._ensureCsrf();
 }
 
 document.readyState === 'loading'
