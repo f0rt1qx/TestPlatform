@@ -1,21 +1,17 @@
 <?php
-/**
- * AuthMiddleware.php — Проверка JWT + сессии
- */
+
 
 class AuthMiddleware {
 
-    /**
-     * Проверить авторизацию. Вернуть payload или null.
-     */
+    
     public static function check(): ?array {
-        // 1. Из заголовка Authorization: Bearer <token>
+        
         $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
         if (preg_match('/Bearer\s+(.+)/i', $authHeader, $m)) {
             return self::validateToken($m[1]);
         }
 
-        // 2. Из куки (для SSR страниц)
+        
         if (!empty($_COOKIE['auth_token'])) {
             return self::validateToken($_COOKIE['auth_token']);
         }
@@ -23,9 +19,7 @@ class AuthMiddleware {
         return null;
     }
 
-    /**
-     * Требовать авторизацию, иначе вернуть 401 JSON
-     */
+    
     public static function require(): array {
         $payload = self::check();
         if (!$payload) {
@@ -36,9 +30,7 @@ class AuthMiddleware {
         return $payload;
     }
 
-    /**
-     * Требовать роль admin
-     */
+    
     public static function requireAdmin(): array {
         $payload = self::require();
         if ($payload['role'] !== 'admin') {
@@ -49,9 +41,7 @@ class AuthMiddleware {
         return $payload;
     }
 
-    /**
-     * Для страниц (не API) — редирект вместо JSON
-     */
+    
     public static function requirePage(string $role = 'student'): array {
         $payload = self::check();
         if (!$payload) {
@@ -68,7 +58,7 @@ class AuthMiddleware {
     private static function validateToken(string $token): ?array {
         try {
             $payload = JWT::decode($token);
-            // Дополнительно проверяем, что пользователь не заблокирован
+            
             $pdo = Database::getInstance();
             $stmt = $pdo->prepare('SELECT is_blocked, is_active FROM users WHERE id = ?');
             $stmt->execute([$payload['sub']]);

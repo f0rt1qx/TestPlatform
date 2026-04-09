@@ -1,5 +1,3 @@
-/* eye-tracker.js - Eye-tracking module using WebGazer.js for gaze tracking during tests */
-
 var EyeTracker = (function() {
 
   function EyeTracker(options) {
@@ -16,26 +14,26 @@ var EyeTracker = (function() {
     this._videoElement   = null;
     this._overlayCanvas   = null;
     this._lastGazeTime   = 0;
-    this.FIXATION_DURATION = 100; // ms - minimum time to count as fixation
-    this.SAMPLE_RATE     = 100; // ms between samples
+    this.FIXATION_DURATION = 100; 
+    this.SAMPLE_RATE     = 100; 
   }
 
   EyeTracker.prototype.start = async function() {
     var self = this;
 
     try {
-      // Check if webcam is available
+      
       var stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
-      stream.getTracks().forEach(track => track.stop()); // Stop test stream
+      stream.getTracks().forEach(track => track.stop()); 
 
-      // Load WebGazer.js from CDN
+      
       if (typeof webgazer === 'undefined') {
         await this._loadWebGazer();
       }
 
       this._webgazer = webgazer;
 
-      // Initialize WebGazer
+      
       webgazer
         .setGazeListener(function(data, elapsedTime) {
           if (!self.isActive || !data) return;
@@ -59,16 +57,16 @@ var EyeTracker = (function() {
         .setRegression('ridge')
         .begin();
 
-      // Hide default video preview (we'll show our own)
+      
       webgazer.showVideoPreview(false);
       webgazer.showPredictionPoints(false);
 
       this.isActive = true;
 
-      // Start calibration automatically
+      
       await this._startCalibration();
 
-      // Start periodic logging
+      
       this._startLogFlush();
 
       return true;
@@ -83,7 +81,7 @@ var EyeTracker = (function() {
   EyeTracker.prototype._loadWebGazer = function() {
     return new Promise(function(resolve, reject) {
       var script = document.createElement('script');
-      script.src = 'https://webgazer.cs.brown.edu/webgazer.js';
+      script.src = 'https:
       script.onload = resolve;
       script.onerror = function() {
         reject(new Error('Failed to load WebGazer.js'));
@@ -95,15 +93,15 @@ var EyeTracker = (function() {
   EyeTracker.prototype._startCalibration = function() {
     var self = this;
 
-    // Show calibration UI
+    
     return new Promise(function(resolve) {
       self._showCalibrationUI(function() {
         self.isCalibrated = true;
         
-        // Hide calibration points
+        
         self._hideCalibrationPoints();
         
-        // Show gaze overlay
+        
         self._showGazeOverlay();
 
         if (self.onCalibrationComplete) {
@@ -122,7 +120,7 @@ var EyeTracker = (function() {
     var clickCount = 0;
     var requiredClicks = 5;
 
-    // Create calibration container
+    
     var container = document.createElement('div');
     container.id = 'eye-calibration-overlay';
     container.style.cssText = 
@@ -150,7 +148,7 @@ var EyeTracker = (function() {
 
     document.body.appendChild(container);
 
-    // Create 9 calibration points in a 3x3 grid
+    
     var positions = [
       { x: '15%', y: '15%' }, { x: '50%', y: '15%' }, { x: '85%', y: '15%' },
       { x: '15%', y: '50%' }, { x: '50%', y: '50%' }, { x: '85%', y: '50%' },
@@ -171,7 +169,7 @@ var EyeTracker = (function() {
       point.addEventListener('click', function() {
         clickCount++;
         
-        // Visual feedback
+        
         this.style.transform = 'translate(-50%,-50%) scale(1.3)';
         this.style.background = '#10b981';
         var self = this;
@@ -184,7 +182,7 @@ var EyeTracker = (function() {
           clickCount = 0;
           currentIndex++;
           
-          // Update progress
+          
           var progress = (currentIndex / positions.length) * 100;
           var fill = document.getElementById('calibration-progress-fill');
           if (fill) fill.style.width = progress + '%';
@@ -193,13 +191,13 @@ var EyeTracker = (function() {
           if (hint) hint.textContent = currentIndex < positions.length ? 
             'Точка ' + (currentIndex + 1) + ' из ' + positions.length : 'Калибровка завершена...';
 
-          // Hide current, show next
+          
           document.getElementById('cal-point-' + (currentIndex - 1)).style.display = 'none';
           
           if (currentIndex < positions.length) {
             document.getElementById('cal-point-' + currentIndex).style.display = 'block';
           } else {
-            // Calibration complete
+            
             setTimeout(function() {
               onComplete();
             }, 500);
@@ -210,10 +208,10 @@ var EyeTracker = (function() {
       container.appendChild(point);
     });
 
-    // Show first point
+    
     document.getElementById('cal-point-0').style.display = 'block';
 
-    // Store reference
+    
     this._calibrationContainer = container;
   };
 
@@ -230,7 +228,7 @@ var EyeTracker = (function() {
   };
 
   EyeTracker.prototype._showGazeOverlay = function() {
-    // Create gaze indicator overlay
+    
     var overlay = document.createElement('div');
     overlay.id = 'eye-gaze-indicator';
     overlay.style.cssText =
@@ -268,7 +266,7 @@ var EyeTracker = (function() {
       var dy = gazePoint.y - this._currentFixation.startY;
       var distance = Math.sqrt(dx * dx + dy * dy);
 
-      // If gaze is within 50px radius, continue fixation
+      
       if (distance < 50) {
         this._currentFixation.points.push(gazePoint);
         this._currentFixation.endX = gazePoint.x;
@@ -280,10 +278,10 @@ var EyeTracker = (function() {
           this._currentFixation.duration = duration;
           this._currentFixation.endTime = gazePoint.timestamp;
           this._fixations.push(Object.assign({}, this._currentFixation));
-          this._currentFixation = null; // Reset for next fixation
+          this._currentFixation = null; 
         }
       } else {
-        // Gaze moved too far, reset fixation
+        
         this._currentFixation = null;
       }
     }
@@ -302,10 +300,10 @@ var EyeTracker = (function() {
     var fixationsToFlush = this._fixations.slice();
     var pointsCount = this._gazePoints.length;
 
-    // Clear local buffers
+    
     this._fixations = [];
 
-    // Send to server
+    
     if (fixationsToFlush.length > 0 && this.attemptId) {
       if (typeof API !== 'undefined') {
         API.logEvent({
@@ -321,22 +319,22 @@ var EyeTracker = (function() {
       }
     }
 
-    // Log summary
+    
     console.log('[EyeTracker] Flushed:', pointsCount, 'points,', fixationsToFlush.length, 'fixations');
   };
 
   EyeTracker.prototype.stop = function() {
     this.isActive = false;
 
-    // Final flush
+    
     this._flushData();
 
-    // Clear intervals
+    
     if (this._logInterval) {
       clearInterval(this._logInterval);
     }
 
-    // Stop webgazer
+    
     if (this._webgazer) {
       try {
         this._webgazer.end();
@@ -345,7 +343,7 @@ var EyeTracker = (function() {
       }
     }
 
-    // Remove overlay
+    
     if (this._gazeOverlay && this._gazeOverlay.parentNode) {
       this._gazeOverlay.remove();
     }
@@ -356,7 +354,7 @@ var EyeTracker = (function() {
   EyeTracker.prototype.getStats = function() {
     var now = Date.now();
     var timeSinceLastGaze = now - this._lastGazeTime;
-    var isActive = timeSinceLastGaze < 5000; // Consider active if data in last 5s
+    var isActive = timeSinceLastGaze < 5000; 
 
     return {
       totalPoints: this._gazePoints.length,
@@ -397,7 +395,6 @@ var EyeTracker = (function() {
   return EyeTracker;
 })();
 
-// Add CSS animations
 (function() {
   var style = document.createElement('style');
   style.textContent =

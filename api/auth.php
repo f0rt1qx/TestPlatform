@@ -1,7 +1,5 @@
 <?php
-/**
- * api/auth.php — регистрация, вход, выход
- */
+
 
 require_once __DIR__ . '/../src/bootstrap.php';
 
@@ -15,9 +13,9 @@ $input  = json_decode(file_get_contents('php://input'), true) ?? [];
 
 $userModel = new UserModel();
 
-// ─── REGISTER ─────────────────────────────────────────────────────────────────
+
 if ($action === 'register' && $method === 'POST') {
-    // CSRF проверка (опциональная для регистрации)
+    
     if (!empty($input['csrf_token']) && !validateCsrfToken($input['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
     }
@@ -28,10 +26,10 @@ if ($action === 'register' && $method === 'POST') {
     $firstName = trim($input['first_name'] ?? '');
     $lastName  = trim($input['last_name'] ?? '');
 
-    // Логирование для отладки
+    
     error_log('[REGISTER] Получены данные: username=' . $username . ', email=' . $email);
 
-    // Упрощенная валидация
+    
     $errors = [];
     if (strlen($username) < 3 || strlen($username) > 50) {
         $errors[] = 'Имя пользователя: от 3 до 50 символов';
@@ -69,7 +67,7 @@ if ($action === 'register' && $method === 'POST') {
 
         if (MAIL_ENABLED) {
             $token = $userModel->createEmailVerification($userId);
-            // TODO: отправить email
+            
         }
 
         $token = JWT::encode(['sub' => $userId, 'username' => $username, 'role' => 'student']);
@@ -95,9 +93,9 @@ if ($action === 'register' && $method === 'POST') {
     }
 }
 
-// ─── LOGIN ────────────────────────────────────────────────────────────────────
+
 if ($action === 'login' && $method === 'POST') {
-    // CSRF проверка
+    
     if (!validateCsrfToken($input['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
     }
@@ -109,21 +107,21 @@ if ($action === 'login' && $method === 'POST') {
         jsonResponse(['success' => false, 'message' => 'Введите логин и пароль'], 400);
     }
 
-    // Rate limiting
+    
     $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
     $rateKey = $ipAddress . ':' . $login;
     if (!checkRateLimit($rateKey, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_TIME)) {
         jsonResponse(['success' => false, 'message' => 'Слишком много попыток входа. Попробуйте позже.'], 429);
     }
 
-    // Ищем по email или username
+    
     $user = filter_var($login, FILTER_VALIDATE_EMAIL)
         ? $userModel->findByEmail($login)
         : $userModel->findByUsername($login);
 
-    // Добавляем задержку для защиты от timing attack
+    
     if (!$user) {
-        usleep(random_int(100000, 300000)); // 100-300ms
+        usleep(random_int(100000, 300000)); 
     }
 
     if (!$user || !$userModel->verifyPassword($password, $user['password_hash'])) {
@@ -138,7 +136,7 @@ if ($action === 'login' && $method === 'POST') {
         jsonResponse(['success' => false, 'message' => 'Аккаунт деактивирован'], 403);
     }
 
-    // Сбрасываем rate limit после успешного входа
+    
     unset($_SESSION['rate_limit:' . $rateKey]);
 
     $token = JWT::encode([
@@ -171,7 +169,7 @@ if ($action === 'login' && $method === 'POST') {
     ]);
 }
 
-// ─── LOGOUT ───────────────────────────────────────────────────────────────────
+
 if ($action === 'logout' && $method === 'POST') {
     setcookie('auth_token', '', [
         'expires' => time() - 3600,
@@ -183,7 +181,7 @@ if ($action === 'logout' && $method === 'POST') {
     jsonResponse(['success' => true, 'message' => 'Вы вышли из системы']);
 }
 
-// ─── ME (текущий пользователь) ───────────────────────────────────────────────
+
 if ($action === 'me' && $method === 'GET') {
     $payload = AuthMiddleware::require();
     $user = $userModel->findById($payload['sub']);
@@ -195,7 +193,7 @@ if ($action === 'me' && $method === 'GET') {
     jsonResponse(['success' => true, 'user' => $user, 'csrf_token' => generateCsrfToken()]);
 }
 
-// ─── GET CSRF TOKEN ──────────────────────────────────────────────────────────
+
 if ($action === 'csrf_token' && $method === 'GET') {
     jsonResponse(['success' => true, 'csrf_token' => generateCsrfToken()]);
 }

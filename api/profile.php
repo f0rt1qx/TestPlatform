@@ -1,7 +1,5 @@
 <?php
-/**
- * api/profile.php — API для управления профилем
- */
+
 
 require_once __DIR__ . '/../src/bootstrap.php';
 
@@ -15,11 +13,11 @@ $input = json_decode(file_get_contents('php://input'), true) ?? [];
 
 $profileModel = new ProfileModel();
 
-// ─── REQUIRE AUTH ────────────────────────────────────────────────────────────
+
 $payload = AuthMiddleware::require();
 $userId = (int)$payload['sub'];
 
-// ─── GET PROFILE ─────────────────────────────────────────────────────────────
+
 if ($action === 'get' && $method === 'GET') {
     $profile = $profileModel->getProfile($userId);
     
@@ -27,10 +25,10 @@ if ($action === 'get' && $method === 'GET') {
         jsonResponse(['success' => false, 'message' => 'Профиль не найден'], 404);
     }
 
-    // Обновляем последний визит
+    
     $profileModel->updateLastVisit($userId);
 
-    // Получаем статистику и достижения
+    
     $stats = $profileModel->getStatistics($userId);
     $achievements = $profileModel->getAchievements($userId);
     $recentResults = $profileModel->getRecentResults($userId, 5);
@@ -45,7 +43,7 @@ if ($action === 'get' && $method === 'GET') {
     ]);
 }
 
-// ─── UPDATE PROFILE ──────────────────────────────────────────────────────────
+
 if ($action === 'update' && $method === 'POST') {
     if (!validateCsrfToken($input['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
@@ -53,7 +51,7 @@ if ($action === 'update' && $method === 'POST') {
 
     $data = [];
     
-    // Bio
+    
     if (isset($input['bio'])) {
         $bio = trim($input['bio']);
         if (strlen($bio) > 500) {
@@ -62,7 +60,7 @@ if ($action === 'update' && $method === 'POST') {
         $data['bio'] = $bio;
     }
 
-    // Phone
+    
     if (isset($input['phone'])) {
         $phone = trim($input['phone']);
         if ($phone && !preg_match('/^[\d\+\-\(\)\s]{10,20}$/', $phone)) {
@@ -71,7 +69,7 @@ if ($action === 'update' && $method === 'POST') {
         $data['phone'] = $phone;
     }
 
-    // City
+    
     if (isset($input['city'])) {
         $city = trim($input['city']);
         if (strlen($city) > 100) {
@@ -80,7 +78,7 @@ if ($action === 'update' && $method === 'POST') {
         $data['city'] = $city;
     }
 
-    // Website
+    
     if (isset($input['website'])) {
         $website = trim($input['website']);
         if ($website && !filter_var($website, FILTER_VALIDATE_URL)) {
@@ -89,17 +87,17 @@ if ($action === 'update' && $method === 'POST') {
         $data['website'] = $website;
     }
 
-    // Social VK
+    
     if (isset($input['social_vk'])) {
         $data['social_vk'] = trim($input['social_vk']);
     }
 
-    // Social TG
+    
     if (isset($input['social_tg'])) {
         $data['social_tg'] = trim($input['social_tg']);
     }
 
-    // Birth date
+    
     if (isset($input['birth_date'])) {
         $birthDate = trim($input['birth_date']);
         if ($birthDate && !DateTime::createFromFormat('Y-m-d', $birthDate)) {
@@ -108,7 +106,7 @@ if ($action === 'update' && $method === 'POST') {
         $data['birth_date'] = $birthDate ?: null;
     }
 
-    // First name
+    
     if (isset($input['first_name'])) {
         $firstName = trim($input['first_name']);
         if (strlen($firstName) > 80) {
@@ -117,7 +115,7 @@ if ($action === 'update' && $method === 'POST') {
         $data['first_name'] = $firstName;
     }
 
-    // Last name
+    
     if (isset($input['last_name'])) {
         $lastName = trim($input['last_name']);
         if (strlen($lastName) > 80) {
@@ -133,7 +131,7 @@ if ($action === 'update' && $method === 'POST') {
     }
 }
 
-// ─── CHANGE EMAIL ────────────────────────────────────────────────────────────
+
 if ($action === 'change_email' && $method === 'POST') {
     if (!validateCsrfToken($input['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
@@ -156,7 +154,7 @@ if ($action === 'change_email' && $method === 'POST') {
     }
 }
 
-// ─── CHANGE USERNAME ─────────────────────────────────────────────────────────
+
 if ($action === 'change_username' && $method === 'POST') {
     if (!validateCsrfToken($input['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
@@ -183,7 +181,7 @@ if ($action === 'change_username' && $method === 'POST') {
     }
 }
 
-// ─── CHANGE PASSWORD ─────────────────────────────────────────────────────────
+
 if ($action === 'change_password' && $method === 'POST') {
     if (!validateCsrfToken($input['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
@@ -217,7 +215,7 @@ if ($action === 'change_password' && $method === 'POST') {
     }
 }
 
-// ─── UPLOAD AVATAR ───────────────────────────────────────────────────────────
+
 if ($action === 'upload_avatar' && $method === 'POST') {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
@@ -229,9 +227,9 @@ if ($action === 'upload_avatar' && $method === 'POST') {
 
     $file = $_FILES['avatar'];
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    $maxSize = 5 * 1024 * 1024; // 5MB
+    $maxSize = 5 * 1024 * 1024; 
 
-    // Проверка типа
+    
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mimeType = finfo_file($finfo, $file['tmp_name']);
     finfo_close($finfo);
@@ -240,31 +238,31 @@ if ($action === 'upload_avatar' && $method === 'POST') {
         jsonResponse(['success' => false, 'message' => 'Разрешены только JPG, PNG, GIF, WebP'], 400);
     }
 
-    // Проверка размера
+    
     if ($file['size'] > $maxSize) {
         jsonResponse(['success' => false, 'message' => 'Максимальный размер 5MB'], 400);
     }
 
-    // Создаём директорию для аватарок
+    
     $uploadDir = __DIR__ . '/../uploads/avatars/';
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0755, true);
     }
 
-    // Генерируем уникальное имя
+    
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
     $newFilename = 'avatar_' . $userId . '_' . time() . '.' . $extension;
     $destination = $uploadDir . $newFilename;
 
-    // Удаляем старую аватарку
+    
     $profileModel->removeAvatar($userId);
 
-    // Перемещаем файл
+    
     if (!move_uploaded_file($file['tmp_name'], $destination)) {
         jsonResponse(['success' => false, 'message' => 'Ошибка загрузки файла'], 500);
     }
 
-    // Сохраняем путь в БД
+    
     $avatarPath = 'uploads/avatars/' . $newFilename;
     if ($profileModel->setAvatar($userId, $avatarPath)) {
         jsonResponse([
@@ -278,7 +276,7 @@ if ($action === 'upload_avatar' && $method === 'POST') {
     }
 }
 
-// ─── REMOVE AVATAR ───────────────────────────────────────────────────────────
+
 if ($action === 'remove_avatar' && $method === 'POST') {
     if (!validateCsrfToken($input['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
@@ -291,7 +289,7 @@ if ($action === 'remove_avatar' && $method === 'POST') {
     }
 }
 
-// ─── GET ACTIVITY ────────────────────────────────────────────────────────────
+
 if ($action === 'activity' && $method === 'GET') {
     $days = min((int)($_GET['days'] ?? 30), 365);
     $activity = $profileModel->getActivityHeatmap($userId, $days);

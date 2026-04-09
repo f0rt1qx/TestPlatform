@@ -1,15 +1,13 @@
 <?php
-/**
- * bootstrap.php — загрузка конфигурации и всех классов
- */
 
-// Подключаем конфиг
+
+
 require_once __DIR__ . '/../config/config.php';
 
-// Устанавливаем часовой пояс
+
 date_default_timezone_set('Europe/Moscow');
 
-// Обработка ошибок
+
 if (APP_DEBUG) {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
@@ -22,7 +20,7 @@ if (APP_DEBUG) {
     ini_set('error_log', __DIR__ . '/../logs/error.log');
 }
 
-// Автозагрузчик классов
+
 spl_autoload_register(function (string $class): void {
     $paths = [
         SRC_PATH . '/helpers/' . $class . '.php',
@@ -38,7 +36,7 @@ spl_autoload_register(function (string $class): void {
     }
 });
 
-// Запускаем сессию
+
 if (session_status() === PHP_SESSION_NONE) {
     $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
     session_set_cookie_params([
@@ -51,7 +49,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Заголовки безопасности
+
 function setSecurityHeaders(): void {
     header('X-Frame-Options: DENY');
     header('X-Content-Type-Options: nosniff');
@@ -60,7 +58,7 @@ function setSecurityHeaders(): void {
     header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; connect-src 'self' https://api.vk.com;");
 }
 
-// CORS для API
+
 function setCORSHeaders(): void {
     $allowedOrigin = APP_URL;
     $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -80,7 +78,7 @@ function setCORSHeaders(): void {
     }
 }
 
-// Хелпер: JSON-ответ
+
 function jsonResponse(array $data, int $code = 200): void {
     http_response_code($code);
     header('Content-Type: application/json; charset=utf-8');
@@ -88,12 +86,12 @@ function jsonResponse(array $data, int $code = 200): void {
     exit;
 }
 
-// Хелпер: sanity-check входных данных
+
 function sanitize(string $value): string {
     return htmlspecialchars(trim($value), ENT_QUOTES, 'UTF-8');
 }
 
-// Rate limiting
+
 function checkRateLimit(string $identifier, int $maxAttempts, int $lockTime): bool {
     $key = 'rate_limit:' . $identifier;
     $attempts = (int)($_SESSION[$key]['count'] ?? 0);
@@ -112,7 +110,7 @@ function checkRateLimit(string $identifier, int $maxAttempts, int $lockTime): bo
     return true;
 }
 
-// CSRF токен
+
 function generateCsrfToken(): string {
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));

@@ -1,7 +1,5 @@
 <?php
-/**
- * UserModel.php
- */
+
 
 class UserModel {
     private PDO $db;
@@ -35,7 +33,7 @@ class UserModel {
         );
         $stmt->execute([
             ':username'       => $data['username'],
-            ':email'          => strtolower($data['email']), // Сохраняем в нижнем регистре
+            ':email'          => strtolower($data['email']), 
             ':password_hash'  => password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => BCRYPT_COST]),
             ':first_name'     => $data['first_name'] ?? '',
             ':last_name'      => $data['last_name'] ?? '',
@@ -131,9 +129,7 @@ class UserModel {
         ];
     }
 
-    /**
-     * Обновить время последнего входа
-     */
+    
     public function updateLastLogin(int $userId): void {
         $stmt = $this->db->prepare(
             'UPDATE users SET last_login = NOW() WHERE id = ?'

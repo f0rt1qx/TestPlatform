@@ -1,25 +1,20 @@
 <?php
-/**
- * OTPAuthModel.php — аутентификация через OTP коды
- * Генерация, отправка и валидация одноразовых кодов
- */
+
 
 class OTPAuthModel {
     private PDO $db;
     private const CODE_LENGTH = 6;
-    private const CODE_TTL = 300; // 5 минут
+    private const CODE_TTL = 300; 
     private const MAX_ATTEMPTS = 3;
-    private const RESEND_COOLDOWN = 60; // 60 секунд
+    private const RESEND_COOLDOWN = 60; 
 
     public function __construct() {
         $this->db = Database::getInstance();
     }
 
-    /**
-     * Генерация криптографически стойкого OTP кода
-     */
+    
     public function generateCode(): string {
-        // Используем random_int для криптографически стойкой генерации
+        
         $code = '';
         for ($i = 0; $i < self::CODE_LENGTH; $i++) {
             $code .= random_int(0, 9);
@@ -27,21 +22,19 @@ class OTPAuthModel {
         return $code;
     }
 
-    /**
-     * Создать или обновить OTP код для пользователя
-     */
+    
     public function createOTP(string $email, string $type = 'login'): array {
-        // Удаляем старые непроверенные коды
+        
         $this->cleanupExpiredCodes();
 
-        // Приводим email к нижнему регистру
+        
         $email = strtolower(trim($email));
 
-        // Генерируем новый код
+        
         $code = $this->generateCode();
         $ipAddress = $_SERVER['REMOTE_ADDR'] ?? '';
 
-        // Проверяем есть ли пользователь
+        
         $stmt = $this->db->prepare('SELECT id, username, phone FROM users WHERE LOWER(email) = ?');
         $stmt->execute([$email]);
         $user = $stmt->fetch();
@@ -50,7 +43,7 @@ class OTPAuthModel {
             return ['success' => false, 'message' => 'Пользователь не найден'];
         }
 
-        // Сохраняем код в базу (используем SQL NOW() + INTERVAL чтобы избежать проблем с timezone)
+        
         $stmt = $this->db->prepare(
             'INSERT INTO otp_codes (user_id, email, code, type, ip_address, expires_at, attempts)
              VALUES (:uid, :email, :code, :type, :ip, NOW() + INTERVAL :ttl SECOND, 0)'
@@ -64,7 +57,7 @@ class OTPAuthModel {
             ':ttl' => self::CODE_TTL,
         ]);
 
-        // Логируем создание OTP
+        
         $this->logOTPEvent($user['id'], 'otp_created', $type);
 
         return [
@@ -73,15 +66,13 @@ class OTPAuthModel {
             'username' => $user['username'],
             'has_phone' => !empty($user['phone']),
             'expires_in' => self::CODE_TTL,
-            'code' => $code, // Возвращаем код для development режима
+            'code' => $code, 
         ];
     }
 
-    /**
-     * Проверка OTP кода
-     */
+    
     public function verifyCode(string $email, string $code): array {
-        // Приводим email к нижнему регистру
+        
         $email = strtolower(trim($email));
 
         $stmt = $this->db->prepare(
@@ -97,7 +88,7 @@ class OTPAuthModel {
         $stmt->execute([$email]);
         $otpRecord = $stmt->fetch();
 
-        // Отладка
+        
         if (!$otpRecord) {
             $stmt2 = $this->db->prepare('SELECT email, expires_at, used, created_at FROM otp_codes WHERE LOWER(email) = ? ORDER BY created_at DESC LIMIT 3');
             $stmt2->execute([$email]);
@@ -109,18 +100,18 @@ class OTPAuthModel {
             return ['success' => false, 'message' => 'Код не найден или истек'];
         }
 
-        // Проверяем лимит попыток
+        
         if ($otpRecord['attempts'] >= self::MAX_ATTEMPTS) {
             $this->logOTPEvent($otpRecord['user_id'], 'otp_max_attempts', $otpRecord['type']);
             return ['success' => false, 'message' => 'Превышено количество попыток. Запросите новый код'];
         }
 
-        // Увеличиваем счетчик попыток
+        
         $this->db->prepare(
             'UPDATE otp_codes SET attempts = attempts + 1 WHERE id = ?'
         )->execute([$otpRecord['id']]);
 
-        // Проверяем код
+        
         if (!password_verify($code, $otpRecord['code'])) {
             $remaining = self::MAX_ATTEMPTS - $otpRecord['attempts'] - 1;
             $this->logOTPEvent($otpRecord['user_id'], 'otp_failed', $otpRecord['type']);
@@ -131,7 +122,7 @@ class OTPAuthModel {
             ];
         }
 
-        // Код верный — помечаем как использованный
+        
         $this->db->prepare(
             'UPDATE otp_codes SET used = 1, used_at = NOW() WHERE id = ?'
         )->execute([$otpRecord['id']]);
@@ -147,9 +138,7 @@ class OTPAuthModel {
         ];
     }
 
-    /**
-     * Отправка OTP кода (Email или SMS)
-     */
+    
     public function sendCode(string $email, string $code, string $method = 'email'): array {
         if ($method === 'email') {
             return $this->sendViaEmail($email, $code);
@@ -159,13 +148,11 @@ class OTPAuthModel {
         return ['success' => false, 'message' => 'Неподдерживаемый метод'];
     }
 
-    /**
-     * Отправка через email
-     */
+    
     private function sendViaEmail(string $email, string $code): array {
         if (MAIL_ENABLED) {
             try {
-                // Используем SMTPMailer для отправки
+                
                 require_once __DIR__ . '/../helpers/SMTPMailer.php';
                 
                 $mailer = new SMTPMailer();
@@ -178,7 +165,7 @@ class OTPAuthModel {
                     return ['success' => true, 'message' => 'Код отправлен на email ' . $this->maskEmail($email)];
                 }
                 
-                // Если ошибка SMTP — возвращаем код для разработки как fallback
+                
                 return [
                     'success' => true,
                     'message' => 'SMTP ошибка, но код сгенерирован',
@@ -186,7 +173,7 @@ class OTPAuthModel {
                     'development_info' => 'SMTP ошибка: ' . ($result['message'] ?? 'Неизвестная ошибка')
                 ];
             } catch (Exception $e) {
-                // При любой ошибке возвращаем код для разработки
+                
                 return [
                     'success' => true,
                     'message' => 'Ошибка SMTP, используйте код',
@@ -196,7 +183,7 @@ class OTPAuthModel {
             }
         }
 
-        // Fallback для разработки — показываем код напрямую
+        
         return [
             'success' => true,
             'message' => 'Код сгенерирован (режим разработки)',
@@ -205,11 +192,9 @@ class OTPAuthModel {
         ];
     }
 
-    /**
-     * Отправка через SMS (заглушка для будущего интеграции)
-     */
+    
     private function sendViaSMS(string $email, string $code): array {
-        // Получаем номер телефона
+        
         $stmt = $this->db->prepare('SELECT phone FROM users WHERE email = ?');
         $stmt->execute([$email]);
         $user = $stmt->fetch();
@@ -218,8 +203,8 @@ class OTPAuthModel {
             return ['success' => false, 'message' => 'Номер телефона не привязан'];
         }
 
-        // TODO: Интеграция с SMS провайдером (Twilio, SMS.ru и т.д.)
-        // Пока возвращаем код для разработки
+        
+        
         return [
             'success' => true,
             'message' => 'SMS код сгенерирован (режим разработки)',
@@ -229,9 +214,7 @@ class OTPAuthModel {
         ];
     }
 
-    /**
-     * Красивый HTML шаблон email
-     */
+    
     private function getEmailTemplate(string $code): string {
         return '<!DOCTYPE html>
 <html>
@@ -272,9 +255,7 @@ class OTPAuthModel {
 </html>';
     }
 
-    /**
-     * Маскировка номера телефона
-     */
+    
     private function maskPhone(string $phone): string {
         $clean = preg_replace('/[^0-9]/', '', $phone);
         if (strlen($clean) >= 10) {
@@ -283,27 +264,21 @@ class OTPAuthModel {
         return $phone;
     }
 
-    /**
-     * Маскировка email
-     */
+    
     private function maskEmail(string $email): string {
         [$name, $domain] = explode('@', $email);
         $masked = substr($name, 0, 2) . '***@' . $domain;
         return $masked;
     }
 
-    /**
-     * Очистка просроченных кодов
-     */
+    
     private function cleanupExpiredCodes(): void {
         $this->db->exec(
             'DELETE FROM otp_codes WHERE expires_at < NOW() OR used = 1'
         );
     }
 
-    /**
-     * Логирование OTP событий
-     */
+    
     private function logOTPEvent(int $userId, string $event, string $type): void {
         $stmt = $this->db->prepare(
             'INSERT INTO logs (user_id, event_type, event_data, severity)
@@ -317,9 +292,7 @@ class OTPAuthModel {
         ]);
     }
 
-    /**
-     * Проверка cooldown для повторной отправки
-     */
+    
     public function checkResendCooldown(string $email): array {
         $stmt = $this->db->prepare(
             'SELECT created_at FROM otp_codes 

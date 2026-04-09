@@ -1,7 +1,5 @@
 <?php
-/**
- * api/admin.php — API администратора
- */
+
 
 require_once __DIR__ . '/../src/bootstrap.php';
 
@@ -19,7 +17,7 @@ $userModel   = new UserModel();
 $testModel   = new TestModel();
 $resultModel = new ResultModel();
 
-// ─── Пользователи ─────────────────────────────────────────────────────────────
+
 if ($action === 'users' && $method === 'GET') {
     $users = $userModel->getAll(100, 0);
     jsonResponse(['success' => true, 'users' => $users, 'csrf_token' => generateCsrfToken()]);
@@ -37,7 +35,7 @@ if ($action === 'block_user' && $method === 'POST') {
     }
     $userModel->toggleBlock($userId, $block);
 
-    // Логирование действия администратора (attempt_id = NULL для админ-действий)
+    
     $resultModel->logEvent(null, $payload['sub'], 'admin_action', [
         'action' => $block ? 'block_user' : 'unblock_user',
         'target_user_id' => $userId,
@@ -46,7 +44,7 @@ if ($action === 'block_user' && $method === 'POST') {
     jsonResponse(['success' => true, 'message' => $block ? 'Пользователь заблокирован' : 'Разблокирован']);
 }
 
-// ─── Тесты ────────────────────────────────────────────────────────────────────
+
 if ($action === 'tests' && $method === 'GET') {
     $tests = $testModel->getAll(false);
     jsonResponse(['success' => true, 'tests' => $tests, 'csrf_token' => generateCsrfToken()]);
@@ -60,7 +58,7 @@ if ($action === 'create_test' && $method === 'POST') {
     $input['created_by'] = $payload['sub'];
     $testId = $testModel->create($input);
 
-    // Логируем действие администратора (attempt_id = NULL для админ-действий)
+    
     $resultModel->logEvent(null, $payload['sub'], 'admin_action', [
         'action' => 'create_test',
         'test_id' => $testId,
@@ -77,7 +75,7 @@ if ($action === 'delete_test' && $method === 'DELETE') {
     
     $testModel->deleteTest($testId);
 
-    // Логируем действие администратора (attempt_id = NULL для админ-действий)
+    
     $resultModel->logEvent(null, $payload['sub'], 'admin_action', [
         'action' => 'delete_test',
         'test_id' => $testId,
@@ -97,7 +95,7 @@ if ($action === 'toggle_test' && $method === 'POST') {
     jsonResponse(['success' => true]);
 }
 
-// ─── Вопросы ──────────────────────────────────────────────────────────────────
+
 if ($action === 'add_question' && $method === 'POST') {
     if (!validateCsrfToken($input['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
@@ -119,7 +117,7 @@ if ($action === 'add_question' && $method === 'POST') {
     jsonResponse(['success' => true, 'question_id' => $questionId]);
 }
 
-// ─── CSV загрузка вопросов ───────────────────────────────────────────────────
+
 if ($action === 'import_csv' && $method === 'POST') {
     if (!validateCsrfToken($input['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
@@ -134,14 +132,14 @@ if ($action === 'import_csv' && $method === 'POST') {
         jsonResponse(['success' => false, 'message' => 'CSV файл не загружен'], 400);
     }
 
-    // Проверка MIME-типа
+    
     $allowedTypes = ['text/csv', 'application/vnd.ms-excel', 'text/plain'];
     $fileType = $_FILES['csv']['type'];
     if (!in_array($fileType, $allowedTypes)) {
         jsonResponse(['success' => false, 'message' => 'Недопустимый тип файла. Только CSV.'], 400);
     }
 
-    // Проверка размера (макс 5MB)
+    
     $maxSize = 5 * 1024 * 1024;
     if ($_FILES['csv']['size'] > $maxSize) {
         jsonResponse(['success' => false, 'message' => 'Файл слишком большой. Максимум 5MB.'], 400);
@@ -154,7 +152,7 @@ if ($action === 'import_csv' && $method === 'POST') {
 
     while (($row = fgetcsv($handle, 1000, ',')) !== false) {
         $line++;
-        if ($line === 1) continue; // Заголовок
+        if ($line === 1) continue; 
 
         if (count($row) < 5) {
             $errors[] = "Строка $line: недостаточно столбцов";
@@ -185,7 +183,7 @@ if ($action === 'import_csv' && $method === 'POST') {
     }
     fclose($handle);
 
-    // Логируем действие администратора (attempt_id = NULL для админ-действий)
+    
     $resultModel->logEvent(null, $payload['sub'], 'admin_action', [
         'action' => 'import_csv',
         'test_id' => $testId,
@@ -195,13 +193,13 @@ if ($action === 'import_csv' && $method === 'POST') {
     jsonResponse(['success' => true, 'imported' => $imported, 'errors' => $errors]);
 }
 
-// ─── Логи ────────────────────────────────────────────────────────────────────
+
 if ($action === 'logs' && $method === 'GET') {
     $logs = $resultModel->getAllLogs(500);
     jsonResponse(['success' => true, 'logs' => $logs, 'csrf_token' => generateCsrfToken()]);
 }
 
-// ─── Eye-Tracking данные ─────────────────────────────────────────────────────
+
 if ($action === 'eye_tracking' && $method === 'GET') {
     $testId = isset($_GET['test_id']) ? (int)$_GET['test_id'] : null;
     $attemptId = isset($_GET['attempt_id']) ? (int)$_GET['attempt_id'] : null;
@@ -212,13 +210,13 @@ if ($action === 'eye_tracking' && $method === 'GET') {
     jsonResponse(['success' => true, 'data' => $eyeData, 'tests' => $tests, 'csrf_token' => generateCsrfToken()]);
 }
 
-// ─── Результаты ──────────────────────────────────────────────────────────────
+
 if ($action === 'results' && $method === 'GET') {
     $results = $resultModel->getAllResults(500);
     jsonResponse(['success' => true, 'results' => $results, 'csrf_token' => generateCsrfToken()]);
 }
 
-// ─── Экспорт результатов CSV ──────────────────────────────────────────────────
+
 if ($action === 'export_csv' && $method === 'GET') {
     $results = $resultModel->getAllResults(10000);
 
@@ -242,13 +240,13 @@ if ($action === 'export_csv' && $method === 'GET') {
     exit;
 }
 
-// ─── Экспорт результатов PDF ──────────────────────────────────────────────────
+
 if ($action === 'export_pdf' && $method === 'GET') {
     require_once __DIR__ . '/../src/helpers/PDFExporter.php';
     
     $results = $resultModel->getAllResults(10000);
     
-    // Логируем действие экспорта
+    
     $resultModel->logEvent(null, $payload['sub'], 'admin_action', [
         'action' => 'export_pdf',
         'records_count' => count($results),

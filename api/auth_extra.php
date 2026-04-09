@@ -1,10 +1,7 @@
 <?php
-/**
- * api/auth.php дополнение — forgot_password и reset_password
- * Добавьте этот блок в api/auth.php перед финальным jsonResponse
- */
 
-// ─── FORGOT PASSWORD ──────────────────────────────────────────────────────────
+
+
 if ($action === 'forgot_password' && $method === 'POST') {
     $email = trim($input['email'] ?? '');
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -12,7 +9,7 @@ if ($action === 'forgot_password' && $method === 'POST') {
     }
 
     $user = $userModel->findByEmail($email);
-    // Не раскрываем, существует ли email
+    
     if (!$user) {
         jsonResponse(['success' => true, 'message' => 'Если аккаунт существует, письмо отправлено']);
     }
@@ -22,7 +19,7 @@ if ($action === 'forgot_password' && $method === 'POST') {
     $resetUrl = APP_URL . '/reset-password.php?token=' . $token;
 
     if (MAIL_ENABLED) {
-        // TODO: реализовать отправку через PHPMailer или mail()
+        
         mail(
             $email,
             'Сброс пароля — ' . APP_NAME,
@@ -30,12 +27,12 @@ if ($action === 'forgot_password' && $method === 'POST') {
         );
         jsonResponse(['success' => true]);
     } else {
-        // DEV mode: возвращаем токен напрямую
+        
         jsonResponse(['success' => true, 'dev_token' => $token, 'dev_url' => $resetUrl]);
     }
 }
 
-// ─── RESET PASSWORD ───────────────────────────────────────────────────────────
+
 if ($action === 'reset_password' && $method === 'POST') {
     $token    = trim($input['token'] ?? '');
     $password = $input['password'] ?? '';

@@ -1,8 +1,5 @@
 <?php
-/**
- * api/test-smtp.php — тестирование SMTP
- * Удалить перед деплоем в production!
- */
+
 
 require_once __DIR__ . '/../src/bootstrap.php';
 
@@ -11,7 +8,7 @@ header('Content-Type: application/json; charset=utf-8');
 $action = $_GET['action'] ?? '';
 $input = json_decode(file_get_contents('php://input'), true) ?? [];
 
-// Только для development!
+
 if (!APP_DEBUG) {
     echo json_encode(['success' => false, 'message' => 'Disabled in production']);
     exit;

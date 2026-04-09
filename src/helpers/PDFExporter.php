@@ -1,30 +1,21 @@
 <?php
-/**
- * PDFExporter.php — экспорт результатов в PDF
- * Поддержка админ-панели (все результаты) и студентов (отдельные тесты)
- */
+
 
 class PDFExporter {
     
-    /**
-     * Экспортировать все результаты (админ)
-     */
+    
     public static function exportResults(array $results): void {
         $html = self::generateAdminHTML($results);
         self::outputPDF($html);
     }
 
-    /**
-     * Экспортировать один результат (студент)
-     */
+    
     public static function exportSingleResult(array $result, array $questions = []): void {
         $html = self::generateStudentHTML($result, $questions);
         self::outputPDF($html);
     }
 
-    /**
-     * Генерирует HTML для админ-панели (все результаты)
-     */
+    
     private static function generateAdminHTML(array $results): string {
         $total = count($results);
         $passed = $total > 0 ? count(array_filter($results, fn($r) => $r['passed'] == 1)) : 0;
@@ -226,11 +217,9 @@ tbody td {
         return $html;
     }
 
-    /**
-     * Генерирует HTML для отдельного результата студента
-     */
+    
     private static function generateStudentHTML(array $result, array $questions = []): string {
-        // Проверяем что все данные есть
+        
         $percentage = isset($result['percentage']) ? floatval($result['percentage']) : 0;
         $passed = isset($result['passed']) && $result['passed'] == 1;
         $cheat = isset($result['cheat_score']) ? intval($result['cheat_score']) : 0;
@@ -507,7 +496,7 @@ body {
     </div>
 </div>';
 
-        // Детали ответов если есть
+        
         if (!empty($result['answers_json'])) {
             $answers = is_string($result['answers_json']) ? json_decode($result['answers_json'], true) : $result['answers_json'];
             
@@ -523,7 +512,7 @@ body {
                     $maxPoints = 0;
                     $questionText = 'Вопрос ' . $qNum;
                     
-                    // Найти текст вопроса из массива questions
+                    
                     foreach ($questions as $q) {
                         if ($q['id'] == $qId) {
                             $questionText = $q['question_text'];
@@ -539,7 +528,7 @@ body {
         </div>
         <div class="question-text">' . htmlspecialchars($questionText) . '</div>';
 
-                    // Ответы пользователя
+                    
                     if (isset($answerData['given']) && is_array($answerData['given'])) {
                         $html .= '<div class="answers-list">';
                         foreach ($answerData['given'] as $ansId) {
@@ -571,23 +560,18 @@ body {
         return $html;
     }
 
-    /**
-     * Выводит PDF через HTML с использованием dompdf если доступен,
-     * иначе fallback на скачивание HTML
-     */
+    
     private static function outputPDF(string $html): void {
-        // Пробуем использовать dompdf если установлен
+        
         if (class_exists('\\Dompdf\\Dompdf')) {
             self::outputWithDompdf($html);
         } else {
-            // Fallback: сохраняем HTML и предлагаем открыть в браузере для печати в PDF
+            
             self::outputAsHTMLForPrint($html);
         }
     }
 
-    /**
-     * Генерация PDF через dompdf
-     */
+    
     private static function outputWithDompdf(string $html): void {
         $dompdf = new \Dompdf\Dompdf();
         $dompdf->setPaper('A4', 'portrait');
@@ -605,11 +589,9 @@ body {
         exit;
     }
 
-    /**
-     * Fallback: выводим HTML который можно сохранить как PDF через браузер
-     */
+    
     private static function outputAsHTMLForPrint(string $html): void {
-        // Добавляем кнопку печати в начало body
+        
         $printButton = '<div id="printButton" style="position: fixed; top: 20px; right: 20px; z-index: 9999; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
     <button onclick="window.print()" style="
         background: #2563eb;

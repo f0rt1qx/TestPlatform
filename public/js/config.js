@@ -1,10 +1,6 @@
-/**
- * config.js — автоматически определяет базовый URL
- * Подключается ПЕРВЫМ перед app.js
- */
 (function() {
-  // Определяем BASE_URL из текущего расположения скрипта
-  // Ищем /public/js/config.js и берём всё до /public/
+  
+  
   var scripts = document.querySelectorAll('script[src]');
   var base = '';
   for (var i = 0; i < scripts.length; i++) {
@@ -15,7 +11,7 @@
       break;
     }
   }
-  // Убираем протокол+хост, оставляем только path
+  
   try {
     var url = new URL(base);
     window.APP_URL = url.pathname.replace(/\/$/, '');

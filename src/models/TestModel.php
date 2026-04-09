@@ -1,7 +1,5 @@
 <?php
-/**
- * TestModel.php
- */
+
 
 class TestModel {
     private PDO $db;
@@ -29,10 +27,7 @@ class TestModel {
         return $stmt->fetch() ?: null;
     }
 
-    /**
-     * Загрузить тест со всеми вопросами и ответами (с перемешиванием)
-     * Оптимизировано: один запрос вместо N+1
-     */
+    
     public function loadForAttempt(int $testId): ?array {
         $test = $this->findById($testId);
         if (!$test) return null;
@@ -40,7 +35,7 @@ class TestModel {
         $shuffleQuestions = (bool)$test['shuffle_questions'];
         $shuffleAnswers = (bool)$test['shuffle_answers'];
         
-        // Один запрос для загрузки всех вопросов с ответами
+        
         $orderClause = $shuffleQuestions ? 'RAND()' : 'q.order_num ASC';
         $answerOrderClause = $shuffleAnswers ? 'RAND()' : 'a.order_num ASC';
         
@@ -55,7 +50,7 @@ class TestModel {
         $stmt->execute([$testId]);
         $rows = $stmt->fetchAll();
 
-        // Группируем данные
+        
         $questions = [];
         $questionMap = [];
         
@@ -91,7 +86,7 @@ class TestModel {
         $allowedOrders = ['order_num ASC', 'RAND()'];
         $order = $shuffle ? 'RAND()' : 'order_num ASC';
         
-        // Whitelist для сортировки - защита от SQL injection
+        
         if (!in_array($order, $allowedOrders)) {
             $order = 'order_num ASC';
         }
@@ -103,10 +98,7 @@ class TestModel {
         return $stmt->fetchAll();
     }
 
-    /**
-     * Загрузить вопросы с правильными ответами (для проверки результатов)
-     * Оптимизировано: один запрос вместо N+1
-     */
+    
     public function getQuestionsWithAnswers(int $testId): array {
         $stmt = $this->db->prepare(
             "SELECT q.id as question_id, q.question_text, q.question_type, q.points, q.order_num,

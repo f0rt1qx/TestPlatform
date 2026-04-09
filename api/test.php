@@ -1,7 +1,5 @@
 <?php
-/**
- * api/test.php — API для работы с тестами
- */
+
 
 require_once __DIR__ . '/../src/bootstrap.php';
 
@@ -16,13 +14,13 @@ $input  = json_decode(file_get_contents('php://input'), true) ?? [];
 $testModel   = new TestModel();
 $resultModel = new ResultModel();
 
-// ─── Список тестов ────────────────────────────────────────────────────────────
+
 if ($action === 'list' && $method === 'GET') {
     $tests = $testModel->getAll(true);
     jsonResponse(['success' => true, 'tests' => $tests]);
 }
 
-// ─── Начать тест ──────────────────────────────────────────────────────────────
+
 if ($action === 'start' && $method === 'POST') {
     if (!validateCsrfToken($input['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
@@ -80,7 +78,7 @@ if ($action === 'start' && $method === 'POST') {
     ]);
 }
 
-// ─── Отправить результат ──────────────────────────────────────────────────────
+
 if ($action === 'submit' && $method === 'POST') {
     if (!validateCsrfToken($input['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
@@ -126,7 +124,7 @@ if ($action === 'submit' && $method === 'POST') {
     jsonResponse(['success' => true, 'result' => $result]);
 }
 
-// ─── Лог событий анти-читинга ─────────────────────────────────────────────────
+
 if ($action === 'log_event' && $method === 'POST') {
     $payload   = AuthMiddleware::require();
     $userId    = $payload['sub'];
@@ -159,14 +157,14 @@ if ($action === 'log_event' && $method === 'POST') {
     jsonResponse(['success' => true]);
 }
 
-// ─── Мои результаты ───────────────────────────────────────────────────────────
+
 if ($action === 'my_results' && $method === 'GET') {
     $payload = AuthMiddleware::require();
     $results = $resultModel->getUserResults($payload['sub']);
     jsonResponse(['success' => true, 'results' => $results, 'csrf_token' => generateCsrfToken()]);
 }
 
-// ─── Детали результата ────────────────────────────────────────────────────────
+
 if ($action === 'result_detail' && $method === 'GET') {
     $payload   = AuthMiddleware::require();
     $attemptId = (int)($_GET['attempt_id'] ?? 0);
@@ -181,7 +179,7 @@ if ($action === 'result_detail' && $method === 'GET') {
     jsonResponse(['success' => true, 'result' => $result]);
 }
 
-// ─── Экспорт результата в PDF ─────────────────────────────────────────────────
+
 if ($action === 'export_pdf' && $method === 'GET') {
     require_once __DIR__ . '/../src/helpers/PDFExporter.php';
     
@@ -195,12 +193,12 @@ if ($action === 'export_pdf' && $method === 'GET') {
     $result  = $resultModel->findResultWithDetails($attemptId);
     $attempt = $resultModel->findAttempt($attemptId);
 
-    // Проверяем что результат принадлежит текущему пользователю
+    
     if (!$result || $attempt['user_id'] != $payload['sub']) {
         jsonResponse(['success' => false, 'message' => 'Not found'], 404);
     }
     
-    // Получаем вопросы для детализации
+    
     $questions = $testModel->getQuestionsWithAnswers($result['test_id']);
     
     PDFExporter::exportSingleResult($result, $questions);

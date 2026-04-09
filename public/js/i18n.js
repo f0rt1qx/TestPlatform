@@ -1,36 +1,31 @@
-/**
- * i18n.js — Интернационализация (i18n)
- * Поддержка: Русский (ru), Казахский (kk), Английский (en)
- */
-
 const i18n = {
-  // Текущий язык
+  
   currentLang: 'ru',
   
-  // Языки по умолчанию
+  
   defaultLang: 'ru',
   
-  // Список поддерживаемых языков
+  
   supportedLanguages: ['ru', 'kk', 'en'],
   
-  // Названия языков
+  
   languageNames: {
     ru: 'Русский',
     kk: 'Қазақша',
     en: 'English'
   },
   
-  // Флаги (эмодзи)
+  
   languageFlags: {
     ru: '🇷🇺',
     kk: '🇰🇿',
     en: '🇬🇧'
   },
 
-  // Словари переводов
+  
   translations: {
     ru: {
-      // Navbar
+      
       'nav.home': 'Главная',
       'nav.features': 'Возможности',
       'nav.how-it-works': 'Как это работает',
@@ -43,7 +38,7 @@ const i18n = {
       'nav.logout': 'Выйти',
       'nav.change-theme': 'Сменить тему',
       
-      // Hero секция
+      
       'hero.title': 'Честное онлайн-тестирование<br>с защитой от списывания',
       'hero.description': 'Современная платформа для проверки знаний с анти-читинг системой, логированием действий и детальной аналитикой результатов.',
       'hero.btn.start': '🚀 Начать бесплатно',
@@ -53,7 +48,7 @@ const i18n = {
       'hero.stats.tests': 'Тестов',
       'hero.stats.satisfied': 'Довольных',
       
-      // Features
+      
       'features.title': 'Почему TestPlatform?',
       'features.subtitle': 'Надёжные инструменты для честной проверки знаний',
       'feature.anticheat.title': 'Анти-читинг система',
@@ -69,7 +64,7 @@ const i18n = {
       'feature.responsive.title': 'Адаптивный дизайн',
       'feature.responsive.desc': 'Работает на любых устройствах: компьютеры, планшеты и смартфоны.',
       
-      // How it works
+      
       'how.title': 'Как это работает?',
       'how.subtitle': 'Простой процесс от регистрации до результата',
       'how.step1.title': 'Регистрация',
@@ -81,7 +76,7 @@ const i18n = {
       'how.step4.title': 'Получите результат',
       'how.step4.desc': 'Узнайте свой балл сразу',
       
-      // Tests preview
+      
       'tests.title': 'Доступные тесты',
       'tests.subtitle': 'Выберите тест для прохождения',
       'tests.btn.login-to-start': 'Войдите чтобы начать',
@@ -90,13 +85,13 @@ const i18n = {
       'tests.meta.questions': 'вопросов',
       'tests.meta.attempts': 'попыток',
       
-      // CTA секция
+      
       'cta.title': 'Готовы начать?',
       'cta.description': 'Присоединяйтесь к тысячам студентов и преподавателей, которые уже используют TestPlatform для честного тестирования.',
       'cta.btn.create-account': '🚀 Создать аккаунт',
       'cta.btn.go-dashboard': '📋 Перейти в кабинет',
       
-      // Footer
+      
       'footer.brand': '🎓 TestPlatform',
       'footer.description': 'Современная платформа для честного онлайн-тестирования с защитой от списывания и детальной аналитикой.',
       'footer.platform': 'Платформа',
@@ -114,7 +109,7 @@ const i18n = {
       'footer.terms': 'Условия использования',
       'footer.rights': 'Все права защищены.',
       
-      // Auth страницы
+      
       'auth.login.title': 'Вход',
       'auth.login.subtitle': 'Войдите в свой аккаунт',
       'auth.login.label': 'Email или логин',
@@ -139,7 +134,7 @@ const i18n = {
       'auth.register.login': 'Войти',
       'auth.register.username-hint': 'Только латиница, цифры, _. От 3 до 50 символов.',
       
-      // Dashboard
+      
       'dashboard.welcome': 'Добро пожаловать',
       'dashboard.ready': 'Готовы проверить свои знания?',
       'dashboard.overview': '📊 Обзор',
@@ -162,7 +157,7 @@ const i18n = {
       'dashboard.no-tests-desc': 'Обратитесь к администратору для добавления тестов',
       'dashboard.start-test': 'Начать тест',
       
-      // Profile
+      
       'profile.title': 'Профиль',
       'profile.edit': '✏️ Личная информация',
       'profile.security': '🔐 Смена пароля',
@@ -184,7 +179,7 @@ const i18n = {
       'profile.social-vk': 'VK профиль',
       'profile.social-tg': 'Telegram',
       
-      // Admin
+      
       'admin.title': '⚙️ Админ-панель',
       'admin.users': '👥 Пользователи',
       'admin.tests': '📝 Тесты',
@@ -199,7 +194,7 @@ const i18n = {
       'admin.logs-title': 'Логи анти-читинг системы',
       'admin.results-title': 'Все результаты',
       
-      // Таблицы
+      
       'table.test': 'Тест',
       'table.date': 'Дата',
       'table.score': 'Баллы',
@@ -220,7 +215,7 @@ const i18n = {
       'table.delete': 'Удалить',
       'table.edit': 'Редактировать',
       
-      // Разное
+      
       'common.loading': 'Загрузка...',
       'common.error': 'Ошибка',
       'common.success': 'Успешно',
@@ -245,7 +240,7 @@ const i18n = {
     },
     
     kk: {
-      // Navbar
+      
       'nav.home': 'Басты бет',
       'nav.features': 'Мүмкіндіктер',
       'nav.how-it-works': 'Қалай жұмыс істейді',
@@ -258,7 +253,7 @@ const i18n = {
       'nav.logout': 'Шығу',
       'nav.change-theme': 'Тақырыпты өзгерту',
       
-      // Hero секция
+      
       'hero.title': 'Көшіруден қорғалған<br>адал онлайн тестілеу',
       'hero.description': 'Анти-читинг жүйесімен, әрекеттерді логированиемен және нәтижелердің егжей-тегжейлі аналитикасымен заманауи платформа.',
       'hero.btn.start': '🚀 Тегін бастау',
@@ -268,7 +263,7 @@ const i18n = {
       'hero.stats.tests': 'Тесттер',
       'hero.stats.satisfied': 'Қанағаттанған',
       
-      // Features
+      
       'features.title': 'Неге TestPlatform?',
       'features.subtitle': 'Адал білім тексеру үшін сенімді құралдар',
       'feature.anticheat.title': 'Анти-читинг жүйесі',
@@ -284,7 +279,7 @@ const i18n = {
       'feature.responsive.title': 'Бейімделген дизайн',
       'feature.responsive.desc': 'Кез келген құрылғыда жұмыс істейді: компьютерлер, планшеттер және смартфондар.',
       
-      // How it works
+      
       'how.title': 'Бұл қалай жұмыс істейді?',
       'how.subtitle': 'Тіркелуден нәтижеге дейінгі қарапайым процесс',
       'how.step1.title': 'Тіркелу',
@@ -296,7 +291,7 @@ const i18n = {
       'how.step4.title': 'Нәтиже алыңыз',
       'how.step4.desc': 'Баллыңызды бірден біліңіз',
       
-      // Tests preview
+      
       'tests.title': 'Қолжетімді тесттер',
       'tests.subtitle': 'Тапсыру үшін тест таңдаңыз',
       'tests.btn.login-to-start': 'Бастау үшін кіріңіз',
@@ -305,13 +300,13 @@ const i18n = {
       'tests.meta.questions': 'сұрақтар',
       'tests.meta.attempts': 'әрекеттер',
       
-      // CTA секция
+      
       'cta.title': 'Бастауға дайынсыз ба?',
       'cta.description': 'Адал тестілеу үшін TestPlatform қолданатын мыңдаған студенттер мен оқытушыларға қосылыңыз.',
       'cta.btn.create-account': '🚀 Аккаунт жасау',
       'cta.btn.go-dashboard': '📋 Кабинетке өту',
       
-      // Footer
+      
       'footer.brand': '🎓 TestPlatform',
       'footer.description': 'Көшіруден қорғанысымен және егжей-тегжейлі аналитикасымен адал онлайн тестілеу үшін заманауи платформа.',
       'footer.platform': 'Платформа',
@@ -329,7 +324,7 @@ const i18n = {
       'footer.terms': 'Пайдалану шарттары',
       'footer.rights': 'Барлық құқықтар қорғалған.',
       
-      // Auth страницы
+      
       'auth.login.title': 'Кіру',
       'auth.login.subtitle': 'Аккаунтыңызға кіріңіз',
       'auth.login.label': 'Email немесе логин',
@@ -354,7 +349,7 @@ const i18n = {
       'auth.register.login': 'Кіру',
       'auth.register.username-hint': 'Тек латын әріптері, сандар, _. 3-тен 50-ге дейінгі таңбалар.',
       
-      // Dashboard
+      
       'dashboard.welcome': 'Қош келдіңіз',
       'dashboard.ready': 'Біліміңізді тексеруге дайынсыз ба?',
       'dashboard.quick-tests': 'Тест тапсыру',
@@ -371,7 +366,7 @@ const i18n = {
       'dashboard.history.title': 'Тапсыру тарихы',
       'dashboard.history.subtitle': 'Тест тапсырудың барлық әрекеттеріңіз',
       
-      // Таблицы
+      
       'table.test': 'Тест',
       'table.date': 'Күні',
       'table.score': 'Балл',
@@ -384,7 +379,7 @@ const i18n = {
       'table.no-results': 'Әлі нәтижелер жоқ',
       'table.no-records': 'Әлі жазбалар жоқ',
       
-      // Разное
+      
       'common.loading': 'Жүктелуде...',
       'common.error': 'Қате',
       'common.success': 'Сәтті',
@@ -469,7 +464,7 @@ const i18n = {
     },
     
     en: {
-      // Navbar
+      
       'nav.home': 'Home',
       'nav.features': 'Features',
       'nav.how-it-works': 'How It Works',
@@ -482,7 +477,7 @@ const i18n = {
       'nav.logout': 'Logout',
       'nav.change-theme': 'Change Theme',
       
-      // Hero секция
+      
       'hero.title': 'Honest Online Testing<br>with Anti-Cheating Protection',
       'hero.description': 'Modern platform for knowledge assessment with anti-cheating system, action logging, and detailed results analytics.',
       'hero.btn.start': '🚀 Start Free',
@@ -492,7 +487,7 @@ const i18n = {
       'hero.stats.tests': 'Tests',
       'hero.stats.satisfied': 'Satisfied',
       
-      // Features
+      
       'features.title': 'Why TestPlatform?',
       'features.subtitle': 'Reliable tools for fair knowledge assessment',
       'feature.anticheat.title': 'Anti-Cheating System',
@@ -508,7 +503,7 @@ const i18n = {
       'feature.responsive.title': 'Responsive Design',
       'feature.responsive.desc': 'Works on any device: computers, tablets, and smartphones.',
       
-      // How it works
+      
       'how.title': 'How It Works?',
       'how.subtitle': 'Simple process from registration to results',
       'how.step1.title': 'Register',
@@ -520,7 +515,7 @@ const i18n = {
       'how.step4.title': 'Get Results',
       'how.step4.desc': 'See your score immediately',
       
-      // Tests preview
+      
       'tests.title': 'Available Tests',
       'tests.subtitle': 'Choose a test to take',
       'tests.btn.login-to-start': 'Login to start',
@@ -529,13 +524,13 @@ const i18n = {
       'tests.meta.questions': 'questions',
       'tests.meta.attempts': 'attempts',
       
-      // CTA секция
+      
       'cta.title': 'Ready to Start?',
       'cta.description': 'Join thousands of students and educators already using TestPlatform for honest testing.',
       'cta.btn.create-account': '🚀 Create Account',
       'cta.btn.go-dashboard': '📋 Go to Dashboard',
       
-      // Footer
+      
       'footer.brand': '🎓 TestPlatform',
       'footer.description': 'Modern platform for honest online testing with anti-cheating protection and detailed analytics.',
       'footer.platform': 'Platform',
@@ -553,7 +548,7 @@ const i18n = {
       'footer.terms': 'Terms of Use',
       'footer.rights': 'All rights reserved.',
       
-      // Auth страницы
+      
       'auth.login.title': 'Login',
       'auth.login.subtitle': 'Sign in to your account',
       'auth.login.label': 'Email or Username',
@@ -578,7 +573,7 @@ const i18n = {
       'auth.register.login': 'Sign In',
       'auth.register.username-hint': 'Latin letters, numbers, _ only. 3 to 50 characters.',
       
-      // Dashboard
+      
       'dashboard.welcome': 'Welcome',
       'dashboard.ready': 'Ready to test your knowledge?',
       'dashboard.quick-tests': 'Take Test',
@@ -595,7 +590,7 @@ const i18n = {
       'dashboard.history.title': 'History',
       'dashboard.history.subtitle': 'All your test attempts',
       
-      // Таблицы
+      
       'table.test': 'Test',
       'table.date': 'Date',
       'table.score': 'Score',
@@ -608,7 +603,7 @@ const i18n = {
       'table.no-results': 'No results yet',
       'table.no-records': 'No records yet',
       
-      // Разное
+      
       'common.loading': 'Loading...',
       'common.error': 'Error',
       'common.success': 'Success',
@@ -693,14 +688,14 @@ const i18n = {
     }
   },
 
-  // Инициализация
+  
   init() {
-    // Получаем сохраненный язык или используем язык браузера
+    
     const saved = localStorage.getItem('language');
     if (saved && this.supportedLanguages.includes(saved)) {
       this.currentLang = saved;
     } else {
-      // Пытаемся определить язык браузера
+      
       const browserLang = navigator.language.slice(0, 2);
       if (this.supportedLanguages.includes(browserLang)) {
         this.currentLang = browserLang;
@@ -710,19 +705,19 @@ const i18n = {
     console.log('[i18n] Инициализация. Текущий язык:', this.currentLang);
   },
 
-  // Применение языка
+  
   apply(lang) {
     this.currentLang = lang;
     localStorage.setItem('language', lang);
     document.documentElement.setAttribute('lang', lang);
     
-    // Переводим все элементы с data-i18n атрибутом
+    
     this.translatePage();
     
     console.log('[i18n] Применен язык:', lang);
   },
 
-  // Перевод страницы
+  
   translatePage() {
     const elements = document.querySelectorAll('[data-i18n]');
     elements.forEach(el => {
@@ -730,7 +725,7 @@ const i18n = {
       const translation = this.t(key);
       
       if (translation) {
-        // Если элемент содержит HTML (например, <br>)
+        
         if (key.includes('title') && translation.includes('<')) {
           el.innerHTML = translation;
         } else {
@@ -739,7 +734,7 @@ const i18n = {
       }
     });
 
-    // Перевод placeholder'ов
+    
     const inputs = document.querySelectorAll('[data-i18n-placeholder]');
     inputs.forEach(el => {
       const key = el.getAttribute('data-i18n-placeholder');
@@ -749,15 +744,15 @@ const i18n = {
       }
     });
 
-    // Обновляем select языка если существует
+    
     this.updateLanguageSelector();
   },
 
-  // Получение перевода
+  
   t(key) {
     const translation = this.translations[this.currentLang]?.[key];
     if (!translation) {
-      // Если перевод не найден, пробуем английский
+      
       const fallback = this.translations['en']?.[key];
       if (fallback) {
         console.warn(`[i18n] Перевод не найден для "${key}", используется английский`);
@@ -769,18 +764,18 @@ const i18n = {
     return translation;
   },
 
-  // Переключение на следующий язык
+  
   toggle() {
     const currentIndex = this.supportedLanguages.indexOf(this.currentLang);
     const nextIndex = (currentIndex + 1) % this.supportedLanguages.length;
     this.apply(this.supportedLanguages[nextIndex]);
   },
 
-  // Обновление селектора языка
+  
   updateLanguageSelector() {
     const selectors = document.querySelectorAll('[data-language-selector]');
     selectors.forEach(selector => {
-      // Очищаем и заполняем селектор
+      
       selector.innerHTML = '';
       
       this.supportedLanguages.forEach(lang => {
@@ -793,42 +788,39 @@ const i18n = {
         selector.appendChild(option);
       });
 
-      // Добавляем обработчик
+      
       selector.addEventListener('change', (e) => {
         this.apply(e.target.value);
       });
     });
 
-    // Обновляем кнопки переключения языка
+    
     const buttons = document.querySelectorAll('[data-lang-toggle]');
     buttons.forEach(btn => {
       btn.textContent = `${this.languageFlags[this.currentLang]} ${this.languageNames[this.currentLang]}`;
     });
   },
 
-  // Получение текущего языка
+  
   getCurrentLang() {
     return this.currentLang;
   },
 
-  // Получение названия текущего языка
+  
   getCurrentLangName() {
     return this.languageNames[this.currentLang];
   },
 
-  // Получение флага текущего языка
+  
   getCurrentLangFlag() {
     return this.languageFlags[this.currentLang];
   }
 };
 
-// Инициализация при загрузке
 i18n.init();
 
-// Экспортируем глобально
 window.i18n = i18n;
 
-// Вспомогательная функция для быстрого перевода
 function __(key) {
   return i18n.t(key);
 }

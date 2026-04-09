@@ -1,28 +1,25 @@
 <?php
-/**
- * check.php — диагностика установки
- * Откройте: http://localhost/test-platform/check.php
- */
+
 header('Content-Type: text/html; charset=utf-8');
 
 $checks = [];
 
-// PHP версия
+
 $phpOk = version_compare(PHP_VERSION, '8.0.0', '>=');
 $checks[] = ['PHP версия', PHP_VERSION, $phpOk ? 'ok' : 'error', $phpOk ? '' : 'Требуется PHP 8.0+'];
 
-// Расширения
+
 foreach (['pdo', 'pdo_mysql', 'json', 'mbstring', 'openssl'] as $ext) {
     $ok = extension_loaded($ext);
     $checks[] = ["Расширение $ext", $ok ? 'Загружено' : 'НЕ ЗАГРУЖЕНО', $ok ? 'ok' : 'error', ''];
 }
 
-// config.php
+
 $configPath = __DIR__ . '/config/config.php';
 $configOk = file_exists($configPath);
 $checks[] = ['config.php', $configOk ? 'Найден' : 'НЕ НАЙДЕН', $configOk ? 'ok' : 'error', ''];
 
-// Подключение к БД
+
 $dbOk = false;
 $dbMsg = '';
 if ($configOk) {
@@ -36,7 +33,7 @@ if ($configOk) {
         $dbOk = true;
         $dbMsg = 'Подключено к ' . DB_NAME . '@' . DB_HOST;
         
-        // Проверяем таблицы
+        
         $tables = $pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
         $required = ['users','tests','questions','answers','results','logs','attempts'];
         $missing = array_diff($required, $tables);
@@ -47,7 +44,7 @@ if ($configOk) {
             $checks[] = ['Таблицы БД', count($tables) . ' таблиц найдено', 'ok', ''];
         }
         
-        // Проверяем пользователей
+        
         $userCount = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
         $checks[] = ['Пользователи в БД', $userCount . ' шт.', $userCount > 0 ? 'ok' : 'warning', 
                      $userCount == 0 ? 'Импортируйте тестовые данные из database.sql' : ''];
@@ -59,7 +56,7 @@ if ($configOk) {
 $checks[] = ['Подключение к MySQL', $dbOk ? $dbMsg : '❌ ' . $dbMsg, $dbOk ? 'ok' : 'error', 
              $dbOk ? '' : 'Проверьте DB_HOST, DB_USER, DB_PASS в config.php и что MySQL запущен'];
 
-// APP_URL
+
 $detectedUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
 $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
 $detectedUrl .= rtrim($scriptDir, '/');
@@ -70,13 +67,13 @@ if ($configOk) {
                  $urlMatch ? '' : "Рекомендуемое значение: $detectedUrl"];
 }
 
-// Папки
+
 foreach (['api', 'src', 'public/css', 'public/js', 'sql'] as $dir) {
     $ok = is_dir(__DIR__ . '/' . $dir);
     $checks[] = ["Папка /$dir", $ok ? 'Существует' : 'ОТСУТСТВУЕТ', $ok ? 'ok' : 'error', ''];
 }
 
-// JS файлы
+
 foreach (['public/js/config.js', 'public/js/app.js', 'public/js/anticheat.js', 'public/css/main.css'] as $f) {
     $ok = file_exists(__DIR__ . '/' . $f);
     $checks[] = [$f, $ok ? '✓' : '✗ ОТСУТСТВУЕТ', $ok ? 'ok' : 'error', ''];

@@ -1,14 +1,12 @@
 <?php
-/**
- * test-db.php — проверка подключения к БД
- */
+
 header('Content-Type: text/html; charset=utf-8');
 
 require_once __DIR__ . '/config/config.php';
 
 echo "<h1>Проверка подключения к БД</h1>";
 
-// Проверка подключения
+
 try {
     $dsn = sprintf(
         'mysql:host=%s;port=%s;dbname=%s;charset=%s',
@@ -26,12 +24,12 @@ try {
     
     echo "<p style='color: green;'>✅ Подключение успешно!</p>";
     
-    // Проверяем таблицу users
+    
     $stmt = $pdo->query("SHOW TABLES LIKE 'users'");
     if ($stmt->rowCount() > 0) {
         echo "<p style='color: green;'>✅ Таблица users существует!</p>";
         
-        // Проверяем структуру
+        
         $stmt = $pdo->query("DESCRIBE users");
         $columns = $stmt->fetchAll();
         echo "<h3>Структура таблицы users:</h3>";
@@ -42,7 +40,7 @@ try {
         }
         echo "</table>";
         
-        // Считаем пользователей
+        
         $stmt = $pdo->query("SELECT COUNT(*) as count FROM users");
         $count = $stmt->fetch()['count'];
         echo "<p>Всего пользователей: <strong>$count</strong></p>";

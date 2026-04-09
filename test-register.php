@@ -1,7 +1,5 @@
 <?php
-/**
- * test-register.php — прямая проверка регистрации
- */
+
 header('Content-Type: text/html; charset=utf-8');
 
 require_once __DIR__ . '/config/config.php';
@@ -9,7 +7,7 @@ require_once __DIR__ . '/src/bootstrap.php';
 
 echo "<h1>Тест регистрации</h1>";
 
-// Тестовые данные
+
 $testUser = [
     'username' => 'testuser_' . time(),
     'email' => 'test_' . time() . '@example.com',
@@ -34,12 +32,12 @@ try {
     if ($userId > 0) {
         echo "<p style='color: green;'>✅ Пользователь успешно создан с ID: $userId</p>";
         
-        // Проверяем что пользователь действительно создан
+        
         $user = $userModel->findById($userId);
         echo "<h3>Созданный пользователь:</h3>";
         echo "<pre>" . print_r($user, true) . "</pre>";
         
-        // Удаляем тестового пользователя
+        
         $db->prepare('DELETE FROM users WHERE id = ?')->execute([$userId]);
         echo "<p style='color: orange;'>⚠️ Тестовый пользователь удалён</p>";
     } else {

@@ -1,5 +1,3 @@
-/* anticheat.js - Anti-cheat system. 3 tab switches = disqualification */
-
 var AntiCheat = (function() {
 
   function AntiCheat(options) {
@@ -152,7 +150,7 @@ var AntiCheat = (function() {
         'position:relative;' +
       '">' +
 
-        /* eye icon */
+        
         '<div style="margin-bottom:20px;">' +
           '<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
             '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>' +
@@ -160,18 +158,18 @@ var AntiCheat = (function() {
           '</svg>' +
         '</div>' +
 
-        /* title */
+        
         '<h2 style="' +
           'color:#ef4444;font-size:1.35rem;font-weight:800;margin-bottom:12px;' +
           'font-family:system-ui,sans-serif;' +
         '">' + (t.title || 'Tab switch') + '</h2>' +
 
-        /* subtitle */
+        
         '<p style="color:#555;font-size:.9rem;margin-bottom:28px;line-height:1.6;font-family:system-ui,sans-serif;">' +
           (t.subtext || 'You switched tabs or minimized the browser.') +
         '</p>' +
 
-        /* counter badge */
+        
         '<div style="margin-bottom:28px;">' +
           '<span style="' +
             'display:inline-block;' +
@@ -180,7 +178,7 @@ var AntiCheat = (function() {
           '">' + counterText + '</span>' +
         '</div>' +
 
-        /* button */
+        
         '<button id="ac-ok" style="' +
           'background:' + btnBg + ';color:#fff;border:none;' +
           'border-radius:10px;padding:14px 32px;font-size:.95rem;font-weight:700;' +
@@ -200,7 +198,7 @@ var AntiCheat = (function() {
 
     wrap.addEventListener('click', function(e) {
       if (e.target === wrap) {
-        /* clicking backdrop does nothing - must press button */
+        
         e.stopPropagation();
       }
     });
@@ -231,7 +229,6 @@ var AntiCheat = (function() {
   return AntiCheat;
 })();
 
-/* CSS */
 (function() {
   var s = document.createElement('style');
   s.textContent =

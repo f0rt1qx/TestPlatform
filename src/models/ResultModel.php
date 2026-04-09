@@ -1,7 +1,5 @@
 <?php
-/**
- * ResultModel.php — управление попытками и результатами
- */
+
 
 class ResultModel {
     private PDO $db;
@@ -10,7 +8,7 @@ class ResultModel {
         $this->db = Database::getInstance();
     }
 
-    // ─── ATTEMPTS ─────────────────────────────────────────────────────────────
+    
 
     public function createAttempt(int $userId, int $testId): int {
         $count = $this->getAttemptNumber($userId, $testId);
@@ -88,11 +86,9 @@ class ResultModel {
         $stmt->execute([$status, $attemptId]);
     }
 
-    // ─── RESULTS ──────────────────────────────────────────────────────────────
+    
 
-    /**
-     * Подсчитать и сохранить результат теста
-     */
+    
     public function calculateAndSave(
         int $attemptId,
         int $userId,
@@ -109,12 +105,12 @@ class ResultModel {
             $maxScore += $q['points'];
             $questionId = (int)$q['id'];
             
-            // Получаем данные ответа, обрабатывая различные форматы
+            
             $userAnswer = $userAnswers[$questionId] ?? [];
             $givenIds = array_map('intval', (array)$userAnswer);
             sort($givenIds);
 
-            // Собираем правильные ID ответов
+            
             $correctIds = [];
             foreach ($q['answers'] as $a) {
                 if ($a['is_correct']) {
@@ -123,7 +119,7 @@ class ResultModel {
             }
             sort($correctIds);
 
-            // Исправленное сравнение массивов
+            
             $isCorrect = array_values($givenIds) === array_values($correctIds);
             
             if ($isCorrect) {
@@ -174,10 +170,7 @@ class ResultModel {
         ];
     }
 
-    /**
-     * Подсчёт cheat_score на основе логов событий
-     * Улучшенная формула с понятными весами
-     */
+    
     private function calculateCheatScore(int $attemptId): int {
         $stmt = $this->db->prepare(
             'SELECT event_type, severity, COUNT(*) as cnt FROM logs WHERE attempt_id = ? GROUP BY event_type, severity'
@@ -185,7 +178,7 @@ class ResultModel {
         $stmt->execute([$attemptId]);
         $events = $stmt->fetchAll();
 
-        // Веса для различных уровней серьёзности
+        
         $weights = [
             'high'   => 15,
             'medium' => 7,
@@ -195,11 +188,11 @@ class ResultModel {
         $score = 0;
         foreach ($events as $e) {
             $weight = $weights[$e['severity']] ?? 3;
-            // Ограничиваем максимальный вклад каждого типа событий
+            
             $score += min((int)$e['cnt'] * $weight, 30);
         }
         
-        // Нормализуем до 100
+        
         return min($score, 100);
     }
 
@@ -222,9 +215,7 @@ class ResultModel {
         return $stmt->fetch() ?: null;
     }
 
-    /**
-     * Получить результат с полными данными (пользователь, тест)
-     */
+    
     public function findResultWithDetails(int $attemptId): ?array {
         $stmt = $this->db->prepare(
             'SELECT r.*, u.username, u.email, t.title as test_title, t.pass_score, a.attempt_number
@@ -239,10 +230,10 @@ class ResultModel {
         return $stmt->fetch() ?: null;
     }
 
-    // ─── LOGS ─────────────────────────────────────────────────────────────────
+    
 
     public function logEvent(?int $attemptId, int $userId, string $eventType, array $data = [], string $severity = 'low'): void {
-        // Очищаем данные перед сохранением
+        
         $cleanData = $this->sanitizeData($data);
 
         $stmt = $this->db->prepare(
@@ -258,9 +249,7 @@ class ResultModel {
         ]);
     }
 
-    /**
-     * Рекурсивная очистка данных для логирования
-     */
+    
     private function sanitizeData(array $data): array {
         $result = [];
         foreach ($data as $key => $value) {

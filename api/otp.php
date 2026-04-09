@@ -1,14 +1,11 @@
 <?php
-/**
- * api/otp.php — OTP аутентификация
- * Вход через код подтверждения (Email/SMS)
- */
 
-ob_start(); // Буферизация вывода чтобы избежать случайного HTML
+
+ob_start(); 
 
 require_once __DIR__ . '/../src/bootstrap.php';
 
-// Очищаем буфер
+
 ob_clean();
 
 setCORSHeaders();
@@ -23,17 +20,17 @@ try {
     $otpModel = new OTPAuthModel();
     $userModel = new UserModel();
 
-    // ─── Шаг 1: Запрос OTP кода ─────────────────────────────────────────────────
+    
     if ($action === 'request' && $method === 'POST') {
         $email = sanitize($input['email'] ?? '');
-        $method_type = $input['method'] ?? 'email'; // email или sms
-        $type = $input['type'] ?? 'login'; // login или register
+        $method_type = $input['method'] ?? 'email'; 
+        $type = $input['type'] ?? 'login'; 
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             jsonResponse(['success' => false, 'message' => 'Неверный формат email'], 400);
         }
 
-        // Проверяем cooldown
+        
         $cooldown = $otpModel->checkResendCooldown($email);
         if (!$cooldown['can_resend']) {
             jsonResponse([
@@ -43,23 +40,23 @@ try {
             ], 429);
         }
 
-        // Rate limiting
+        
         $rateLimitId = 'otp_request_' . ($_SERVER['REMOTE_ADDR'] ?? '');
         if (!checkRateLimit($rateLimitId, 5, 300)) {
             jsonResponse(['success' => false, 'message' => 'Слишком много запросов. Попробуйте позже'], 429);
         }
 
-        // Создаем OTP
+        
         $result = $otpModel->createOTP($email, $type);
         
         if (!$result['success']) {
             jsonResponse($result, 404);
         }
 
-        // Получаем код для development режима
+        
         $plainCode = $result['code'] ?? '';
 
-        // Отправляем код
+        
         $sendResult = $otpModel->sendCode($email, $plainCode, $method_type);
 
         jsonResponse([
@@ -72,7 +69,7 @@ try {
         ]);
     }
 
-    // ─── Шаг 2: Проверка OTP кода ───────────────────────────────────────────────
+    
     if ($action === 'verify' && $method === 'POST') {
         if (!validateCsrfToken($input['csrf_token'] ?? '')) {
             jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
@@ -85,13 +82,13 @@ try {
             jsonResponse(['success' => false, 'message' => 'Email и код обязательны'], 400);
         }
 
-        // Rate limiting на проверку
+        
         $rateLimitId = 'otp_verify_' . ($_SERVER['REMOTE_ADDR'] ?? '');
         if (!checkRateLimit($rateLimitId, 10, 300)) {
             jsonResponse(['success' => false, 'message' => 'Слишком много попыток. Попробуйте позже'], 429);
         }
 
-        // Проверяем код
+        
         $result = $otpModel->verifyCode($email, $code);
 
         if (!$result['success']) {
@@ -102,15 +99,15 @@ try {
             ], 401);
         }
 
-        // Проверяем не заблокирован ли пользователь
+        
         if ($result['is_blocked']) {
             jsonResponse(['success' => false, 'message' => 'Аккаунт заблокирован. Обратитесь в поддержку'], 403);
         }
 
-        // Обновляем время последнего входа
+        
         $userModel->updateLastLogin($result['user_id']);
 
-        // Генерируем JWT токен
+        
         $token = JWT::encode([
             'sub'   => $result['user_id'],
             'email' => $email,
@@ -131,7 +128,7 @@ try {
         ]);
     }
 
-    // ─── Шаг 3: Повторная отправка кода ─────────────────────────────────────────
+    
     if ($action === 'resend' && $method === 'POST') {
         $email = sanitize($input['email'] ?? '');
         $method_type = $input['method'] ?? 'email';
@@ -140,7 +137,7 @@ try {
             jsonResponse(['success' => false, 'message' => 'Неверный формат email'], 400);
         }
 
-        // Проверяем cooldown
+        
         $cooldown = $otpModel->checkResendCooldown($email);
         if (!$cooldown['can_resend']) {
             jsonResponse([
@@ -150,23 +147,23 @@ try {
             ], 429);
         }
 
-        // Rate limiting
+        
         $rateLimitId = 'otp_resend_' . ($_SERVER['REMOTE_ADDR'] ?? '');
         if (!checkRateLimit($rateLimitId, 3, 300)) {
             jsonResponse(['success' => false, 'message' => 'Слишком много запросов'], 429);
         }
 
-        // Создаем новый OTP
+        
         $result = $otpModel->createOTP($email);
         
         if (!$result['success']) {
             jsonResponse($result, 404);
         }
 
-        // Получаем код для development режима
+        
         $plainCode = $result['code'] ?? '';
 
-        // Отправляем код
+        
         $sendResult = $otpModel->sendCode($email, $plainCode, $method_type);
 
         jsonResponse([
@@ -178,7 +175,7 @@ try {
         ]);
     }
 
-    // ─── Проверка существования пользователя ─────────────────────────────────────
+    
     if ($action === 'check_user' && $method === 'POST') {
         $email = sanitize($input['email'] ?? '');
 
@@ -207,7 +204,7 @@ try {
     jsonResponse(['success' => false, 'message' => 'Unknown action'], 404);
 
 } catch (Exception $e) {
-    // Очищаем буфер и возвращаем JSON ошибку
+    
     ob_clean();
     jsonResponse(['success' => false, 'message' => 'Server error: ' . $e->getMessage()], 500);
 }

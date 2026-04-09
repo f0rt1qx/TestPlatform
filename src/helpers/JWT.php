@@ -1,14 +1,9 @@
 <?php
-/**
- * JWT.php — Простая реализация JWT без внешних библиотек
- * Алгоритм: HMAC-SHA256 (HS256)
- */
+
 
 class JWT {
 
-    /**
-     * Создать JWT токен
-     */
+    
     public static function encode(array $payload, ?string $secret = null, int $expire = 0): string {
         $secret = $secret ?? JWT_SECRET;
         $expire = $expire > 0 ? $expire : JWT_EXPIRE;
@@ -26,10 +21,7 @@ class JWT {
         return $header . '.' . $payloadEncoded . '.' . $signature;
     }
 
-    /**
-     * Декодировать и проверить JWT токен
-     * @throws RuntimeException при невалидном токене
-     */
+    
     public static function decode(string $token, ?string $secret = null): array {
         $secret = $secret ?? JWT_SECRET;
 
@@ -40,7 +32,7 @@ class JWT {
 
         [$headerB64, $payloadB64, $signatureB64] = $parts;
 
-        // Проверяем подпись
+        
         $expected = self::sign($headerB64 . '.' . $payloadB64, $secret);
         if (!hash_equals($expected, $signatureB64)) {
             throw new RuntimeException('Invalid token signature');
@@ -51,7 +43,7 @@ class JWT {
             throw new RuntimeException('Invalid token payload');
         }
 
-        // Проверяем срок действия
+        
         if (isset($payload['exp']) && $payload['exp'] < time()) {
             throw new RuntimeException('Token expired');
         }
@@ -59,9 +51,7 @@ class JWT {
         return $payload;
     }
 
-    /**
-     * Получить payload без проверки (для refresh логики)
-     */
+    
     public static function getPayload(string $token): ?array {
         $parts = explode('.', $token);
         if (count($parts) !== 3) return null;
@@ -69,7 +59,7 @@ class JWT {
         return $decoded ?: null;
     }
 
-    // ─── Приватные методы ─────────────────────────────────────────────────────
+    
 
     private static function sign(string $data, string $secret): string {
         return self::base64url(hash_hmac('sha256', $data, $secret, true));

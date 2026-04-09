@@ -1,7 +1,5 @@
 <?php
-/**
- * ProfileModel.php — работа с профилем пользователя
- */
+
 
 class ProfileModel {
     private PDO $db;
@@ -10,9 +8,7 @@ class ProfileModel {
         $this->db = Database::getInstance();
     }
 
-    /**
-     * Получить полный профиль пользователя
-     */
+    
     public function getProfile(int $userId): ?array {
         $stmt = $this->db->prepare(
             'SELECT id, username, email, avatar, bio, phone, city, website,
@@ -29,9 +25,7 @@ class ProfileModel {
         return $stmt->fetch() ?: null;
     }
 
-    /**
-     * Обновить основные данные профиля
-     */
+    
     public function updateProfile(int $userId, array $data): bool {
         $allowed = ['bio', 'phone', 'city', 'website', 'social_vk', 'social_tg', 'birth_date', 'first_name', 'last_name'];
         $fields = [];
@@ -55,51 +49,39 @@ class ProfileModel {
         return $stmt->execute($params);
     }
 
-    /**
-     * Обновить email
-     */
+    
     public function updateEmail(int $userId, string $email): bool {
         $stmt = $this->db->prepare('UPDATE users SET email = ?, email_verified = 0 WHERE id = ?');
         return $stmt->execute([$email, $userId]);
     }
 
-    /**
-     * Проверить, занят ли email другим пользователем
-     */
+    
     public function isEmailTaken(string $email, int $excludeUserId = 0): bool {
         $stmt = $this->db->prepare('SELECT COUNT(*) FROM users WHERE email = ? AND id != ?');
         $stmt->execute([$email, $excludeUserId]);
         return (int)$stmt->fetchColumn() > 0;
     }
 
-    /**
-     * Проверить, занят ли username другим пользователем
-     */
+    
     public function isUsernameTaken(string $username, int $excludeUserId = 0): bool {
         $stmt = $this->db->prepare('SELECT COUNT(*) FROM users WHERE username = ? AND id != ?');
         $stmt->execute([$username, $excludeUserId]);
         return (int)$stmt->fetchColumn() > 0;
     }
 
-    /**
-     * Обновить username
-     */
+    
     public function updateUsername(int $userId, string $username): bool {
         $stmt = $this->db->prepare('UPDATE users SET username = ? WHERE id = ?');
         return $stmt->execute([$username, $userId]);
     }
 
-    /**
-     * Обновить пароль
-     */
+    
     public function updatePassword(int $userId, string $passwordHash): bool {
         $stmt = $this->db->prepare('UPDATE users SET password_hash = ? WHERE id = ?');
         return $stmt->execute([$passwordHash, $userId]);
     }
 
-    /**
-     * Проверить текущий пароль
-     */
+    
     public function verifyPassword(int $userId, string $password): bool {
         $stmt = $this->db->prepare('SELECT password_hash FROM users WHERE id = ?');
         $stmt->execute([$userId]);
@@ -107,11 +89,9 @@ class ProfileModel {
         return $hash && password_verify($password, $hash);
     }
 
-    /**
-     * Установить аватарку
-     */
+    
     public function setAvatar(int $userId, string $avatarPath): bool {
-        // Удаляем старую аватарку если есть
+        
         $stmt = $this->db->prepare('SELECT avatar FROM users WHERE id = ?');
         $stmt->execute([$userId]);
         $oldAvatar = $stmt->fetchColumn();
@@ -124,9 +104,7 @@ class ProfileModel {
         return $stmt->execute([$avatarPath, $userId]);
     }
 
-    /**
-     * Удалить аватарку
-     */
+    
     public function removeAvatar(int $userId): bool {
         $stmt = $this->db->prepare('SELECT avatar FROM users WHERE id = ?');
         $stmt->execute([$userId]);
@@ -140,26 +118,20 @@ class ProfileModel {
         return $stmt->execute([$userId]);
     }
 
-    /**
-     * Получить аватарку пользователя
-     */
+    
     public function getAvatar(int $userId): ?string {
         $stmt = $this->db->prepare('SELECT avatar FROM users WHERE id = ?');
         $stmt->execute([$userId]);
         return $stmt->fetchColumn();
     }
 
-    /**
-     * Обновить последний визит
-     */
+    
     public function updateLastVisit(int $userId): bool {
         $stmt = $this->db->prepare('UPDATE users SET last_visit_at = NOW() WHERE id = ?');
         return $stmt->execute([$userId]);
     }
 
-    /**
-     * Получить статистику пользователя
-     */
+    
     public function getStatistics(int $userId): array {
         $stmt = $this->db->prepare(
             'SELECT 
@@ -184,9 +156,7 @@ class ProfileModel {
         ];
     }
 
-    /**
-     * Получить последние результаты
-     */
+    
     public function getRecentResults(int $userId, int $limit = 5): array {
         $stmt = $this->db->prepare(
             'SELECT r.*, t.title as test_title, a.attempt_number
@@ -201,14 +171,12 @@ class ProfileModel {
         return $stmt->fetchAll();
     }
 
-    /**
-     * Получить достижения пользователя
-     */
+    
     public function getAchievements(int $userId): array {
         $stats = $this->getStatistics($userId);
         $achievements = [];
 
-        // Достижение: Первый тест
+        
         if ($stats['total_attempts'] >= 1) {
             $achievements[] = [
                 'id' => 'first_test',
@@ -219,7 +187,7 @@ class ProfileModel {
             ];
         }
 
-        // Достижение: 10 тестов
+        
         if ($stats['total_attempts'] >= 10) {
             $achievements[] = [
                 'id' => 'ten_tests',
@@ -230,7 +198,7 @@ class ProfileModel {
             ];
         }
 
-        // Достижение: 100% средний балл
+        
         if ($stats['avg_percentage'] >= 100) {
             $achievements[] = [
                 'id' => 'perfect_score',
@@ -241,7 +209,7 @@ class ProfileModel {
             ];
         }
 
-        // Достижение: 50 пройденных тестов
+        
         if ($stats['passed_tests'] >= 50) {
             $achievements[] = [
                 'id' => 'fifty_passed',
@@ -252,7 +220,7 @@ class ProfileModel {
             ];
         }
 
-        // Достижение: Честный игрок
+        
         if ($stats['avg_cheat_score'] < 10 && $stats['total_attempts'] >= 5) {
             $achievements[] = [
                 'id' => 'honest_player',
@@ -263,7 +231,7 @@ class ProfileModel {
             ];
         }
 
-        // Достижение: Скоростной прохождение
+        
         if ($stats['total_time_seconds'] > 0) {
             $achievements[] = [
                 'id' => 'time_master',
@@ -277,9 +245,7 @@ class ProfileModel {
         return $achievements;
     }
 
-    /**
-     * Получить активность по дням (для графика)
-     */
+    
     public function getActivityHeatmap(int $userId, int $days = 30): array {
         $stmt = $this->db->prepare(
             'SELECT DATE(created_at) as date, COUNT(*) as count

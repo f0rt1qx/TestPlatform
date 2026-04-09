@@ -1,14 +1,7 @@
-/**
- * app.js — общая логика: темы, Toast, API-клиент, Auth
- */
-
-/* ── Theme ──────────────────────────────────────────────────────────────── */
 const Theme = {
   init() {
-    // Проверяем сохраненную тему или используем светлую по умолчанию
     const saved = localStorage.getItem('theme') || 'light';
     this.apply(saved);
-    console.log('[THEME] Инициализация темы:', saved);
   },
   apply(theme) {
     document.documentElement.setAttribute('data-theme', theme);
@@ -40,7 +33,7 @@ const Theme = {
 Theme.init();
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Переключатель темы
+  
   document.querySelectorAll('[data-theme-toggle]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -57,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
   Auth.updateNavbar();
 });
 
-/* ── Toast ───────────────────────────────────────────────────────────────── */
 const Toast = {
   container: null,
   
@@ -88,7 +80,6 @@ const Toast = {
   warning(msg) { this.show(msg, 'warning'); },
 };
 
-/* ── API Client ──────────────────────────────────────────────────────────── */
 const API = {
   get baseUrl() {
     return (window.APP_URL || '') + '/api';
@@ -147,7 +138,7 @@ const API = {
   post(endpoint, body) { return this.request(endpoint, 'POST', body); },
   delete(endpoint) { return this.request(endpoint, 'DELETE'); },
 
-  // Auth
+  
   async login(login, password) {
     const csrfToken = localStorage.getItem('csrf_token');
     return this.post('/auth.php?action=login', { login, password, csrf_token: csrfToken });
@@ -161,7 +152,7 @@ const API = {
   logout() { return this.post('/auth.php?action=logout', {}); },
   getMe() { return this.get('/auth.php?action=me'); },
 
-  // Tests
+  
   getTests() { return this.get('/test.php?action=list'); },
   
   async startTest(testId) {
@@ -178,7 +169,7 @@ const API = {
   getMyResults() { return this.get('/test.php?action=my_results'); },
   getResultDetail(id) { return this.get(`/test.php?action=result_detail&attempt_id=${id}`); },
 
-  // Admin
+  
   adminUsers() { return this.get('/admin.php?action=users'); },
   adminTests() { return this.get('/admin.php?action=tests'); },
   adminLogs() { return this.get('/admin.php?action=logs'); },
@@ -213,7 +204,6 @@ const API = {
   },
 };
 
-/* ── Auth ────────────────────────────────────────────────────────────────── */
 const Auth = {
   _token: null,
 
@@ -310,7 +300,6 @@ const Auth = {
   },
 };
 
-/* ── Helpers ─────────────────────────────────────────────────────────────── */
 function setLoading(btn, loading) {
   if (loading) {
     btn.dataset.origText = btn.innerHTML;
@@ -341,10 +330,9 @@ document.addEventListener('click', e => {
   }
 });
 
-// Получение CSRF токена при загрузке страницы
 async function initCsrfToken() {
   try {
-    // Пробуем получить токен через специальный эндпоинт (работает для всех)
+    
     const response = await fetch((window.APP_URL || '') + '/api/auth.php?action=csrf_token', {
       method: 'GET',
       credentials: 'include',
@@ -358,12 +346,11 @@ async function initCsrfToken() {
       }
     }
   } catch (error) {
-    // Тихая ошибка - токен будет получен при первом запросе
+    
     console.warn('[CSRF] Failed to load token:', error.message);
   }
 }
 
-// Инициализация CSRF токена
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initCsrfToken);
 } else {
