@@ -25,7 +25,7 @@
       <li data-guest><a href="register.php" class="btn btn-secondary btn-sm" data-i18n="nav.register"><i class="fas fa-circle-user-plus"></i> Регистрация</a></li>
       <li data-user class="hidden"><a href="dashboard.php" data-i18n="nav.dashboard"><i class="fas fa-grid-2"></i> Кабинет</a></li>
       <li data-user class="hidden"><a href="profile.php" data-i18n="nav.profile"><i class="fas fa-circle-user"></i> Профиль</a></li>
-      <li data-admin class="hidden"><a href="admin.php" data-i18n="nav.admin"><i class="fas fa-shield-halved"></i> Админ</a></li>
+      <li data-admin class="hidden"><a href="admin.php" data-i18n="nav.admin"><img src="https://img.icons8.com/ios/48/security-checked.png" alt="" width="40" height="40"> Админ</a></li>
       <li data-user class="hidden"><a href="#" onclick="AuthManager.logout()" data-i18n="nav.logout"><i class="fas fa-right-from-bracket"></i> Выйти</a></li>
       <li>
         <div class="lang-selector">
@@ -48,23 +48,23 @@
       <h1 data-i18n="hero.title">Честное онлайн-тестирование<br>с защитой от списывания</h1>
       <p data-i18n="hero.description">Современная платформа для проверки знаний с анти-читинг системой, логированием действий и детальной аналитикой результатов.</p>
       <div class="hero-btns">
-        <a href="register.php" class="btn btn-primary btn-lg" data-guest data-i18n="hero.btn.start"><i class="fas fa-rocket"></i> Начать бесплатно</a>
-        <a href="dashboard.php" class="btn btn-primary btn-lg hidden" data-user data-i18n="hero.btn.my-tests"><i class="fas fa-clipboard-list"></i> Мои тесты</a>
-        <a href="#tests-preview" class="btn btn-outline btn-lg" data-guest data-i18n="hero.btn.view-tests"><i class="fas fa-list-check"></i> Смотреть тесты</a>
+        <a href="register.php" class="btn btn-primary btn-lg" data-guest data-i18n="hero.btn.start"><img src="https://img.icons8.com/ios/18/rocket.png" alt="" width="18" height="18"> Начать бесплатно</a>
+        <a href="dashboard.php" class="btn btn-primary btn-lg hidden" data-user data-i18n="hero.btn.my-tests"><img src="https://img.icons8.com/ios/18/clipboard.png" alt="" width="18" height="18"> Мои тесты</a>
+        <a href="#tests-preview" class="btn btn-outline btn-lg" data-guest data-i18n="hero.btn.view-tests"><img src="https://img.icons8.com/ios/18/checklist.png" alt="" width="18" height="18"> Смотреть тесты</a>
       </div>
 
       <div class="hero-stats">
         <div class="hero-stat">
           <span class="hero-stat-value">1000+</span>
-          <span class="hero-stat-label" data-i18n="hero.stats.students"><i class="fas fa-circle-user-graduate"></i> Студентов</span>
+          <span class="hero-stat-label" data-i18n="hero.stats.students"><img src="https://img.icons8.com/ios/24/graduate-male--v1.png" alt="" width="18" height="18"> Студентов</span>
         </div>
         <div class="hero-stat">
           <span class="hero-stat-value">500+</span>
-          <span class="hero-stat-label" data-i18n="hero.stats.tests"><i class="fas fa-file-lines"></i> Тестов</span>
+          <span class="hero-stat-label" data-i18n="hero.stats.tests"><img src="https://img.icons8.com/ios/24/test-document.png" alt="" width="18" height="18"> Тестов</span>
         </div>
         <div class="hero-stat">
           <span class="hero-stat-value">99%</span>
-          <span class="hero-stat-label" data-i18n="hero.stats.satisfied"><i class="fas fa-face-smile"></i> Довольных</span>
+          <span class="hero-stat-label" data-i18n="hero.stats.satisfied"><img src="https://img.icons8.com/ios/24/happy.png" alt="" width="18" height="18"> Довольных</span>
         </div>
       </div>
     </div>
@@ -81,37 +81,37 @@
 
     <div class="features-grid">
       <div class="feature-card fade-in">
-        <div class="feature-icon"><i class="fas fa-shield-halved"></i></div>
+        <div class="feature-icon"><img src="https://img.icons8.com/ios/48/security-checked.png" alt="" width="40" height="40"></div>
         <h3 data-i18n="feature.anticheat.title">Анти-читинг система</h3>
         <p data-i18n="feature.anticheat.desc">Отслеживание переключения вкладок, копирования и подозрительного поведения в реальном времени.</p>
       </div>
 
       <div class="feature-card fade-in">
-        <div class="feature-icon"><i class="fas fa-shuffle"></i></div>
+        <div class="feature-icon"><img src="https://img.icons8.com/ios/48/shuffle.png" alt="" width="40" height="40"></div>
         <h3 data-i18n="feature.random.title">Случайные вопросы</h3>
         <p data-i18n="feature.random.desc">Вопросы и варианты ответов перемешиваются каждый раз — никаких шаблонов.</p>
       </div>
 
       <div class="feature-card fade-in">
-        <div class="feature-icon"><i class="fas fa-stopwatch"></i></div>
+        <div class="feature-icon"><img src="https://img.icons8.com/ios/48/stopwatch.png" alt="" width="40" height="40"></div>
         <h3 data-i18n="feature.timer.title">Таймер и автосохранение</h3>
         <p data-i18n="feature.timer.desc">Точный обратный отсчёт и автоматическое сохранение ответов каждые 30 секунд.</p>
       </div>
 
       <div class="feature-card fade-in">
-        <div class="feature-icon"><i class="fas fa-chart-column"></i></div>
+        <div class="feature-icon"><img src="https://img.icons8.com/ios/48/bar-chart.png" alt="" width="40" height="40"></div>
         <h3 data-i18n="feature.stats.title">Детальная статистика</h3>
         <p data-i18n="feature.stats.desc">Полная аналитика результатов, прогресс и честность прохождения для каждого студента.</p>
       </div>
 
       <div class="feature-card fade-in">
-        <div class="feature-icon"><i class="fas fa-sliders"></i></div>
+        <div class="feature-icon"><img src="https://img.icons8.com/ios/48/equalizer.png" alt="" width="40" height="40"></div>
         <h3 data-i18n="feature.settings.title">Гибкие настройки</h3>
         <p data-i18n="feature.settings.desc">Настраивайте время, количество попыток, проходной балл и параметры перемешивания.</p>
       </div>
 
       <div class="feature-card fade-in">
-        <div class="feature-icon"><i class="fas fa-mobile-screen"></i></div>
+        <div class="feature-icon"><img src="https://img.icons8.com/ios/48/iphone-x.png" alt="" width="40" height="40"></div>
         <h3 data-i18n="feature.responsive.title">Адаптивный дизайн</h3>
         <p data-i18n="feature.responsive.desc">Работает на любых устройствах: компьютеры, планшеты и смартфоны.</p>
       </div>
@@ -135,19 +135,19 @@
       </div>
 
       <div class="step fade-in">
-        <div class="step-num"><i class="fas fa-magnifying-glass"></i></div>
+        <div class="step-num"><img src="https://img.icons8.com/ios/24/search--v1.png" alt="" width="24" height="24"></div>
         <h4 data-i18n="how.step2.title">Выберите тест</h4>
         <p data-i18n="how.step2.desc">Найдите нужный тест в каталоге</p>
       </div>
 
       <div class="step fade-in">
-        <div class="step-num"><i class="fas fa-pen"></i></div>
+        <div class="step-num"><img src="https://img.icons8.com/ios/24/edit--v1.png" alt="" width="24" height="24"></div>
         <h4 data-i18n="how.step3.title">Пройдите тест</h4>
         <p data-i18n="how.step3.desc">Ответьте на вопросы честно</p>
       </div>
 
       <div class="step fade-in">
-        <div class="step-num"><i class="fas fa-trophy"></i></div>
+        <div class="step-num"><img src="https://img.icons8.com/ios/24/trophy--v1.png" alt="" width="24" height="24"></div>
         <h4 data-i18n="how.step4.title">Получите результат</h4>
         <p data-i18n="how.step4.desc">Узнайте свой балл сразу</p>
       </div>
@@ -223,8 +223,8 @@
     </div>
 
     <div class="text-center mt-4">
-      <a href="register.php" class="btn btn-primary btn-lg" data-guest data-i18n="hero.btn.start"><i class="fas fa-rocket"></i> Начать бесплатно</a>
-      <a href="dashboard.php" class="btn btn-primary btn-lg hidden" data-user data-i18n="hero.btn.my-tests"><i class="fas fa-clipboard-list"></i> Мои тесты</a>
+      <a href="register.php" class="btn btn-primary btn-lg" data-guest data-i18n="hero.btn.start"><img src="https://img.icons8.com/ios/18/rocket.png" alt="" width="18" height="18"> Начать бесплатно</a>
+      <a href="dashboard.php" class="btn btn-primary btn-lg hidden" data-user data-i18n="hero.btn.my-tests"><img src="https://img.icons8.com/ios/18/clipboard.png" alt="" width="18" height="18"> Мои тесты</a>
     </div>
   </div>
 </section>
@@ -253,7 +253,7 @@
         <div class="footer-social">
           <a href="#" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
           <a href="#" aria-label="VK"><i class="fab fa-vk"></i></a>
-          <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+          <a href="#" aria-label="Email"><img src="https://img.icons8.com/ios/24/email.png" alt="" width="20" height="20"></a>
         </div>
       </div>
 
