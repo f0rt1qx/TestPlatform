@@ -7,12 +7,12 @@ setCORSHeaders();
 setSecurityHeaders();
 header('Content-Type: application/json; charset=utf-8');
 
-$method = $_SERVER['REQUEST_METHOD'];
-$action = $_GET['action'] ?? '';
-$input  = json_decode(file_get_contents('php://input'), true) ?? [];
+$httpMethod = $_SERVER['REQUEST_METHOD'];
+$op = $_GET['action'] ?? '';
+$reqBody  = json_decode(file_get_contents('php://input'), true) ?? [];
 
-$testModel   = new TestModel();
-$resultModel = new ResultModel();
+$examCatalog = new TestModel();
+$scoreKeeper = new ResultModel();
 
 $response = static function (array $data, int $code = 200): void {
     http_response_code($code);

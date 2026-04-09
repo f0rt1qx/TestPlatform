@@ -12,13 +12,13 @@ setCORSHeaders();
 setSecurityHeaders();
 header('Content-Type: application/json; charset=utf-8');
 
-$method = $_SERVER['REQUEST_METHOD'];
-$action = $_GET['action'] ?? '';
-$input  = json_decode(file_get_contents('php://input'), true) ?? [];
+$httpMethod = $_SERVER['REQUEST_METHOD'];
+$otpOp = $_GET['action'] ?? '';
+$otpPayload  = json_decode(file_get_contents('php://input'), true) ?? [];
 
 try {
-    $otpModel = new OTPAuthModel();
-    $userModel = new UserModel();
+    $codeManager = new OTPAuthModel();
+    $accountsDb = new UserModel();
 
     
     if ($action === 'request' && $method === 'POST') {

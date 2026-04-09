@@ -7,15 +7,14 @@ setCORSHeaders();
 setSecurityHeaders();
 header('Content-Type: application/json; charset=utf-8');
 
-$method = $_SERVER['REQUEST_METHOD'];
-$action = $_GET['action'] ?? '';
-$input = json_decode(file_get_contents('php://input'), true) ?? [];
+$httpMethod = $_SERVER['REQUEST_METHOD'];
+$profileOp = $_GET['action'] ?? '';
+$profileReqBody = json_decode(file_get_contents('php://input'), true) ?? [];
 
-$profileModel = new ProfileModel();
+$profileHandler = new ProfileModel();
 
-
-$payload = AuthMiddleware::require();
-$currentUser = (int)$payload['sub'];
+$authTokenPayload = AuthMiddleware::require();
+$loggedInUserId = (int)$authTokenPayload['sub'];
 
 
 if ($action === 'get' && $method === 'GET') {

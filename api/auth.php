@@ -8,10 +8,10 @@ setSecurityHeaders();
 header('Content-Type: application/json; charset=utf-8');
 
 $method = $_SERVER['REQUEST_METHOD'];
-$action = $_GET['action'] ?? '';
-$payload  = json_decode(file_get_contents('php://input'), true) ?? [];
+$requestedOp = $_GET['action'] ?? '';
+$requestBody  = json_decode(file_get_contents('php://input'), true) ?? [];
 
-$userModel = new UserModel();
+$accountsDb = new UserModel();
 
 
 if ($action === 'register' && $method === 'POST') {

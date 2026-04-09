@@ -7,12 +7,12 @@ setCORSHeaders();
 setSecurityHeaders();
 header('Content-Type: application/json; charset=utf-8');
 
-$method = $_SERVER['REQUEST_METHOD'];
-$action = $_GET['action'] ?? '';
+$httpMethod = $_SERVER['REQUEST_METHOD'];
+$importOp = $_GET['action'] ?? '';
 
 
-$payload = AuthMiddleware::require();
-if (!isset($payload['role']) || $payload['role'] !== 'admin') {
+$adminSession = AuthMiddleware::require();
+if (!isset($adminSession['role']) || $adminSession['role'] !== 'admin') {
     jsonResponse(['success' => false, 'message' => 'Доступ запрещён'], 403);
 }
 

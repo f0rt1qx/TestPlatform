@@ -6,8 +6,8 @@ require_once __DIR__ . '/../src/bootstrap.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-$action = $_GET['action'] ?? '';
-$input = json_decode(file_get_contents('php://input'), true) ?? [];
+$smtpOp = $_GET['action'] ?? '';
+$smtpReqBody = json_decode(file_get_contents('php://input'), true) ?? [];
 
 if (!APP_DEBUG) {
     echo json_encode(['success' => false, 'message' => 'Disabled in production']);
@@ -16,10 +16,10 @@ if (!APP_DEBUG) {
 
 require_once __DIR__ . '/../src/helpers/SMTPMailer.php';
 
-$mailer = new SMTPMailer();
+$mailSender = new SMTPMailer();
 
-$encodeResponse = static function (array $result): void {
-    echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+$formatJson = static function (array $mailResult): void {
+    echo json_encode($mailResult, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit;
 };
 

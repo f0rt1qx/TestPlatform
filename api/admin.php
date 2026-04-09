@@ -10,12 +10,12 @@ header('Content-Type: application/json; charset=utf-8');
 $payload = AuthMiddleware::requireAdmin();
 
 $method = $_SERVER['REQUEST_METHOD'];
-$action = $_GET['action'] ?? '';
-$input  = json_decode(file_get_contents('php://input'), true) ?? [];
+$requestedAction = $_GET['action'] ?? '';
+$requestBody  = json_decode(file_get_contents('php://input'), true) ?? [];
 
-$userModel   = new UserModel();
-$testModel   = new TestModel();
-$resultModel = new ResultModel();
+$adminOps   = new UserModel();
+$catalogMgr = new TestModel();
+$statsKeeper = new ResultModel();
 
 
 if ($action === 'users' && $method === 'GET') {
