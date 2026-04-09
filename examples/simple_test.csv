@@ -1,0 +1,7 @@
+test_title,test_description,time_limit,max_attempts,pass_score,question_text,question_type,points,answer_text,is_correct
+Test1,Test description,30,2,60,Question 1,single,1,Answer A,1
+Test1,Test description,30,2,60,Question 1,single,1,Answer B,0
+Test1,Test description,30,2,60,Question 1,single,1,Answer C,0
+Test1,Test description,30,2,60,Question 2,multiple,2,Answer X,1
+Test1,Test description,30,2,60,Question 2,multiple,2,Answer Y,1
+Test1,Test description,30,2,60,Question 2,multiple,2,Answer Z,0

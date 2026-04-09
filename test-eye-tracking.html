@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eye-Tracking Test Page</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 800px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: #64748b;
+      margin-bottom: 30px;
+      font-size: 1rem;
+    }
+
+    .status-card {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .status-card.active {
+      background: #dcfce7;
+      border-color: #86efac;
+    }
+
+    .status-card.error {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    .status-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .status-icon {
+      font-size: 2rem;
+    }
+
+    .status-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .status-text {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin: 10px 0;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    button.secondary {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    #canvas {
+      width: 100%;
+      height: 400px;
+      background: #f8fafc;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .log {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 15px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+
+    .log-entry {
+      margin-bottom: 5px;
+    }
+
+    .log-entry.error {
+      color: #f87171;
+    }
+
+    .log-entry.success {
+      color: #4ade80;
+    }
+
+    .log-entry.info {
+      color: #60a5fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>👁️ Eye-Tracking Test</h1>
+    <p class="subtitle">Тестирование модуля eye-tracking перед интеграцией</p>
+
+    <div id="statusCard" class="status-card">
+      <div class="status-header">
+        <span class="status-icon">⚙️</span>
+        <div>
+          <div class="status-title">Eye-Tracker не инициализирован</div>
+          <div class="status-text">Нажмите "Запустить" для начала тестирования</div>
+        </div>
+      </div>
+    </div>
+
+    <button id="startBtn" onclick="startEyeTracker()">🚀 Запустить</button>
+    <button id="stopBtn" class="secondary" onclick="stopEyeTracker()" disabled>⏹️ Остановить</button>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value" id="pointsCount">0</div>
+        <div class="stat-label">Точек взгляда</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="fixationsCount">0</div>
+        <div class="stat-label">Фиксаций</div>
+      </div>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="log" id="log"></div>
+  </div>
+
+  <script src="public/js/eye-tracker.js"></script>
+  <script>
+    let eyeTracker = null;
+    let pointsCount = 0;
+    let fixationsCount = 0;
+
+    function addLog(message, type = 'info') {
+      const log = document.getElementById('log');
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${type}`;
+      const time = new Date().toLocaleTimeString('ru');
+      entry.textContent = `[${time}] ${message}`;
+      log.insertBefore(entry, log.firstChild);
+      
+      // Keep max 50 entries
+      while (log.children.length > 50) {
+        log.removeChild(log.lastChild);
+      }
+    }
+
+    async function startEyeTracker() {
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('stopBtn').disabled = false;
+      document.getElementById('canvas').style.display = 'block';
+
+      addLog('Инициализация eye-tracker...', 'info');
+
+      try {
+        eyeTracker = new EyeTracker({
+          attemptId: 'test_123',
+          onGazeData: function(gazePoint) {
+            pointsCount++;
+            document.getElementById('pointsCount').textContent = pointsCount;
+            
+            if (pointsCount % 10 === 0) {
+              addLog(`Получена точка: x=${Math.round(gazePoint.x)}, y=${Math.round(gazePoint.y)}`, 'info');
+            }
+          },
+          onCalibrationComplete: function() {
+            addLog('✅ Калибровка завершена!', 'success');
+            
+            const statusCard = document.getElementById('statusCard');
+            statusCard.classList.add('active');
+            statusCard.querySelector('.status-icon').textContent = '👁️';
+            statusCard.querySelector('.status-title').textContent = 'Eye-Tracker активен';
+            statusCard.querySelector('.status-text').textContent = 'Отслеживание взгляда работает';
+          }
+        });
+
+        const success = await eyeTracker.start();
+
+        if (success) {
+          addLog('Eye-tracker успешно запущен', 'success');
+        } else {
+          addLog('Не удалось запустить eye-tracker', 'error');
+          document.getElementById('statusCard').classList.add('error');
+        }
+
+      } catch (err) {
+        addLog(`Ошибка: ${err.message}`, 'error');
+        document.getElementById('statusCard').classList.add('error');
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('stopBtn').disabled = true;
+      }
+    }
+
+    function stopEyeTracker() {
+      if (eyeTracker) {
+        eyeTracker.stop();
+        eyeTracker = null;
+        
+        const stats = eyeTracker ? eyeTracker.getStats() : {};
+        addLog(`Eye-tracker остановлен. Всего точек: ${stats.totalPoints || 0}`, 'info');
+      }
+
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('stopBtn').disabled = true;
+      
+      const statusCard = document.getElementById('statusCard');
+      statusCard.classList.remove('active', 'error');
+      statusCard.querySelector('.status-icon').textContent = '⏹️';
+      statusCard.querySelector('.status-title').textContent = 'Eye-Tracker остановлен';
+      statusCard.querySelector('.status-text').textContent = 'Нажмите "Запустить" для повторного теста';
+    }
+
+    // Auto-start on page load
+    window.addEventListener('load', () => {
+      addLog('Страница загружена. Нажмите "Запустить"', 'info');
+    });
+  </script>
+</body>
+</html>

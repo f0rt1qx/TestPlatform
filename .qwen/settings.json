@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir *)",
+      "Bash(php *)",
+      "Bash(c:\\xampp\\mysql\\bin\\mysql.exe *)",
+      "Bash(c:\\xampp\\php\\php.exe *)"
+    ]
+  },
+  "$version": 3
+}

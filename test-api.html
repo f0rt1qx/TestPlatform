@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест API регистрации</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+    .box { background: white; padding: 20px; border-radius: 8px; max-width: 600px; margin: 0 auto; }
+    h1 { color: #333; }
+    .success { color: green; }
+    .error { color: red; }
+    .info { color: blue; }
+    pre { background: #f0f0f0; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    button { background: #00c853; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+    button:hover { background: #00a344; }
+    input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; }
+    label { font-weight: bold; display: block; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h1>🧪 Тест API регистрации</h1>
+  
+  <form id="testForm">
+    <label>Username:</label>
+    <input type="text" id="username" value="testuser_<?php echo time(); ?>">
+    
+    <label>Email:</label>
+    <input type="email" id="email" value="test_<?php echo time(); ?>@example.com">
+    
+    <label>Password:</label>
+    <input type="password" id="password" value="testpass123">
+    
+    <label>First Name:</label>
+    <input type="text" id="first_name" value="Тест">
+    
+    <label>Last Name:</label>
+    <input type="text" id="last_name" value="Тестов">
+    
+    <button type="submit" style="margin-top: 15px;">🚀 Тестировать регистрацию</button>
+  </form>
+  
+  <hr style="margin: 20px 0;">
+  
+  <h3>Результат:</h3>
+  <pre id="result">Нажмите кнопку для тестирования...</pre>
+</div>
+
+<script>
+document.getElementById('testForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const resultEl = document.getElementById('result');
+  resultEl.innerHTML = '⏳ Отправка запроса...';
+  
+  const data = {
+    username: document.getElementById('username').value,
+    email: document.getElementById('email').value,
+    password: document.getElementById('password').value,
+    first_name: document.getElementById('first_name').value,
+    last_name: document.getElementById('last_name').value,
+  };
+  
+  console.log('Отправляемые данные:', data);
+  
+  try {
+    const response = await fetch('api/auth.php?action=register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify(data)
+    });
+    
+    console.log('Status:', response.status);
+    console.log('Headers:', [...response.headers.entries()]);
+    
+    const contentType = response.headers.get('content-type');
+    console.log('Content-Type:', contentType);
+    
+    let result;
+    if (contentType && contentType.includes('application/json')) {
+      result = await response.json();
+    } else {
+      const text = await response.text();
+      result = {
+        error: 'Сервер вернул не JSON!',
+        content_type: contentType,
+        response: text.substring(0, 500)
+      };
+    }
+    
+    resultEl.innerHTML = '<strong>Status:</strong> ' + response.status + '\n' +
+                         '<strong>Response:</strong>\n' + JSON.stringify(result, null, 2);
+    
+    if (response.status === 200 && result.success) {
+      resultEl.className = 'success';
+      resultEl.innerHTML = '✅ УСПЕХ!\n\n' + resultEl.innerHTML;
+    } else if (response.status === 422) {
+      resultEl.className = 'error';
+      resultEl.innerHTML = '❌ ОШИБКА ВАЛИДАЦИИ (422)\n\n' + resultEl.innerHTML;
+    } else {
+      resultEl.className = 'error';
+      resultEl.innerHTML = '❌ ОШИБКА\n\n' + resultEl.innerHTML;
+    }
+    
+  } catch (error) {
+    console.error('Error:', error);
+    resultEl.innerHTML = '❌ ИСКЛЮЧЕНИЕ:\n' + error.message + '\n\n' +
+                         'Проверьте консоль (F12) для деталей';
+    resultEl.className = 'error';
+  }
+});
+</script>
+
+</body>
+</html>
