@@ -1,8 +1,22 @@
 <?php
 
+/**
+ * JWT helper with differentiated exception types:
+ * - InvalidArgumentException for structural/payload issues
+ * - RuntimeException for signature mismatches and expiration
+ *
+ * Also provides validate() that returns bool instead of throwing.
+ */
 class JWT {
 
     public static function encode(array $tokenBody, ?string $signingKey = null, int $ttl = 0): string {
+        if (empty($tokenBody)) {
+            throw new InvalidArgumentException('Token body must not be empty');
+        }
+        if (isset($tokenBody['sub']) && !is_string($tokenBody['sub']) && !is_int($tokenBody['sub'])) {
+            throw new InvalidArgumentException('Token subject (sub) must be string or int');
+        }
+
         $signingKey ??= JWT_SECRET;
         $ttl = $ttl > 0 ? $ttl : JWT_EXPIRE;
 
@@ -22,21 +36,57 @@ class JWT {
     public static function decode(string $encodedToken, ?string $signingKey = null): array {
         $signingKey ??= JWT_SECRET;
 
+        // InvalidArgumentException for structural problems
         $segments = explode('.', $encodedToken);
-        count($segments) !== 3 && throw new RuntimeException('Invalid token structure');
+        if (count($segments) !== 3) {
+            throw new InvalidArgumentException('Invalid token structure: expected 3 segments, got ' . count($segments));
+        }
+
+        [$hdrB64, $bodyB64, $sigB64] = $segments;
+
+        // RuntimeException for signature mismatch
+        $expectedSig = self::computeSignature($hdrB64 . '.' . $bodyB64, $signingKey);
+        if (!hash_equals($expectedSig, $sigB64)) {
+            throw new RuntimeException('Invalid token signature');
+        }
+
+        // InvalidArgumentException for malformed payload
+        $decodedBody = json_decode(self::base64urlDecode($bodyB64), true);
+        if (!$decodedBody) {
+            throw new InvalidArgumentException('Invalid token payload: cannot decode');
+        }
+
+        // RuntimeException for expiration
+        $exp = $decodedBody['exp'] ?? null;
+        if (isset($exp) && $exp < time()) {
+            throw new RuntimeException('Token expired');
+        }
+
+        return $decodedBody;
+    }
+
+    /**
+     * Validate without throwing — returns bool.
+     * Useful for silent checks where you don't need to know WHY it failed.
+     */
+    public static function validate(string $encodedToken, ?string $signingKey = null): bool {
+        $signingKey ??= JWT_SECRET;
+
+        $segments = explode('.', $encodedToken);
+        if (count($segments) !== 3) return false;
 
         [$hdrB64, $bodyB64, $sigB64] = $segments;
 
         $expectedSig = self::computeSignature($hdrB64 . '.' . $bodyB64, $signingKey);
-        !hash_equals($expectedSig, $sigB64) && throw new RuntimeException('Invalid token signature');
+        if (!hash_equals($expectedSig, $sigB64)) return false;
 
         $decodedBody = json_decode(self::base64urlDecode($bodyB64), true);
-        !$decodedBody && throw new RuntimeException('Invalid token payload');
+        if (!$decodedBody) return false;
 
         $exp = $decodedBody['exp'] ?? null;
-        isset($exp) && $exp < time() && throw new RuntimeException('Token expired');
+        if (isset($exp) && $exp < time()) return false;
 
-        return $decodedBody;
+        return true;
     }
 
     public static function getPayload(string $encodedToken): ?array {

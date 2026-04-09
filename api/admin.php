@@ -6,6 +6,30 @@ setCORSHeaders();
 setSecurityHeaders();
 header('Content-Type: application/json; charset=utf-8');
 
+/**
+ * Centralized error handler — catches all uncaught exceptions
+ * and converts them to JSON responses with appropriate HTTP codes.
+ */
+set_error_handler(function (int $errno, string $errstr, string $errfile, int $errline): bool {
+    if (error_reporting() & $errno) {
+        jsonResponse(['success' => false, 'message' => $errstr], 500);
+    }
+    return true;
+});
+
+set_exception_handler(function (Throwable $e): void {
+    $httpCode = match (true) {
+        $e instanceof AdminException => 403,
+        $e instanceof UnauthenticatedException => 401,
+        $e instanceof DomainException => 400,
+        $e instanceof InvalidArgumentException => 400,
+        $e instanceof UnexpectedValueException => 422,
+        $e instanceof LogicException => 409,
+        default => 500,
+    };
+    jsonResponse(['success' => false, 'message' => $e->getMessage()], $httpCode);
+});
+
 $payload = AuthMiddleware::requireAdmin();
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -22,10 +46,10 @@ match (true) {
     )(),
 
     $action === 'block_user' && $method === 'POST' => (function () use ($input, $payload, $userModel, $resultModel): void {
-        !validateCsrfToken($input['csrf_token'] ?? '') && jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
+        validateCsrfToken($input['csrf_token'] ?? '') || throw new InvalidArgumentException('CSRF token invalid');
         $userId = (int)($input['user_id'] ?? 0);
+        $userId > 0 || throw new DomainException('user_id required');
         $block  = (bool)($input['block'] ?? true);
-        !$userId && jsonResponse(['success' => false, 'message' => 'user_id required'], 400);
         $userModel->toggleBlock($userId, $block);
         $resultModel->logEvent(null, $payload['sub'], 'admin_action', [
             'action' => $block ? 'block_user' : 'unblock_user',
@@ -39,7 +63,7 @@ match (true) {
     )(),
 
     $action === 'create_test' && $method === 'POST' => (function () use ($input, $payload, $testModel, $resultModel): void {
-        !validateCsrfToken($input['csrf_token'] ?? '') && jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
+        validateCsrfToken($input['csrf_token'] ?? '') || throw new InvalidArgumentException('CSRF token invalid');
         $input['created_by'] = $payload['sub'];
         $testId = $testModel->create($input);
         $resultModel->logEvent(null, $payload['sub'], 'admin_action', [
@@ -51,7 +75,7 @@ match (true) {
 
     $action === 'delete_test' && $method === 'DELETE' => (function () use ($testModel, $resultModel, $payload): void {
         $testId = (int)($_GET['test_id'] ?? 0);
-        !$testId && jsonResponse(['success' => false, 'message' => 'test_id required'], 400);
+        $testId > 0 || throw new DomainException('test_id required');
         $testModel->deleteTest($testId);
         $resultModel->logEvent(null, $payload['sub'], 'admin_action', [
             'action' => 'delete_test',
@@ -61,7 +85,7 @@ match (true) {
     })(),
 
     $action === 'toggle_test' && $method === 'POST' => (function () use ($input, $testModel): void {
-        !validateCsrfToken($input['csrf_token'] ?? '') && jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
+        validateCsrfToken($input['csrf_token'] ?? '') || throw new InvalidArgumentException('CSRF token invalid');
         $testId = (int)($input['test_id'] ?? 0);
         $active = (bool)($input['active'] ?? true);
         $testModel->toggleActive($testId, $active);
@@ -69,9 +93,9 @@ match (true) {
     })(),
 
     $action === 'add_question' && $method === 'POST' => (function () use ($input, $testModel): void {
-        !validateCsrfToken($input['csrf_token'] ?? '') && jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
+        validateCsrfToken($input['csrf_token'] ?? '') || throw new InvalidArgumentException('CSRF token invalid');
         $testId = (int)($input['test_id'] ?? 0);
-        !$testId && jsonResponse(['success' => false, 'message' => 'test_id required'], 400);
+        $testId > 0 || throw new DomainException('test_id required');
         $questionId = $testModel->addQuestion($testId, $input);
         !empty($input['answers']) && is_array($input['answers']) && array_walk(
             $input['answers'],
@@ -81,13 +105,13 @@ match (true) {
     })(),
 
     $action === 'import_csv' && $method === 'POST' => (function () use ($input, $payload, $testModel, $resultModel): void {
-        !validateCsrfToken($input['csrf_token'] ?? '') && jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
+        validateCsrfToken($input['csrf_token'] ?? '') || throw new InvalidArgumentException('CSRF token invalid');
         $testId = (int)($input['test_id'] ?? 0);
-        !$testId && jsonResponse(['success' => false, 'message' => 'test_id required'], 400);
-        (!isset($_FILES['csv']) || $_FILES['csv']['error'] !== UPLOAD_ERR_OK) && jsonResponse(['success' => false, 'message' => 'CSV файл не загружен'], 400);
+        $testId > 0 || throw new DomainException('test_id required');
+        (isset($_FILES['csv']) && $_FILES['csv']['error'] === UPLOAD_ERR_OK) || throw new DomainException('CSV файл не загружен');
         $allowedTypes = ['text/csv', 'application/vnd.ms-excel', 'text/plain'];
-        !in_array($_FILES['csv']['type'], $allowedTypes) && jsonResponse(['success' => false, 'message' => 'Недопустимый тип файла. Только CSV.'], 400);
-        $_FILES['csv']['size'] > 5 * 1024 * 1024 && jsonResponse(['success' => false, 'message' => 'Файл слишком большой. Максимум 5MB.'], 400);
+        in_array($_FILES['csv']['type'], $allowedTypes, true) || throw new UnexpectedValueException('Недопустимый тип файла. Только CSV.');
+        $_FILES['csv']['size'] <= 5 * 1024 * 1024 || throw new UnexpectedValueException('Файл слишком большой. Максимум 5MB.');
 
         $handle   = fopen($_FILES['csv']['tmp_name'], 'r');
         $imported = 0;
@@ -179,5 +203,5 @@ match (true) {
         PDFExporter::exportResults($results);
     })(),
 
-    default => jsonResponse(['success' => false, 'message' => 'Unknown action'], 404),
+    default => throw new LogicException('Unknown action'),
 };

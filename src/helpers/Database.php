@@ -1,5 +1,50 @@
 <?php
 
+/**
+ * Custom exception that wraps PDO exceptions with a cause chain.
+ * Preserves the original PDOException as the previous exception.
+ */
+class DbException extends RuntimeException {
+    private ?string $sqlState;
+    private array $context;
+
+    public function __construct(
+        string $message,
+        int $code = 0,
+        ?Throwable $previous = null,
+        ?string $sqlState = null,
+        array $context = []
+    ) {
+        parent::__construct($message, $code, $previous);
+        $this->sqlState = $sqlState;
+        $this->context  = $context;
+    }
+
+    public function getSqlState(): ?string {
+        return $this->sqlState;
+    }
+
+    public function getContext(): array {
+        return $this->context;
+    }
+
+    public function getChain(): array {
+        $chain = [];
+        $exc = $this;
+        while ($exc !== null) {
+            $chain[] = [
+                'class'   => get_class($exc),
+                'message' => $exc->getMessage(),
+                'code'    => $exc->getCode(),
+                'file'    => $exc->getFile(),
+                'line'    => $exc->getLine(),
+            ];
+            $exc = $exc->getPrevious();
+        }
+        return $chain;
+    }
+}
+
 class Database {
     private static ?PDO $singletonInstance = null;
 
@@ -18,36 +63,68 @@ class Database {
                 PDO::ATTR_PERSISTENT         => true,
             ];
 
+            $tempConnection = null;
             try {
-                self::$singletonInstance = new PDO(
+                $tempConnection = new PDO(
                     dsn: $connectionString,
                     username: DB_USER,
                     password: DB_PASS,
                     options: $pdoOptions,
                 );
+
+                // Successfully created — assign to singleton
+                self::$singletonInstance = $tempConnection;
             } catch (PDOException $dbException) {
-                $fallbackMsg = 'Database connection failed. Please try again later.';
+                // Build context info for debugging
+                $context = [
+                    'host' => DB_HOST,
+                    'port' => DB_PORT,
+                    'dbname' => DB_NAME,
+                    'user' => DB_USER,
+                ];
+
+                // Wrap in DbException with cause chain
+                $wrapped = new DbException(
+                    'Database connection failed',
+                    $dbException->getCode(),
+                    $dbException,  // <-- cause chain: DbException -> PDOException
+                    $dbException->errorInfo[0] ?? null,
+                    $context
+                );
 
                 $errorLogPath = __DIR__ . '/../../logs/error.log';
-                is_writable(dirname($errorLogPath)) && error_log(
-                    date('Y-m-d H:i:s') . ' - DB Connection Error: ' . $dbException->getMessage() . PHP_EOL,
-                    3,
-                    $errorLogPath,
-                );
+                $logEntry = date('Y-m-d H:i:s') . ' - DB Connection Error: ' . $wrapped->getMessage()
+                    . ' | Chain: ' . json_encode($wrapped->getChain(), JSON_UNESCAPED_UNICODE) . PHP_EOL;
+
+                try {
+                    if (is_writable(dirname($errorLogPath))) {
+                        error_log($logEntry, 3, $errorLogPath);
+                    }
+                } finally {
+                    // Cleanup: ensure no dangling connection
+                    $tempConnection = null;
+                }
 
                 if (APP_DEBUG) {
                     http_response_code(500);
                     header('Content-Type: application/json');
                     die(json_encode([
                         'error'   => 'DB Connection failed',
-                        'details' => $dbException->getMessage(),
-                        'code'    => $dbException->getCode(),
+                        'details' => $wrapped->getMessage(),
+                        'code'    => $wrapped->getCode(),
+                        'chain'   => $wrapped->getChain(),
+                        'context' => $wrapped->getContext(),
                     ], JSON_UNESCAPED_UNICODE));
                 }
 
                 http_response_code(500);
                 header('Content-Type: application/json');
-                die(json_encode(['error' => $fallbackMsg], JSON_UNESCAPED_UNICODE));
+                die(json_encode(['error' => 'Database connection failed. Please try again later.'], JSON_UNESCAPED_UNICODE));
+            } finally {
+                // Additional cleanup: clear temp reference if something went wrong
+                if (self::$singletonInstance === null && $tempConnection !== null) {
+                    $tempConnection = null;
+                }
             }
         }
         return self::$singletonInstance;
