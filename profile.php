@@ -76,12 +76,12 @@
     <button class="profile-tab" onclick="switchTab('security')"><img src="https://img.icons8.com/ios/18/lock--v1.png" alt="" width="18" height="18"> Безопасность</button>
     <button class="profile-tab" onclick="switchTab('avatar')"><img src="https://img.icons8.com/ios/18/image.png" alt="" width="18" height="18"> Аватарка</button>
     <button class="profile-tab" onclick="switchTab('achievements')"><img src="https://img.icons8.com/ios/18/trophy--v1.png" alt="" width="18" height="18"> Достижения</button>
-    <button class="profile-tab" onclick="switchTab('activity')"><img src="https://img.icons8.com/ios/18/increasing-chart.png" alt="" width="18" height="18"> Активность</button>
+    <button class="profile-tab" onclick="switchTab('activity')"><img src="https://img.icons8.com/glyph-neue/64/activity.png" alt="" width="18" height="18"> Активность</button>
   </div>
 
   <!-- Tab: Info -->
   <div id="tab-info" class="profile-section">
-    <div class="section-title"><img src="https://img.icons8.com/ios/18/edit-user.png" alt="" width="18" height="18"> Личная информация</div>
+    <div class="section-title"><img src="https://img.icons8.com/fluency-systems-regular/48/password-book.png" alt="" width="18" height="18"> Личная информация</div>
     <form id="profileForm">
       <div class="form-grid">
         <div class="form-group">
@@ -251,7 +251,7 @@
       document.getElementById('headerName').textContent = (profile.first_name || profile.last_name) 
         ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || profile.username 
         : profile.username;
-      document.getElementById('headerRole').textContent = profile.role === 'admin' ? '👑 Администратор' : '👤 Студент';
+      document.getElementById('headerRole').textContent = profile.role === 'admin' ? 'Администратор' : 'Студент';
       document.getElementById('headerBio').textContent = profile.bio || '';
 
       // Stats

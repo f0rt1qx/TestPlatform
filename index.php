@@ -49,7 +49,7 @@
       <p data-i18n="hero.description">Современная платформа для проверки знаний с анти-читинг системой, логированием действий и детальной аналитикой результатов.</p>
       <div class="hero-btns">
         <a href="register.php" class="btn btn-primary btn-lg" data-guest data-i18n="hero.btn.start"><img src="https://img.icons8.com/ios/18/rocket.png" alt="" width="18" height="18"> Начать бесплатно</a>
-        <a href="dashboard.php" class="btn btn-primary btn-lg hidden" data-user data-i18n="hero.btn.my-tests"><img src="https://img.icons8.com/ios/18/clipboard.png" alt="" width="18" height="18"> Мои тесты</a>
+        <a href="dashboard.php" class="btn btn-primary btn-lg hidden" data-user data-i18n="hero.btn.my-tests"><img src="https://img.icons8.com/parakeet-partial-filled/48/exam.png" alt="" width="18" height="18">Мои тесты</a>
         <a href="#tests-preview" class="btn btn-outline btn-lg" data-guest data-i18n="hero.btn.view-tests"><img src="https://img.icons8.com/ios/18/checklist.png" alt="" width="18" height="18"> Смотреть тесты</a>
       </div>
 

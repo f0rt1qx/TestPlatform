@@ -286,7 +286,10 @@ async function initCsrfToken() {
       headers: { 'Content-Type': 'application/json' }
     });
 
-    resp.ok && (await resp.json()).csrf_token && localStorage.setItem('csrf_token', (await resp.json()).csrf_token);
+    if (resp.ok) {
+      const data = await resp.json();
+      data.csrf_token && localStorage.setItem('csrf_token', data.csrf_token);
+    }
   } catch (err) {
     console.warn('[CSRF] Failed to load token:', err.message);
   }
