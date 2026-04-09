@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 require_once __DIR__ . '/../src/bootstrap.php';
 
@@ -7,7 +8,6 @@ header('Content-Type: application/json; charset=utf-8');
 
 $action = $_GET['action'] ?? '';
 $input = json_decode(file_get_contents('php://input'), true) ?? [];
-
 
 if (!APP_DEBUG) {
     echo json_encode(['success' => false, 'message' => 'Disabled in production']);
@@ -18,22 +18,26 @@ require_once __DIR__ . '/../src/helpers/SMTPMailer.php';
 
 $mailer = new SMTPMailer();
 
-if ($action === 'connect') {
-    $result = $mailer->testConnection();
+$encodeResponse = static function (array $result): void {
     echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit;
-}
+};
 
-if ($action === 'send') {
-    $email = $input['email'] ?? '';
-    
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(['success' => false, 'message' => 'Invalid email']);
-        exit;
+try {
+    if ($action === 'connect') {
+        $result = $mailer->testConnection();
+        $encodeResponse($result);
     }
 
-    $subject = 'Тестовое письмо TestPlatform';
-    $body = '<!DOCTYPE html>
+    if ($action === 'send') {
+        $email = $input['email'] ?? '';
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException('Invalid email');
+        }
+
+        $subject = 'Тестовое письмо TestPlatform';
+        $body = '<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
 <body style="margin:0;padding:40px;background:#f3f4f6;">
@@ -63,9 +67,19 @@ if ($action === 'send') {
 </body>
 </html>';
 
-    $result = $mailer->send($email, $subject, $body, true);
-    echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $result = $mailer->send($email, $subject, $body, true);
+        $encodeResponse($result);
+    }
+
+    throw new RuntimeException('Unknown action');
+
+} catch (InvalidArgumentException $e) {
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    exit;
+} catch (RuntimeException $e) {
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    exit;
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
     exit;
 }
-
-echo json_encode(['success' => false, 'message' => 'Unknown action']);

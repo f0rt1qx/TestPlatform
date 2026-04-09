@@ -24,18 +24,13 @@ if ($action === 'users' && $method === 'GET') {
 }
 
 if ($action === 'block_user' && $method === 'POST') {
-    if (!validateCsrfToken($input['csrf_token'] ?? '')) {
-        jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
-    }
-    
+    !validateCsrfToken($input['csrf_token'] ?? '') && jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
+
     $userId = (int)($input['user_id'] ?? 0);
     $block  = (bool)($input['block'] ?? true);
-    if (!$userId) {
-        jsonResponse(['success' => false, 'message' => 'user_id required'], 400);
-    }
+    if (!$userId) jsonResponse(['success' => false, 'message' => 'user_id required'], 400);
     $userModel->toggleBlock($userId, $block);
 
-    
     $resultModel->logEvent(null, $payload['sub'], 'admin_action', [
         'action' => $block ? 'block_user' : 'unblock_user',
         'target_user_id' => $userId,
@@ -51,14 +46,11 @@ if ($action === 'tests' && $method === 'GET') {
 }
 
 if ($action === 'create_test' && $method === 'POST') {
-    if (!validateCsrfToken($input['csrf_token'] ?? '')) {
-        jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
-    }
+    !validateCsrfToken($input['csrf_token'] ?? '') && jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
 
     $input['created_by'] = $payload['sub'];
     $testId = $testModel->create($input);
 
-    
     $resultModel->logEvent(null, $payload['sub'], 'admin_action', [
         'action' => 'create_test',
         'test_id' => $testId,
@@ -69,13 +61,10 @@ if ($action === 'create_test' && $method === 'POST') {
 
 if ($action === 'delete_test' && $method === 'DELETE') {
     $testId = (int)($_GET['test_id'] ?? 0);
-    if (!$testId) {
-        jsonResponse(['success' => false, 'message' => 'test_id required'], 400);
-    }
-    
+    if (!$testId) jsonResponse(['success' => false, 'message' => 'test_id required'], 400);
+
     $testModel->deleteTest($testId);
 
-    
     $resultModel->logEvent(null, $payload['sub'], 'admin_action', [
         'action' => 'delete_test',
         'test_id' => $testId,
@@ -85,10 +74,7 @@ if ($action === 'delete_test' && $method === 'DELETE') {
 }
 
 if ($action === 'toggle_test' && $method === 'POST') {
-    if (!validateCsrfToken($input['csrf_token'] ?? '')) {
-        jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
-    }
-    
+    !validateCsrfToken($input['csrf_token'] ?? '') && jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
     $testId = (int)($input['test_id'] ?? 0);
     $active = (bool)($input['active'] ?? true);
     $testModel->toggleActive($testId, $active);
@@ -97,14 +83,9 @@ if ($action === 'toggle_test' && $method === 'POST') {
 
 
 if ($action === 'add_question' && $method === 'POST') {
-    if (!validateCsrfToken($input['csrf_token'] ?? '')) {
-        jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
-    }
-    
+    !validateCsrfToken($input['csrf_token'] ?? '') && jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
     $testId = (int)($input['test_id'] ?? 0);
-    if (!$testId) {
-        jsonResponse(['success' => false, 'message' => 'test_id required'], 400);
-    }
+    if (!$testId) jsonResponse(['success' => false, 'message' => 'test_id required'], 400);
 
     $questionId = $testModel->addQuestion($testId, $input);
 
@@ -119,31 +100,14 @@ if ($action === 'add_question' && $method === 'POST') {
 
 
 if ($action === 'import_csv' && $method === 'POST') {
-    if (!validateCsrfToken($input['csrf_token'] ?? '')) {
-        jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
-    }
-    
+    !validateCsrfToken($input['csrf_token'] ?? '') && jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
     $testId = (int)($input['test_id'] ?? 0);
-    if (!$testId) {
-        jsonResponse(['success' => false, 'message' => 'test_id required'], 400);
-    }
+    if (!$testId) jsonResponse(['success' => false, 'message' => 'test_id required'], 400);
+    if (!isset($_FILES['csv']) || $_FILES['csv']['error'] !== UPLOAD_ERR_OK) jsonResponse(['success' => false, 'message' => 'CSV файл не загружен'], 400);
 
-    if (!isset($_FILES['csv']) || $_FILES['csv']['error'] !== UPLOAD_ERR_OK) {
-        jsonResponse(['success' => false, 'message' => 'CSV файл не загружен'], 400);
-    }
-
-    
     $allowedTypes = ['text/csv', 'application/vnd.ms-excel', 'text/plain'];
-    $fileType = $_FILES['csv']['type'];
-    if (!in_array($fileType, $allowedTypes)) {
-        jsonResponse(['success' => false, 'message' => 'Недопустимый тип файла. Только CSV.'], 400);
-    }
-
-    
-    $maxSize = 5 * 1024 * 1024;
-    if ($_FILES['csv']['size'] > $maxSize) {
-        jsonResponse(['success' => false, 'message' => 'Файл слишком большой. Максимум 5MB.'], 400);
-    }
+    !in_array($_FILES['csv']['type'], $allowedTypes) && jsonResponse(['success' => false, 'message' => 'Недопустимый тип файла. Только CSV.'], 400);
+    $_FILES['csv']['size'] > 5 * 1024 * 1024 && jsonResponse(['success' => false, 'message' => 'Файл слишком большой. Максимум 5MB.'], 400);
 
     $handle = fopen($_FILES['csv']['tmp_name'], 'r');
     $imported = 0;
@@ -203,10 +167,8 @@ if ($action === 'logs' && $method === 'GET') {
 if ($action === 'eye_tracking' && $method === 'GET') {
     $testId = isset($_GET['test_id']) ? (int)$_GET['test_id'] : null;
     $attemptId = isset($_GET['attempt_id']) ? (int)$_GET['attempt_id'] : null;
-    
     $eyeData = $resultModel->getEyeTrackingLogs(500, $testId, $attemptId);
     $tests = $testModel->getAll(false);
-    
     jsonResponse(['success' => true, 'data' => $eyeData, 'tests' => $tests, 'csrf_token' => generateCsrfToken()]);
 }
 

@@ -175,9 +175,9 @@
 </head>
 <body>
 
-<div class="auth-wrapper">
-  <div class="auth-card">
-    <div class="auth-logo">
+<div class="AuthManager-wrapper">
+  <div class="AuthManager-card">
+    <div class="AuthManager-logo">
       <a href="index.php" style="text-decoration:none;">
         <h1>🎓 TestPlatform</h1>
       </a>
@@ -282,13 +282,13 @@
   </div>
 </div>
 
-<div class="toast-container" id="toastContainer"></div>
+<div class="NotificationToast-container" id="toastContainer"></div>
 
 <script src="public/js/config.js"></script>
 <script src="public/js/i18n.js"></script>
 <script src="public/js/app.js"></script>
 <script>
-  if (Auth.isLoggedIn()) {
+  if (AuthManager.isLoggedIn()) {
     window.location.href = 'dashboard.php';
   }
 
@@ -304,7 +304,7 @@
     const email = document.getElementById('emailInput').value.trim();
     
     if (!email || !email.includes('@')) {
-      Toast.error('Введите корректный email');
+      NotificationToast.error('Введите корректный email');
       return;
     }
 
@@ -358,9 +358,9 @@
         document.querySelector('.otp-input[data-index="0"]').focus();
       }, 100);
 
-      Toast.success('Код отправлен!');
+      NotificationToast.success('Код отправлен!');
     } catch (err) {
-      Toast.error(err.message);
+      NotificationToast.error(err.message);
     } finally {
       setLoading(btn, false);
     }
@@ -432,7 +432,7 @@
     otpInputs.forEach(input => code += input.value);
 
     if (code.length !== 6) {
-      Toast.error('Введите полный 6-значный код');
+      NotificationToast.error('Введите полный 6-значный код');
       return;
     }
 
@@ -454,9 +454,9 @@
 
       if (!data.success) {
         if (data.remaining_attempts !== undefined) {
-          Toast.warning(`${data.message}. Осталось попыток: ${data.remaining_attempts}`);
+          NotificationToast.warning(`${data.message}. Осталось попыток: ${data.remaining_attempts}`);
         } else {
-          Toast.error(data.message);
+          NotificationToast.error(data.message);
         }
         return;
       }
@@ -467,13 +467,13 @@
         localStorage.setItem('csrf_token', data.csrf_token);
       }
 
-      Toast.success('Вход выполнен! Перенаправление...');
+      NotificationToast.success('Вход выполнен! Перенаправление...');
       
       setTimeout(() => {
         window.location.href = 'dashboard.php';
       }, 1000);
     } catch (err) {
-      Toast.error(err.message);
+      NotificationToast.error(err.message);
     } finally {
       setLoading(btn, false);
     }
@@ -550,9 +550,9 @@
       startTimer(data.expires_in || 300);
       startResendCooldown();
 
-      Toast.success('Новый код отправлен!');
+      NotificationToast.success('Новый код отправлен!');
     } catch (err) {
-      Toast.error(err.message);
+      NotificationToast.error(err.message);
     }
   }
 

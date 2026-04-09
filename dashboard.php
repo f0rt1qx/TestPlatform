@@ -23,7 +23,7 @@
       <li><a href="dashboard.php" class="active"><i class="fas fa-th-large"></i> Кабинет</a></li>
       <li><a href="profile.php"><i class="fas fa-user"></i> Профиль</a></li>
       <li data-admin class="hidden"><a href="admin.php"><i class="fas fa-shield-alt"></i> Админ</a></li>
-      <li><a href="#" onclick="Auth.logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+      <li><a href="#" onclick="AuthManager.logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>
@@ -147,13 +147,13 @@
   </main>
 </div>
 
-<div class="toast-container" id="toastContainer"></div>
+<div class="NotificationToast-container" id="toastContainer"></div>
 
 <script src="public/js/config.js"></script>
 <script src="public/js/i18n.js"></script>
 <script src="public/js/app.js"></script>
 <script>
-  if (!Auth.isLoggedIn()) {
+  if (!AuthManager.isLoggedIn()) {
     window.location.href = 'login.php?redirect=' + encodeURIComponent(location.href);
   }
 
@@ -161,7 +161,7 @@
   let allResults = [];
 
   document.addEventListener('DOMContentLoaded', () => {
-    Auth.updateNavbar();
+    AuthManager.updateNavbar();
     loadOverview();
   });
 

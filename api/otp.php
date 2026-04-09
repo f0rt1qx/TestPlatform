@@ -23,40 +23,31 @@ try {
     
     if ($action === 'request' && $method === 'POST') {
         $email = sanitize($input['email'] ?? '');
-        $method_type = $input['method'] ?? 'email'; 
-        $type = $input['type'] ?? 'login'; 
+        $method_type = $input['method'] ?? 'email';
+        $type = $input['type'] ?? 'login';
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             jsonResponse(['success' => false, 'message' => 'Неверный формат email'], 400);
         }
 
-        
         $cooldown = $otpModel->checkResendCooldown($email);
         if (!$cooldown['can_resend']) {
             jsonResponse([
-                'success' => false, 
+                'success' => false,
                 'message' => $cooldown['message'],
                 'cooldown_remaining' => $cooldown['remaining_seconds']
             ], 429);
         }
 
-        
         $rateLimitId = 'otp_request_' . ($_SERVER['REMOTE_ADDR'] ?? '');
         if (!checkRateLimit($rateLimitId, 5, 300)) {
             jsonResponse(['success' => false, 'message' => 'Слишком много запросов. Попробуйте позже'], 429);
         }
 
-        
         $result = $otpModel->createOTP($email, $type);
-        
-        if (!$result['success']) {
-            jsonResponse($result, 404);
-        }
+        if (!$result['success']) jsonResponse($result, 404);
 
-        
         $plainCode = $result['code'] ?? '';
-
-        
         $sendResult = $otpModel->sendCode($email, $plainCode, $method_type);
 
         jsonResponse([
@@ -77,20 +68,14 @@ try {
 
         $email = sanitize($input['email'] ?? '');
         $code = sanitize($input['code'] ?? '');
+        if (empty($email) || empty($code)) jsonResponse(['success' => false, 'message' => 'Email и код обязательны'], 400);
 
-        if (empty($email) || empty($code)) {
-            jsonResponse(['success' => false, 'message' => 'Email и код обязательны'], 400);
-        }
-
-        
         $rateLimitId = 'otp_verify_' . ($_SERVER['REMOTE_ADDR'] ?? '');
         if (!checkRateLimit($rateLimitId, 10, 300)) {
             jsonResponse(['success' => false, 'message' => 'Слишком много попыток. Попробуйте позже'], 429);
         }
 
-        
         $result = $otpModel->verifyCode($email, $code);
-
         if (!$result['success']) {
             jsonResponse([
                 'success' => false,
@@ -98,16 +83,10 @@ try {
                 'remaining_attempts' => $result['remaining_attempts'] ?? null
             ], 401);
         }
+        if ($result['is_blocked']) jsonResponse(['success' => false, 'message' => 'Аккаунт заблокирован. Обратитесь в поддержку'], 403);
 
-        
-        if ($result['is_blocked']) {
-            jsonResponse(['success' => false, 'message' => 'Аккаунт заблокирован. Обратитесь в поддержку'], 403);
-        }
-
-        
         $userModel->updateLastLogin($result['user_id']);
 
-        
         $token = JWT::encode([
             'sub'   => $result['user_id'],
             'email' => $email,
@@ -137,7 +116,6 @@ try {
             jsonResponse(['success' => false, 'message' => 'Неверный формат email'], 400);
         }
 
-        
         $cooldown = $otpModel->checkResendCooldown($email);
         if (!$cooldown['can_resend']) {
             jsonResponse([
@@ -147,23 +125,15 @@ try {
             ], 429);
         }
 
-        
         $rateLimitId = 'otp_resend_' . ($_SERVER['REMOTE_ADDR'] ?? '');
         if (!checkRateLimit($rateLimitId, 3, 300)) {
             jsonResponse(['success' => false, 'message' => 'Слишком много запросов'], 429);
         }
 
-        
         $result = $otpModel->createOTP($email);
-        
-        if (!$result['success']) {
-            jsonResponse($result, 404);
-        }
+        if (!$result['success']) jsonResponse($result, 404);
 
-        
         $plainCode = $result['code'] ?? '';
-
-        
         $sendResult = $otpModel->sendCode($email, $plainCode, $method_type);
 
         jsonResponse([
@@ -178,13 +148,11 @@ try {
     
     if ($action === 'check_user' && $method === 'POST') {
         $email = sanitize($input['email'] ?? '');
-
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             jsonResponse(['success' => false, 'message' => 'Неверный формат email'], 400);
         }
 
         $user = $userModel->findByEmail($email);
-
         if ($user) {
             jsonResponse([
                 'success' => true,
@@ -192,13 +160,9 @@ try {
                 'username' => $user['username'],
                 'has_phone' => !empty($user['phone']),
             ]);
-        } else {
-            jsonResponse([
-                'success' => true,
-                'exists' => false,
-                'message' => 'Пользователь не найден'
-            ]);
         }
+
+        jsonResponse(['success' => true, 'exists' => false, 'message' => 'Пользователь не найден']);
     }
 
     jsonResponse(['success' => false, 'message' => 'Unknown action'], 404);

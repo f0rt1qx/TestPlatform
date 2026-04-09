@@ -24,7 +24,7 @@
       <li><a href="dashboard.php"><i class="fas fa-th-large"></i> Кабинет</a></li>
       <li><a href="profile.php" class="active"><i class="fas fa-user"></i> Профиль</a></li>
       <li data-admin class="hidden"><a href="admin.php"><i class="fas fa-shield-alt"></i> Админ</a></li>
-      <li><a href="#" onclick="Auth.logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+      <li><a href="#" onclick="AuthManager.logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>
@@ -219,13 +219,13 @@
 
 </div>
 
-<div class="toast-container" id="toastContainer"></div>
+<div class="NotificationToast-container" id="toastContainer"></div>
 
 <script src="public/js/config.js"></script>
 <script src="public/js/i18n.js"></script>
 <script src="public/js/app.js"></script>
 <script>
-  if (!Auth.isLoggedIn()) {
+  if (!AuthManager.isLoggedIn()) {
     window.location.href = 'login.php?redirect=' + encodeURIComponent(location.href);
   }
 
@@ -288,7 +288,7 @@
       loadActivity(30);
 
     } catch (err) {
-      Toast.error(err.message);
+      NotificationToast.error(err.message);
     }
   }
 
@@ -372,10 +372,10 @@
         last_name: document.getElementById('lastName').value,
         csrf_token: localStorage.getItem('csrf_token')
       });
-      Toast.success('Профиль обновлён');
+      NotificationToast.success('Профиль обновлён');
       loadProfile();
     } catch (err) {
-      Toast.error(err.message);
+      NotificationToast.error(err.message);
     } finally {
       setLoading(btn, false);
     }
@@ -402,10 +402,10 @@
           csrf_token: localStorage.getItem('csrf_token')
         });
       }
-      Toast.success('Данные обновлены');
+      NotificationToast.success('Данные обновлены');
       loadProfile();
     } catch (err) {
-      Toast.error(err.message);
+      NotificationToast.error(err.message);
     } finally {
       setLoading(btn, false);
     }
@@ -430,10 +430,10 @@
         confirm_password: confirm,
         csrf_token: localStorage.getItem('csrf_token')
       });
-      Toast.success('Пароль изменён');
+      NotificationToast.success('Пароль изменён');
       e.target.reset();
     } catch (err) {
-      Toast.error(err.message);
+      NotificationToast.error(err.message);
     } finally {
       setLoading(btn, false);
     }
@@ -459,10 +459,10 @@
       const data = await response.json();
       if (!data.success) throw new Error(data.message);
       
-      Toast.success('Аватарка загружена');
+      NotificationToast.success('Аватарка загружена');
       loadProfile();
     } catch (err) {
-      Toast.error(err.message);
+      NotificationToast.error(err.message);
     } finally {
       document.getElementById('avatarProgress').classList.add('hidden');
       e.target.value = '';
@@ -476,10 +476,10 @@
       await API.post('/profile.php?action=remove_avatar', {
         csrf_token: localStorage.getItem('csrf_token')
       });
-      Toast.success('Аватарка удалена');
+      NotificationToast.success('Аватарка удалена');
       loadProfile();
     } catch (err) {
-      Toast.error(err.message);
+      NotificationToast.error(err.message);
     }
   });
 

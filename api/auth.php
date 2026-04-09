@@ -9,44 +9,35 @@ header('Content-Type: application/json; charset=utf-8');
 
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
-$input  = json_decode(file_get_contents('php://input'), true) ?? [];
+$payload  = json_decode(file_get_contents('php://input'), true) ?? [];
 
 $userModel = new UserModel();
 
 
 if ($action === 'register' && $method === 'POST') {
-    
-    if (!empty($input['csrf_token']) && !validateCsrfToken($input['csrf_token'] ?? '')) {
+    if (!empty($payload['csrf_token']) && !validateCsrfToken($payload['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
     }
 
-    $username  = trim($input['username'] ?? '');
-    $email     = trim($input['email'] ?? '');
-    $password  = $input['password'] ?? '';
-    $firstName = trim($input['first_name'] ?? '');
-    $lastName  = trim($input['last_name'] ?? '');
+    $username  = trim($payload['username'] ?? '');
+    $email     = trim($payload['email'] ?? '');
+    $password  = $payload['password'] ?? '';
+    $firstName = trim($payload['first_name'] ?? '');
+    $lastName  = trim($payload['last_name'] ?? '');
 
-    
     error_log('[REGISTER] Получены данные: username=' . $username . ', email=' . $email);
 
-    
-    $errors = [];
     if (strlen($username) < 3 || strlen($username) > 50) {
-        $errors[] = 'Имя пользователя: от 3 до 50 символов';
+        jsonResponse(['success' => false, 'errors' => ['Имя пользователя: от 3 до 50 символов']], 422);
     }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = 'Некорректный email';
+        jsonResponse(['success' => false, 'errors' => ['Некорректный email']], 422);
     }
     if (strlen($password) < 8) {
-        $errors[] = 'Пароль: минимум 8 символов';
+        jsonResponse(['success' => false, 'errors' => ['Пароль: минимум 8 символов']], 422);
     }
-    if (!empty($username) && !preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
-        $errors[] = 'Имя пользователя: только латиница, цифры, _';
-    }
-
-    if ($errors) {
-        error_log('[REGISTER] Ошибки валидации: ' . json_encode($errors));
-        jsonResponse(['success' => false, 'errors' => $errors], 422);
+    if (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+        jsonResponse(['success' => false, 'errors' => ['Имя пользователя: только латиница, цифры, _']], 422);
     }
 
     if ($userModel->findByEmail($email)) {
@@ -66,12 +57,11 @@ if ($action === 'register' && $method === 'POST') {
         ]);
 
         if (MAIL_ENABLED) {
-            $token = $userModel->createEmailVerification($userId);
-            
+            $userModel->createEmailVerification($userId);
         }
 
         $token = JWT::encode(['sub' => $userId, 'username' => $username, 'role' => 'student']);
-        
+
         $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
         setcookie('auth_token', $token, [
             'expires' => time() + JWT_EXPIRE,
@@ -95,48 +85,34 @@ if ($action === 'register' && $method === 'POST') {
 
 
 if ($action === 'login' && $method === 'POST') {
-    
-    if (!validateCsrfToken($input['csrf_token'] ?? '')) {
+    if (!validateCsrfToken($payload['csrf_token'] ?? '')) {
         jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
     }
 
-    $login    = trim($input['login'] ?? '');
-    $password = $input['password'] ?? '';
+    $login    = trim($payload['login'] ?? '');
+    $password = $payload['password'] ?? '';
 
     if (!$login || !$password) {
         jsonResponse(['success' => false, 'message' => 'Введите логин и пароль'], 400);
     }
 
-    
     $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
     $rateKey = $ipAddress . ':' . $login;
     if (!checkRateLimit($rateKey, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_TIME)) {
         jsonResponse(['success' => false, 'message' => 'Слишком много попыток входа. Попробуйте позже.'], 429);
     }
 
-    
     $user = filter_var($login, FILTER_VALIDATE_EMAIL)
         ? $userModel->findByEmail($login)
         : $userModel->findByUsername($login);
 
-    
-    if (!$user) {
-        usleep(random_int(100000, 300000)); 
-    }
-
+    if (!$user) usleep(random_int(100000, 300000));
     if (!$user || !$userModel->verifyPassword($password, $user['password_hash'])) {
         jsonResponse(['success' => false, 'message' => 'Неверный логин или пароль'], 401);
     }
+    if ($user['is_blocked']) jsonResponse(['success' => false, 'message' => 'Аккаунт заблокирован'], 403);
+    if (!$user['is_active']) jsonResponse(['success' => false, 'message' => 'Аккаунт деактивирован'], 403);
 
-    if ($user['is_blocked']) {
-        jsonResponse(['success' => false, 'message' => 'Аккаунт заблокирован'], 403);
-    }
-
-    if (!$user['is_active']) {
-        jsonResponse(['success' => false, 'message' => 'Аккаунт деактивирован'], 403);
-    }
-
-    
     unset($_SESSION['rate_limit:' . $rateKey]);
 
     $token = JWT::encode([

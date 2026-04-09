@@ -1,6 +1,6 @@
 <?php
 
-
+declare(strict_types=1);
 
 if ($action === 'forgot_password' && $method === 'POST') {
     $email = trim($input['email'] ?? '');
@@ -9,27 +9,21 @@ if ($action === 'forgot_password' && $method === 'POST') {
     }
 
     $user = $userModel->findByEmail($email);
-    
-    if (!$user) {
-        jsonResponse(['success' => true, 'message' => 'Если аккаунт существует, письмо отправлено']);
-    }
+    if (!$user) jsonResponse(['success' => true, 'message' => 'Если аккаунт существует, письмо отправлено']);
 
     $token = $userModel->createPasswordReset($user['id']);
-
     $resetUrl = APP_URL . '/reset-password.php?token=' . $token;
 
-    if (MAIL_ENABLED) {
-        
-        mail(
-            $email,
-            'Сброс пароля — ' . APP_NAME,
-            "Перейдите по ссылке для сброса пароля:\n$resetUrl\n\nСсылка действительна 1 час."
-        );
-        jsonResponse(['success' => true]);
-    } else {
-        
+    if (!MAIL_ENABLED) {
         jsonResponse(['success' => true, 'dev_token' => $token, 'dev_url' => $resetUrl]);
     }
+
+    mail(
+        $email,
+        'Сброс пароля — ' . APP_NAME,
+        "Перейдите по ссылке для сброса пароля:\n$resetUrl\n\nСсылка действительна 1 час."
+    );
+    jsonResponse(['success' => true]);
 }
 
 
@@ -42,9 +36,7 @@ if ($action === 'reset_password' && $method === 'POST') {
     }
 
     $reset = $userModel->findPasswordReset($token);
-    if (!$reset) {
-        jsonResponse(['success' => false, 'message' => 'Ссылка недействительна или истекла'], 400);
-    }
+    if (!$reset) jsonResponse(['success' => false, 'message' => 'Ссылка недействительна или истекла'], 400);
 
     $userModel->updatePassword($reset['user_id'], $password);
     $userModel->usePasswordReset($reset['id']);

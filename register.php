@@ -108,7 +108,7 @@
 <script src="public/js/i18n.js"></script>
 <script src="public/js/app.js"></script>
 <script>
-  if (Auth.isLoggedIn()) window.location.href = 'dashboard.php';
+  if (AuthManager.isLoggedIn()) window.location.href = 'dashboard.php';
 
   // Индикатор силы пароля
   const pwdInput = document.getElementById('password');
@@ -172,7 +172,7 @@
     try {
       console.log('[REGISTER] Отправка данных:', { username, email, first_name: document.getElementById('first_name').value.trim(), last_name: document.getElementById('last_name').value.trim() });
       
-      const res = await Auth.register({
+      const res = await AuthManager.register({
         username,
         email,
         password,
@@ -183,7 +183,7 @@
       console.log('[REGISTER] Ответ сервера:', res);
       
       if (res.success) {
-        Toast.success('Аккаунт создан! Добро пожаловать! 🎉');
+        NotificationToast.success('Аккаунт создан! Добро пожаловать! 🎉');
         setTimeout(() => window.location.href = 'dashboard.php', 800);
       } else {
         // Показываем ошибки валидации от сервера

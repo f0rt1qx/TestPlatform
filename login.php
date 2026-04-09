@@ -68,7 +68,7 @@
 <script src="public/js/i18n.js"></script>
 <script src="public/js/app.js"></script>
 <script>
-  if (Auth.isLoggedIn()) {
+  if (AuthManager.isLoggedIn()) {
     window.location.href = 'dashboard.php';
   }
 
@@ -91,9 +91,9 @@
 
     setLoading(submitBtn, true);
     try {
-      const res = await Auth.login(login, password);
+      const res = await AuthManager.login(login, password);
       if (res.success) {
-        Toast.success('Добро пожаловать, ' + res.user.username + '! 🎉');
+        NotificationToast.success('Добро пожаловать, ' + res.user.username + '! 🎉');
         const redirect = new URLSearchParams(location.search).get('redirect');
         setTimeout(() => {
           window.location.href = redirect || (res.user.role === 'admin' ? 'admin.php' : 'dashboard.php');

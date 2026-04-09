@@ -26,7 +26,7 @@
       <li data-user class="hidden"><a href="dashboard.php" data-i18n="nav.dashboard"><i class="fas fa-th-large"></i> Кабинет</a></li>
       <li data-user class="hidden"><a href="profile.php" data-i18n="nav.profile"><i class="fas fa-user"></i> Профиль</a></li>
       <li data-admin class="hidden"><a href="admin.php" data-i18n="nav.admin"><i class="fas fa-shield-alt"></i> Админ</a></li>
-      <li data-user class="hidden"><a href="#" onclick="Auth.logout()" data-i18n="nav.logout"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+      <li data-user class="hidden"><a href="#" onclick="AuthManager.logout()" data-i18n="nav.logout"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>

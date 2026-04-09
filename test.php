@@ -155,7 +155,7 @@
     .tp-disq p { color: #94a3b8; font-size: .95rem; line-height: 1.7; margin-bottom: 28px; }
     .tp-disq-dots { display: flex; gap: 10px; justify-content: center; margin-bottom: 32px; }
     .tp-disq-dot { width: 14px; height: 14px; border-radius: 50%; background: #ef4444; }
-    .toast-container { position: fixed; bottom: 80px; right: 24px; z-index: 9999; }
+    .NotificationToast-container { position: fixed; bottom: 80px; right: 24px; z-index: 9999; }
     @media (max-width: 768px) { .tp-layout { grid-template-columns: 1fr; } .tp-sidebar { display: none; } .tp-nav { width: 100%; padding: 12px 20px; } .tp-main { padding: 24px 20px 100px; } }
   </style>
 </head>
@@ -302,7 +302,7 @@
   </div>
 </div>
 
-<div class="toast-container" id="toastContainer"></div>
+<div class="NotificationToast-container" id="toastContainer"></div>
 
 <script src="public/js/config.js"></script>
 <script src="public/js/app.js"></script>
@@ -318,7 +318,7 @@ window.AC_TEXT = {
 <script src="public/js/anticheat.js"></script>
 <script src="public/js/eye-tracker.js"></script>
 <script>
-  if (!Auth.isLoggedIn()) {
+  if (!AuthManager.isLoggedIn()) {
     window.location.href = 'login.php?redirect=' + encodeURIComponent(location.href);
   }
   var testId = new URLSearchParams(location.search).get('id');
@@ -716,7 +716,7 @@ window.AC_TEXT = {
   // ── EXPORT PDF ─────────────────────────────────────────────────────────────
   function exportResultPDF() {
     if (!attemptId) {
-      Toast.error('Не удалось найти ID попытки');
+      NotificationToast.error('Не удалось найти ID попытки');
       return;
     }
     window.open('api/test.php?action=export_pdf&attempt_id=' + attemptId, '_blank');

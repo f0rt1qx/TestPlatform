@@ -32,7 +32,7 @@
     <ul class="navbar-nav" id="mainNav">
       <li><a href="dashboard.php"><i class="fas fa-th-large"></i> Кабинет</a></li>
       <li><a href="admin.php" class="active"><i class="fas fa-shield-alt"></i> Админ</a></li>
-      <li><a href="#" onclick="Auth.logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+      <li><a href="#" onclick="AuthManager.logout()"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>
@@ -263,15 +263,15 @@
   </div>
 </div>
 
-<div class="toast-container" id="toastContainer"></div>
+<div class="NotificationToast-container" id="toastContainer"></div>
 
 <script src="public/js/config.js"></script>
 <script src="public/js/i18n.js"></script>
 <script src="public/js/app.js"></script>
 <script>
-  // Auth guard
+  // AuthManager guard
   document.addEventListener('DOMContentLoaded', () => {
-    if (!Auth.isLoggedIn() || !Auth.isAdmin()) {
+    if (!AuthManager.isLoggedIn() || !AuthManager.isAdmin()) {
       window.location.href = 'login.php';
     }
     loadTab('users');
@@ -345,10 +345,10 @@
   async function toggleBlock(userId, block) {
     try {
       await API.blockUser(userId, block);
-      Toast.success(block ? 'Пользователь заблокирован' : 'Пользователь разблокирован');
+      NotificationToast.success(block ? 'Пользователь заблокирован' : 'Пользователь разблокирован');
       loadedTabs.users = false;
       loadUsers();
-    } catch(e) { Toast.error(e.message); }
+    } catch(e) { NotificationToast.error(e.message); }
   }
 
   // ── Tests ──────────────────────────────────────────────────────────────────
@@ -398,11 +398,11 @@
         shuffle_questions: document.getElementById('shuffleQ').checked ? 1 : 0,
         shuffle_answers:   document.getElementById('shuffleA').checked ? 1 : 0,
       });
-      Toast.success('Тест создан!');
+      NotificationToast.success('Тест создан!');
       closeModal('createTestModal');
       loadedTabs.tests = false;
       loadTests();
-    } catch(err) { Toast.error(err.message); }
+    } catch(err) { NotificationToast.error(err.message); }
     finally { setLoading(btn, false); }
   });
 
@@ -414,12 +414,12 @@
     const file = fileInput.files[0];
     
     if (!file) {
-      Toast.error('Выберите файл');
+      NotificationToast.error('Выберите файл');
       return;
     }
     
     if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
-      Toast.error('Только CSV файлы');
+      NotificationToast.error('Только CSV файлы');
       return;
     }
     
@@ -478,7 +478,7 @@
       result.classList.remove('hidden');
       fileInput.value = '';
       
-      Toast.success('Тесты импортированы!');
+      NotificationToast.success('Тесты импортированы!');
       loadedTabs.tests = false;
       
       // Закрываем через 2 секунды если успешно
@@ -490,7 +490,7 @@
     } catch (err) {
       result.innerHTML = `<div class="alert alert-error" style="margin:0;">${err.message}</div>`;
       result.classList.remove('hidden');
-      Toast.error(err.message);
+      NotificationToast.error(err.message);
     } finally {
       btn.disabled = false;
       btn.textContent = 'Импортировать';
@@ -502,10 +502,10 @@
     if (!confirm('Удалить тест? Все вопросы и результаты будут удалены.')) return;
     try {
       await API.deleteTest(id);
-      Toast.success('Тест удалён');
+      NotificationToast.success('Тест удалён');
       loadedTabs.tests = false;
       loadTests();
-    } catch(e) { Toast.error(e.message); }
+    } catch(e) { NotificationToast.error(e.message); }
   }
 
   async function toggleTestActive(id, active) {
@@ -513,7 +513,7 @@
       await API.toggleTest(id, active);
       loadedTabs.tests = false;
       loadTests();
-    } catch(e) { Toast.error(e.message); }
+    } catch(e) { NotificationToast.error(e.message); }
   }
 
   // ── Add Question ──────────────────────────────────────────────────────────
@@ -551,7 +551,7 @@
       const correct = row.querySelector('[name^="ans_correct"]').checked;
       if (text) answers.push({ answer_text: text, is_correct: correct ? 1 : 0 });
     }
-    if (!answers.length) { Toast.error('Добавьте хотя бы один вариант'); return; }
+    if (!answers.length) { NotificationToast.error('Добавьте хотя бы один вариант'); return; }
 
     const btn = document.getElementById('addQBtn');
     setLoading(btn, true);
@@ -563,11 +563,11 @@
         points:        parseInt(document.getElementById('aqPoints').value),
         answers,
       });
-      Toast.success('Вопрос добавлен!');
+      NotificationToast.success('Вопрос добавлен!');
       closeModal('addQuestionModal');
       loadedTabs.tests = false;
       loadTests();
-    } catch(e) { Toast.error(e.message); }
+    } catch(e) { NotificationToast.error(e.message); }
     finally { setLoading(btn, false); }
   });
 
@@ -823,7 +823,7 @@
   }
 
   function viewFixationDetails(logId) {
-    Toast.info('Просмотр деталей фиксации #' + logId);
+    NotificationToast.info('Просмотр деталей фиксации #' + logId);
     // TODO: Implement modal with detailed fixation data
   }
 

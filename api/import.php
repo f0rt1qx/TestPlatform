@@ -18,13 +18,10 @@ if (!isset($payload['role']) || $payload['role'] !== 'admin') {
 
 
 if ($action === 'csv' && $method === 'POST') {
-    
-    $csrfToken = $_POST['csrf_token'] ?? '';
-    if (!validateCsrfToken($csrfToken)) {
-        jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
-    }
 
-    
+    $csrfToken = $_POST['csrf_token'] ?? '';
+    if (!validateCsrfToken($csrfToken)) jsonResponse(['success' => false, 'message' => 'CSRF token invalid'], 403);
+
     if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
         $errorMessages = [
             UPLOAD_ERR_INI_SIZE => 'Файл слишком большой',
@@ -40,22 +37,16 @@ if ($action === 'csv' && $method === 'POST') {
     }
 
     $file = $_FILES['file'];
-    
-    
-    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-    if ($ext !== 'csv') {
-        jsonResponse(['success' => false, 'message' => 'Разрешены только CSV файлы'], 400);
-    }
 
-    
+    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    if ($ext !== 'csv') jsonResponse(['success' => false, 'message' => 'Разрешены только CSV файлы'], 400);
+
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mimeType = finfo_file($finfo, $file['tmp_name']);
     finfo_close($finfo);
-    
+
     $allowedMimes = ['text/csv', 'text/plain', 'application/vnd.ms-excel'];
-    if (!in_array($mimeType, $allowedMimes)) {
-        jsonResponse(['success' => false, 'message' => 'Неверный формат файла'], 400);
-    }
+    if (!in_array($mimeType, $allowedMimes)) jsonResponse(['success' => false, 'message' => 'Неверный формат файла'], 400);
 
     try {
         $result = importFromCSV($file['tmp_name'], $payload['sub']);
@@ -193,21 +184,16 @@ function importFromCSV(string $filePath, int $adminId): array {
     $testModel = new TestModel();
 
     $handle = fopen($filePath, 'r');
-    if (!$handle) {
-        throw new Exception('Не удалось открыть файл');
-    }
+    if (!$handle) throw new Exception('Не удалось открыть файл');
 
-    
     $headers = fgetcsv($handle);
     if (!$headers) {
         fclose($handle);
         throw new Exception('Пустой файл CSV');
     }
 
-    
     $headers[0] = preg_replace('/^\x{FEFF}/u', '', $headers[0]);
 
-    
     $requiredColumns = ['test_title', 'question_text', 'answer_text', 'is_correct'];
     foreach ($requiredColumns as $col) {
         if (!in_array($col, $headers)) {
@@ -223,7 +209,27 @@ function importFromCSV(string $filePath, int $adminId): array {
         'errors' => []
     ];
 
-    
+    $validateRow = static function (array $data, int $rowNum) use (&$stats): ?array {
+        $testTitle = trim($data['test_title'] ?? '');
+        $questionText = trim($data['question_text'] ?? '');
+        $answerText = trim($data['answer_text'] ?? '');
+
+        if (!$testTitle) {
+            $stats['errors'][] = "Строка {$rowNum}: Пустое название теста";
+            return null;
+        }
+        if (!$questionText) {
+            $stats['errors'][] = "Строка {$rowNum}: Пустой текст вопроса";
+            return null;
+        }
+        if (!$answerText) {
+            $stats['errors'][] = "Строка {$rowNum}: Пустой текст ответа";
+            return null;
+        }
+
+        return compact('testTitle', 'questionText', 'answerText', 'data');
+    };
+
     $rows = [];
     $rowNum = 1;
     while (($row = fgetcsv($handle)) !== false) {
@@ -233,31 +239,15 @@ function importFromCSV(string $filePath, int $adminId): array {
     }
     fclose($handle);
 
-    if (empty($rows)) {
-        throw new Exception('Нет данных для импорта');
-    }
+    if (empty($rows)) throw new Exception('Нет данных для импорта');
 
-    
     $grouped = [];
     foreach ($rows as $idx => $data) {
-        $testTitle = trim($data['test_title'] ?? '');
-        $questionText = trim($data['question_text'] ?? '');
-        $answerText = trim($data['answer_text'] ?? '');
+        $validated = $validateRow($data, $idx + 2);
+        if ($validated === null) continue;
 
-        if (!$testTitle) {
-            $stats['errors'][] = "Строка " . ($idx + 2) . ": Пустое название теста";
-            continue;
-        }
-        if (!$questionText) {
-            $stats['errors'][] = "Строка " . ($idx + 2) . ": Пустой текст вопроса";
-            continue;
-        }
-        if (!$answerText) {
-            $stats['errors'][] = "Строка " . ($idx + 2) . ": Пустой текст ответа";
-            continue;
-        }
+        ['testTitle' => $testTitle, 'questionText' => $questionText, 'answerText' => $answerText, 'data' => $data] = $validated;
 
-        
         $key = $testTitle . '|||' . $questionText;
 
         if (!isset($grouped[$key])) {
@@ -269,7 +259,7 @@ function importFromCSV(string $filePath, int $adminId): array {
                 'pass_score' => (int)($data['pass_score'] ?? 60),
                 'question_type' => trim($data['question_type'] ?? 'single'),
                 'points' => (int)($data['points'] ?? 1),
-                'question_text' => $questionText, 
+                'question_text' => $questionText,
                 'answers' => []
             ];
         }
@@ -280,28 +270,26 @@ function importFromCSV(string $filePath, int $adminId): array {
         ];
     }
 
-    
     $currentTest = null;
     $currentTestId = null;
     $questionOrder = 0;
 
-    foreach ($grouped as $key => $item) {
+    foreach ($grouped as ['test_title' => $testTitle, 'test_description' => $description, 'time_limit' => $timeLimit, 'max_attempts' => $maxAttempts, 'pass_score' => $passScore, 'question_type' => $questionType, 'points' => $points, 'question_text' => $questionText, 'answers' => $answers]) {
         try {
-            
-            if ($currentTest !== $item['test_title']) {
+            if ($currentTest !== $testTitle) {
                 $stmt = $db->prepare('SELECT id FROM tests WHERE title = ? LIMIT 1');
-                $stmt->execute([$item['test_title']]);
+                $stmt->execute([$testTitle]);
                 $existing = $stmt->fetch();
 
                 if ($existing) {
                     $currentTestId = (int)$existing['id'];
                 } else {
                     $testData = [
-                        'title' => $item['test_title'],
-                        'description' => $item['test_description'],
-                        'time_limit' => $item['time_limit'],
-                        'max_attempts' => $item['max_attempts'],
-                        'pass_score' => $item['pass_score'],
+                        'title' => $testTitle,
+                        'description' => $description,
+                        'time_limit' => $timeLimit,
+                        'max_attempts' => $maxAttempts,
+                        'pass_score' => $passScore,
                         'shuffle_questions' => 1,
                         'shuffle_answers' => 1,
                         'created_by' => $adminId,
@@ -310,39 +298,36 @@ function importFromCSV(string $filePath, int $adminId): array {
                     $stats['tests_created']++;
                 }
 
-                $currentTest = $item['test_title'];
+                $currentTest = $testTitle;
                 $questionOrder = 0;
             }
 
-            
-            if (empty($item['answers'])) {
-                $stats['errors'][] = "Вопрос '{$key}': нет вариантов ответа";
+            if (empty($answers)) {
+                $stats['errors'][] = "Вопрос '{$testTitle}|||{$questionText}': нет вариантов ответа";
                 continue;
             }
 
             $questionData = [
-                'question_text' => $item['question_text'],
-                'question_type' => $item['question_type'],
-                'points' => $item['points'],
+                'question_text' => $questionText,
+                'question_type' => $questionType,
+                'points' => $points,
                 'order_num' => $questionOrder++,
             ];
 
             $questionId = $testModel->addQuestion($currentTestId, $questionData);
             $stats['questions_created']++;
 
-            
-            foreach ($item['answers'] as $idx => $answer) {
-                $answerData = [
-                    'answer_text' => $answer['answer_text'],
-                    'is_correct' => $answer['is_correct'],
+            foreach ($answers as $idx => ['answer_text' => $answerText, 'is_correct' => $isCorrect]) {
+                $testModel->addAnswer($questionId, [
+                    'answer_text' => $answerText,
+                    'is_correct' => $isCorrect,
                     'order_num' => $idx,
-                ];
-                $testModel->addAnswer($questionId, $answerData);
+                ]);
                 $stats['answers_created']++;
             }
 
         } catch (Exception $e) {
-            $stats['errors'][] = "Вопрос '{$key}': " . $e->getMessage();
+            $stats['errors'][] = "Вопрос '{$testTitle}|||{$questionText}': " . $e->getMessage();
         }
     }
 

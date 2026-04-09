@@ -1,83 +1,81 @@
-const Theme = {
+const ThemeManager = {
+  currentTheme: null,
+
   init() {
-    const saved = localStorage.getItem('theme') || 'light';
-    this.apply(saved);
+    this.currentTheme = localStorage.getItem('theme') || 'light';
+    this.apply(this.currentTheme);
   },
-  apply(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-    this.updateIcon();
-    console.log('[THEME] Применена тема:', theme);
+
+  apply(themeName) {
+    document.documentElement.setAttribute('data-theme', themeName);
+    localStorage.setItem('theme', themeName);
+    this._refreshToggleIcons();
   },
+
   toggle() {
-    const current = document.documentElement.getAttribute('data-theme') || 'light';
-    const next = current === 'dark' ? 'light' : 'dark';
-    console.log('[THEME] Переключение с', current, 'на', next);
-    this.apply(next);
+    const curr = document.documentElement.getAttribute('data-theme') || 'light';
+    const nextTheme = curr === 'dark' ? 'light' : 'dark';
+    this.apply(nextTheme);
   },
-  updateIcon() {
-    const theme = document.documentElement.getAttribute('data-theme');
+
+  _refreshToggleIcons() {
+    const activeTheme = document.documentElement.getAttribute('data-theme');
     const toggles = document.querySelectorAll('[data-theme-toggle]');
-    toggles.forEach(toggle => {
-      const icon = toggle.querySelector('i');
-      if (icon) {
-        if (theme === 'dark') {
-          icon.className = 'fas fa-moon';
-        } else {
-          icon.className = 'fas fa-sun';
-        }
-      }
+    toggles.forEach(function(toggle) {
+      const iconEl = toggle.querySelector('i');
+      if (!iconEl) return;
+      iconEl.className = activeTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
     });
   }
 };
-Theme.init();
+ThemeManager.init();
 
 document.addEventListener('DOMContentLoaded', () => {
-  
-  document.querySelectorAll('[data-theme-toggle]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  document.querySelectorAll('[data-theme-toggle]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
       e.preventDefault();
-      Theme.toggle();
+      ThemeManager.toggle();
     });
   });
-  
-  const burger = document.querySelector('.burger');
-  const nav = document.querySelector('.navbar-nav');
-  if (burger && nav) {
-    burger.addEventListener('click', () => nav.classList.toggle('open'));
+
+  const burgerEl = document.querySelector('.burger');
+  const navMenu = document.querySelector('.navbar-nav');
+  if (burgerEl && navMenu) {
+    burgerEl.addEventListener('click', function() {
+      navMenu.classList.toggle('open');
+    });
   }
-  
-  Auth.updateNavbar();
+
+  AuthManager.updateNavbar();
 });
 
-const Toast = {
-  container: null,
-  
+const NotificationToast = {
+  _container: null,
+
   init() {
-    if (!this.container) {
-      this.container = document.createElement('div');
-      this.container.className = 'toast-container';
-      document.body.appendChild(this.container);
-    }
+    if (this._container) return;
+    this._container = document.createElement('div');
+    this._container.className = 'toast-container';
+    document.body.appendChild(this._container);
   },
-  
-  show(message, type = 'info', duration = 4000) {
+
+  show(msg, kind = 'info', duration = 4000) {
     this.init();
-    const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `<span>${icons[type] || icons.info}</span><span>${message}</span>`;
-    this.container.appendChild(toast);
-    
-    setTimeout(() => {
-      toast.style.animation = 'fadeOut .3s ease forwards';
-      setTimeout(() => toast.remove(), 300);
+    const iconMap = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+    const el = document.createElement('div');
+    el.className = `toast ${kind}`;
+    el.innerHTML = `<span>${iconMap[kind] || iconMap.info}</span><span>${msg}</span>`;
+    this._container.appendChild(el);
+
+    setTimeout(function() {
+      el.style.animation = 'fadeOut .3s ease forwards';
+      setTimeout(function() { el.remove(); }, 300);
     }, duration);
   },
-  
-  success(msg) { this.show(msg, 'success'); },
-  error(msg) { this.show(msg, 'error', 6000); },
-  warning(msg) { this.show(msg, 'warning'); },
+
+  success(m) { this.show(m, 'success'); },
+  error(m) { this.show(m, 'error', 6000); },
+  warning(m) { this.show(m, 'warning'); }
 };
 
 const API = {
@@ -85,174 +83,157 @@ const API = {
     return (window.APP_URL || '') + '/api';
   },
 
-  _headers() {
-    const headers = { 'Content-Type': 'application/json' };
-    const token = Auth.getToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    return headers;
+  _getAuthHeaders() {
+    const hdr = { 'Content-Type': 'application/json' };
+    const t = AuthManager.getToken();
+    if (t) hdr['Authorization'] = `Bearer ${t}`;
+    return hdr;
   },
 
-  async request(endpoint, method = 'GET', body = null) {
-    const url = this.baseUrl + endpoint;
-    const options = { 
-      method, 
-      headers: this._headers(),
+  async request(endpoint, method = 'GET', payload = null) {
+    const reqUrl = this.baseUrl + endpoint;
+    const fetchOpts = {
+      method,
+      headers: this._getAuthHeaders(),
       credentials: 'include',
     };
-    
-    if (body) {
-      options.body = JSON.stringify(body);
-    }
 
-    let response;
+    if (payload) fetchOpts.body = JSON.stringify(payload);
+
+    let httpResponse;
     try {
-      response = await fetch(url, options);
-    } catch (error) {
+      httpResponse = await fetch(reqUrl, fetchOpts);
+    } catch (netErr) {
       throw new Error('Ошибка сети. Проверьте что XAMPP запущен.');
     }
 
-    const contentType = response.headers.get('content-type') || '';
-    if (!contentType.includes('application/json')) {
-      const text = await response.text();
-      console.error('[API] Получен не-JSON ответ от', url, ':', text.substring(0, 200));
+    const ct = httpResponse.headers.get('content-type') || '';
+    if (!ct.includes('application/json')) {
+      const rawText = await httpResponse.text();
+      console.error('[API] Получен не-JSON ответ от', reqUrl, ':', rawText.substring(0, 200));
       throw new Error(
         `Сервер вернул HTML вместо JSON. Проверьте:\n` +
         `1. Apache и MySQL запущены в XAMPP\n` +
-        `2. Файл ${url} существует\n` +
+        `2. Файл ${reqUrl} существует\n` +
         `3. APP_URL = "${window.APP_URL}" верный`
       );
     }
 
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.message || 'Ошибка сервера');
+    const responseData = await httpResponse.json();
+    if (!httpResponse.ok) {
+      throw new Error(responseData.message || 'Ошибка сервера');
     }
-    
-    return data;
+
+    return responseData;
   },
 
   get(endpoint) { return this.request(endpoint, 'GET'); },
   post(endpoint, body) { return this.request(endpoint, 'POST', body); },
   delete(endpoint) { return this.request(endpoint, 'DELETE'); },
 
-  
-  async login(login, password) {
-    const csrfToken = localStorage.getItem('csrf_token');
-    return this.post('/auth.php?action=login', { login, password, csrf_token: csrfToken });
+
+  async login(username, password) {
+    const csrfVal = localStorage.getItem('csrf_token');
+    return this.post('/auth.php?action=login', { login: username, password, csrf_token: csrfVal });
   },
-  
-  async register(data) {
-    const csrfToken = localStorage.getItem('csrf_token');
-    return this.post('/auth.php?action=register', { ...data, csrf_token: csrfToken });
+
+  async register(regData) {
+    const csrfVal = localStorage.getItem('csrf_token');
+    return this.post('/auth.php?action=register', { ...regData, csrf_token: csrfVal });
   },
-  
+
   logout() { return this.post('/auth.php?action=logout', {}); },
   getMe() { return this.get('/auth.php?action=me'); },
 
-  
   getTests() { return this.get('/test.php?action=list'); },
-  
-  async startTest(testId) {
-    const csrfToken = localStorage.getItem('csrf_token');
-    return this.post('/test.php?action=start', { test_id: testId, csrf_token: csrfToken });
-  },
-  
-  async submitTest(data) {
-    const csrfToken = localStorage.getItem('csrf_token');
-    return this.post('/test.php?action=submit', { ...data, csrf_token: csrfToken });
-  },
-  
-  logEvent(data) { return this.post('/test.php?action=log_event', data); },
-  getMyResults() { return this.get('/test.php?action=my_results'); },
-  getResultDetail(id) { return this.get(`/test.php?action=result_detail&attempt_id=${id}`); },
 
-  
+  async startTest(tid) {
+    const csrfVal = localStorage.getItem('csrf_token');
+    return this.post('/test.php?action=start', { test_id: tid, csrf_token: csrfVal });
+  },
+
+  async submitTest(submissionData) {
+    const csrfVal = localStorage.getItem('csrf_token');
+    return this.post('/test.php?action=submit', { ...submissionData, csrf_token: csrfVal });
+  },
+
+  logEvent(evtData) { return this.post('/test.php?action=log_event', evtData); },
+  getMyResults() { return this.get('/test.php?action=my_results'); },
+  getResultDetail(attemptId) { return this.get(`/test.php?action=result_detail&attempt_id=${attemptId}`); },
+
   adminUsers() { return this.get('/admin.php?action=users'); },
   adminTests() { return this.get('/admin.php?action=tests'); },
   adminLogs() { return this.get('/admin.php?action=logs'); },
-  adminEyeTracking(params = {}) {
-    const query = new URLSearchParams();
-    if (params.test_id) query.set('test_id', params.test_id);
-    if (params.attempt_id) query.set('attempt_id', params.attempt_id);
-    return this.get('/admin.php?action=eye_tracking&' + query.toString());
+  adminEyeTracking(prms = {}) {
+    const qp = new URLSearchParams();
+    if (prms.test_id) qp.set('test_id', prms.test_id);
+    if (prms.attempt_id) qp.set('attempt_id', prms.attempt_id);
+    return this.get('/admin.php?action=eye_tracking&' + qp.toString());
   },
   adminResults() { return this.get('/admin.php?action=results'); },
-  
-  async createTest(data) {
-    const csrfToken = localStorage.getItem('csrf_token');
-    return this.post('/admin.php?action=create_test', { ...data, csrf_token: csrfToken });
+
+  async createTest(testData) {
+    const csrfVal = localStorage.getItem('csrf_token');
+    return this.post('/admin.php?action=create_test', { ...testData, csrf_token: csrfVal });
   },
-  
-  deleteTest(id) { return this.delete(`/admin.php?action=delete_test&test_id=${id}`); },
-  
-  async toggleTest(id, active) {
-    const csrfToken = localStorage.getItem('csrf_token');
-    return this.post('/admin.php?action=toggle_test', { test_id: id, active, csrf_token: csrfToken });
+
+  deleteTest(tid) { return this.delete(`/admin.php?action=delete_test&test_id=${tid}`); },
+
+  async toggleTest(tid, isActive) {
+    const csrfVal = localStorage.getItem('csrf_token');
+    return this.post('/admin.php?action=toggle_test', { test_id: tid, active: isActive, csrf_token: csrfVal });
   },
-  
-  async blockUser(id, block) {
-    const csrfToken = localStorage.getItem('csrf_token');
-    return this.post('/admin.php?action=block_user', { user_id: id, block, csrf_token: csrfToken });
+
+  async blockUser(uid, isBlocked) {
+    const csrfVal = localStorage.getItem('csrf_token');
+    return this.post('/admin.php?action=block_user', { user_id: uid, block: isBlocked, csrf_token: csrfVal });
   },
-  
-  async addQuestion(data) {
-    const csrfToken = localStorage.getItem('csrf_token');
-    return this.post('/admin.php?action=add_question', { ...data, csrf_token: csrfToken });
+
+  async addQuestion(qData) {
+    const csrfVal = localStorage.getItem('csrf_token');
+    return this.post('/admin.php?action=add_question', { ...qData, csrf_token: csrfVal });
   },
 };
 
-const Auth = {
-  _token: null,
+const AuthManager = {
+  _cachedToken: null,
 
   getToken() {
-    if (!this._token) {
-      this._token = localStorage.getItem('auth_token') || this._getCookie('auth_token');
+    if (!this._cachedToken) {
+      this._cachedToken = localStorage.getItem('auth_token') || this._readCookie('auth_token');
     }
-    return this._token || null;
+    return this._cachedToken || null;
   },
 
-  _getCookie(name) {
-    const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-    return match ? decodeURIComponent(match[1]) : null;
+  _readCookie(cookieName) {
+    const cookieMatch = document.cookie.match(new RegExp('(?:^|; )' + cookieName + '=([^;]*)'));
+    return cookieMatch ? decodeURIComponent(cookieMatch[1]) : null;
   },
 
-  saveToken(token) {
-    this._token = token;
-    localStorage.setItem('auth_token', token);
+  saveToken(tok) {
+    this._cachedToken = tok;
+    localStorage.setItem('auth_token', tok);
   },
 
-  async login(login, password) {
-    const res = await API.login(login, password);
-    if (res.success && res.token) {
-      this.saveToken(res.token);
-    }
-    if (res.csrf_token) {
-      localStorage.setItem('csrf_token', res.csrf_token);
-    }
-    return res;
+  async login(username, password) {
+    const apiResp = await API.login(username, password);
+    if (apiResp.success && apiResp.token) this.saveToken(apiResp.token);
+    if (apiResp.csrf_token) localStorage.setItem('csrf_token', apiResp.csrf_token);
+    return apiResp;
   },
 
-  async register(data) {
-    const res = await API.register(data);
-    if (res.success && res.token) {
-      this.saveToken(res.token);
-    }
-    if (res.csrf_token) {
-      localStorage.setItem('csrf_token', res.csrf_token);
-    }
-    return res;
+  async register(regPayload) {
+    const apiResp = await API.register(regPayload);
+    if (apiResp.success && apiResp.token) this.saveToken(apiResp.token);
+    if (apiResp.csrf_token) localStorage.setItem('csrf_token', apiResp.csrf_token);
+    return apiResp;
   },
 
   async logout() {
-    try { 
-      await API.logout(); 
-    } catch (error) {
-      console.warn('Logout API call failed:', error);
+    try { await API.logout(); } catch (err) {
+      console.warn('Logout API call failed:', err);
     } finally {
-      this._token = null;
+      this._cachedToken = null;
       localStorage.removeItem('auth_token');
       localStorage.removeItem('csrf_token');
       document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -263,41 +244,41 @@ const Auth = {
   isLoggedIn() { return !!this.getToken(); },
 
   getPayload() {
-    const token = this.getToken();
-    if (!token) return null;
+    const tok = this.getToken();
+    if (!tok) return null;
     try {
-      const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-      return JSON.parse(atob(base64));
-    } catch {
+      const b64 = tok.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(atob(b64));
+    } catch (e) {
       return null;
     }
   },
 
   isAdmin() {
-    const payload = this.getPayload();
-    return payload && payload.role === 'admin';
+    const pl = this.getPayload();
+    return pl && pl.role === 'admin';
   },
 
   updateNavbar() {
     const loggedIn = this.isLoggedIn();
-    const payload = this.getPayload();
-    
-    document.querySelectorAll('[data-guest]').forEach(el => {
+    const pl = this.getPayload();
+
+    document.querySelectorAll('[data-guest]').forEach(function(el) {
       el.classList.toggle('hidden', loggedIn);
     });
-    document.querySelectorAll('[data-user]').forEach(el => {
+    document.querySelectorAll('[data-user]').forEach(function(el) {
       el.classList.toggle('hidden', !loggedIn);
     });
-    document.querySelectorAll('[data-admin]').forEach(el => {
-      el.classList.toggle('hidden', !this.isAdmin());
+    document.querySelectorAll('[data-admin]').forEach(function(el) {
+      el.classList.toggle('hidden', !AuthManager.isAdmin());
     });
-    
-    if (payload) {
-      document.querySelectorAll('[data-username]').forEach(el => {
-        el.textContent = payload.username;
+
+    if (pl) {
+      document.querySelectorAll('[data-username]').forEach(function(el) {
+        el.textContent = pl.username;
       });
     }
-  },
+  }
 };
 
 function setLoading(btn, loading) {
