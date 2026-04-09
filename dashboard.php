@@ -306,21 +306,21 @@
 
   function getTestIcon(title) {
     const icons = {
-      'математ': '📐',
-      'информат': '💻',
-      'русск': '📚',
-      'истор': '📜',
-      'физ': '⚡',
-      'хим': '🧪',
-      'био': '🧬',
-      'геометр': '📐',
-      'алгебр': '🔢',
+      'математ': '<img src="https://img.icons8.com/ios/48/calculator--v1.png" alt="" width="40" height="40">',
+      'информат': '<img src="https://img.icons8.com/ios/48/electronics.png" alt="" width="40" height="40">',
+      'русск': '<img src="https://img.icons8.com/ios/48/fine-print.png" alt="" width="40" height="40">',
+      'истор': '<img src="https://img.icons8.com/ios/48/history.png" alt="" width="40" height="40">',
+      'физ': '<img src="https://img.icons8.com/ios/48/physics.png" alt="" width="40" height="40">',
+      'хим': '<img src="https://img.icons8.com/ios/48/test-tube.png" alt="" width="40" height="40">',
+      'био': '<img src="https://img.icons8.com/ios/48/dna.png" alt="" width="40" height="40">',
+      'геометр': '<img src="https://img.icons8.com/ios/48/ruler.png" alt="" width="40" height="40">',
+      'алгебр': '<img src="https://img.icons8.com/ios/48/numbers.png" alt="" width="40" height="40">',
     };
     const lower = title.toLowerCase();
     for (const [key, icon] of Object.entries(icons)) {
       if (lower.includes(key)) return icon;
     }
-    return '📝';
+    return '<img src="https://img.icons8.com/ios/48/document.png" alt="" width="40" height="40">';
   }
 
   function formatTime(seconds) {
