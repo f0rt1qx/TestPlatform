@@ -36,7 +36,7 @@
   <div class="auth-card">
     <div class="auth-logo">
       <a href="index.php" style="text-decoration:none;">
-        <h1><img src="src/logo.svg" alt="Sapienta logo" width="48" height="48" class="auth-logo-svg"> Sapienta</h1>
+        <h1><img src="src/logo.png" alt="Sapienta logo" width="48" height="48" class="auth-logo-svg"> Sapienta</h1>
       </a>
       <p data-i18n="auth.register.subtitle">Создайте аккаунт</p>
     </div>

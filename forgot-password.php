@@ -15,7 +15,7 @@
 <div class="auth-wrapper">
   <div class="auth-card">
     <div class="auth-logo">
-      <a href="index.php" style="text-decoration:none;"><h1><img src="src/logo.svg" alt="Sapienta logo" width="48" height="48" class="auth-logo-svg"> Sapienta</h1></a>
+      <a href="index.php" style="text-decoration:none;"><h1><img src="src/logo.png" alt="Sapienta logo" width="48" height="48" class="auth-logo-svg"> Sapienta</h1></a>
       <p>Восстановление пароля</p>
     </div>
 
