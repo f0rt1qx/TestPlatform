@@ -179,7 +179,7 @@
   <div class="AuthManager-card">
     <div class="AuthManager-logo">
       <a href="index.php" style="text-decoration:none;">
-        <h1><img src="src/logo.png" alt="Sapienta logo" width="64" height="64" class="auth-logo-svg"> Sapienta</h1>
+        <h1 style="flex-direction:column;gap:10px;"><img src="src/logo.png" alt="Sapienta logo" width="72" height="72" style="width:72px;height:72px;object-fit:contain;flex-shrink:0;filter:none!important;"> <span>Sapienta</span></h1>
       </a>
       <p id="pageSubtitle">Войдите по коду подтверждения</p>
     </div>

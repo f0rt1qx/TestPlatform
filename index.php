@@ -17,7 +17,8 @@
 <nav class="navbar" id="navbar">
   <div class="container">
     <a href="index.php" class="navbar-brand">
-      <img src="src/logo.png" alt="Sapienta logo" width="48" height="48" style="width:48px;height:48px;object-fit:contain;flex-shrink:0;"> Sapienta
+      <img src="src/logo.png" alt="Sapienta logo" width="56" height="56" style="width:56px;height:56px;object-fit:contain;flex-shrink:0;">
+      <span>Sapienta</span>
     </a>
 
     <ul class="navbar-nav" id="mainNav">
@@ -248,7 +249,7 @@
   <div class="container">
     <div class="footer-content">
       <div class="footer-brand">
-        <h3 data-i18n="footer.brand"><img src="src/logo.png" alt="Sapienta logo" width="40" height="40" class="footer-logo"> Sapienta</h3>
+        <h3 data-i18n="footer.brand" style="flex-direction:column;gap:8px;"><img src="src/logo.png" alt="Sapienta logo" width="50" height="50" style="width:50px;height:50px;object-fit:contain;flex-shrink:0;filter:none!important;"> <span>Sapienta</span></h3>
         <p data-i18n="footer.description">Современная платформа для честного онлайн-тестирования</p>
         <div class="footer-social">
           <a href="#" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>

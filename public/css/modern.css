@@ -582,16 +582,18 @@ textarea.form-control {
 /* ── Brand ────────────────────────────────────────────── */
 .navbar-brand {
   font-family: 'Poppins', sans-serif;
-  font-size: 1.4rem;
+  font-size: 0.95rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #fff;
   text-decoration: none;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 4px;
   flex-shrink: 0;
   transition: opacity var(--transition-fast);
+  line-height: 1;
 }
 
 .navbar-brand i {
@@ -601,15 +603,15 @@ textarea.form-control {
 }
 
 .navbar-brand img {
-  width: 48px !important;
-  height: 48px !important;
+  width: 56px !important;
+  height: 56px !important;
   object-fit: contain;
   transition: transform var(--transition-fast);
 }
 
 .navbar-logo {
-  width: 48px !important;
-  height: 48px !important;
+  width: 56px !important;
+  height: 56px !important;
   object-fit: contain;
   transition: transform var(--transition-fast);
   filter: none !important;
@@ -1203,20 +1205,22 @@ textarea.form-control {
 }
 
 .footer-brand h3 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 16px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  line-height: 1;
 }
 
 .footer-logo {
-  width: 40px !important;
-  height: 40px !important;
+  width: 50px !important;
+  height: 50px !important;
   object-fit: contain;
   flex-shrink: 0;
   filter: none !important;
@@ -1336,14 +1340,15 @@ textarea.form-control {
   background-clip: text;
   margin-bottom: 8px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
+  gap: 10px;
+  line-height: 1;
 }
 
 .auth-logo-svg {
-  width: 64px !important;
-  height: 64px !important;
+  width: 72px !important;
+  height: 72px !important;
   object-fit: contain;
   flex-shrink: 0;
   filter: none !important;

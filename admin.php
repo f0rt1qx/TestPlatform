@@ -27,7 +27,8 @@
 <nav class="navbar" id="navbar">
   <div class="container">
     <a href="index.php" class="navbar-brand">
-      <img src="src/logo.png" alt="Sapienta logo" width="48" height="48" class="navbar-logo"> Sapienta
+      <img src="src/logo.png" alt="Sapienta logo" width="56" height="56" class="navbar-logo">
+      <span>Sapienta</span>
     </a>
     <ul class="navbar-nav" id="mainNav">
       <li><a href="dashboard.php">Кабинет</a></li>
