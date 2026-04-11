@@ -17,7 +17,7 @@
   <div class="auth-card">
     <div class="auth-logo">
       <a href="index.php" style="text-decoration:none;">
-        <h1 style="flex-direction:column;gap:10px;"><img src="src/logo.png" alt="Sapienta logo" width="72" height="72" style="width:72px;height:72px;object-fit:contain;flex-shrink:0;filter:none!important;"> <span>Sapienta</span></h1>
+        <h1><img src="src/logo.png" alt="Sapienta logo" width="80" height="80" style="width:80px;height:80px;object-fit:contain;filter:none!important;"></h1>
       </a>
       <p data-i18n="auth.login.subtitle">Войдите в свой аккаунт</p>
     </div>

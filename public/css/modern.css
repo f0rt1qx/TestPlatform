@@ -582,18 +582,16 @@ textarea.form-control {
 /* ── Brand ────────────────────────────────────────────── */
 .navbar-brand {
   font-family: 'Poppins', sans-serif;
-  font-size: 0.95rem;
+  font-size: 0;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #fff;
   text-decoration: none;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 0;
   flex-shrink: 0;
   transition: opacity var(--transition-fast);
-  line-height: 1;
 }
 
 .navbar-brand i {
@@ -1205,22 +1203,20 @@ textarea.form-control {
 }
 
 .footer-brand h3 {
-  font-size: 1.2rem;
+  font-size: 0;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 16px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  line-height: 1;
+  gap: 0;
 }
 
 .footer-logo {
-  width: 50px !important;
-  height: 50px !important;
+  width: 60px !important;
+  height: 60px !important;
   object-fit: contain;
   flex-shrink: 0;
   filter: none !important;
@@ -1333,22 +1329,21 @@ textarea.form-control {
 }
 
 .auth-logo h1 {
-  font-size: 2rem;
+  font-size: 0;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 8px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  line-height: 1;
+  justify-content: center;
+  gap: 0;
 }
 
 .auth-logo-svg {
-  width: 72px !important;
-  height: 72px !important;
+  width: 80px !important;
+  height: 80px !important;
   object-fit: contain;
   flex-shrink: 0;
   filter: none !important;
