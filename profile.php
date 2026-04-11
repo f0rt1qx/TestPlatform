@@ -18,7 +18,7 @@
 <nav class="navbar" id="navbar">
   <div class="container">
     <a href="index.php" class="navbar-brand">
-      <img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="24" height="24"> Sapienta
+      <img src="src/logo.svg" alt="Sapienta logo" width="32" height="32" class="navbar-logo"> Sapienta
     </a>
     <ul class="navbar-nav" id="mainNav">
       <li><a href="dashboard.php">Кабинет</a></li>
