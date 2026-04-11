@@ -156,7 +156,7 @@ class OTPAuthModel {
                 require_once __DIR__ . '/../helpers/SMTPMailer.php';
                 
                 $mailer = new SMTPMailer();
-                $subject = 'Код подтверждения TestPlatform';
+                $subject = 'Код подтверждения Sapienta';
                 $message = $this->getEmailTemplate($code);
                 
                 $result = $mailer->send($email, $subject, $message, true);
@@ -225,7 +225,7 @@ class OTPAuthModel {
 <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:40px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
     <tr>
         <td style="background:linear-gradient(135deg,#2563eb,#1e40af);padding:30px;text-align:center;">
-            <h1 style="margin:0;color:#fff;font-size:24px;">🎓 TestPlatform</h1>
+            <h1 style="margin:0;color:#fff;font-size:24px;">🎓 Sapienta</h1>
         </td>
     </tr>
     <tr>
@@ -246,7 +246,7 @@ class OTPAuthModel {
     <tr>
         <td style="background:#f8fafc;padding:20px;text-align:center;border-top:1px solid #e2e8f0;">
             <p style="margin:0;color:#94a3b8;font-size:11px;">
-                © ' . date('Y') . ' TestPlatform. Все права защищены.
+                © ' . date('Y') . ' Sapienta. Все права защищены.
             </p>
         </td>
     </tr>

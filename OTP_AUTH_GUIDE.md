@@ -101,8 +101,8 @@ define('MAIL_HOST',       'smtp.gmail.com');
 define('MAIL_PORT',       587);
 define('MAIL_USER',       'your-email@gmail.com');
 define('MAIL_PASS',       'your-app-password');
-define('MAIL_FROM',       'noreply@testplatform.com');
-define('MAIL_FROM_NAME',  'TestPlatform');
+define('MAIL_FROM',       'noreply@sapienta.local');
+define('MAIL_FROM_NAME',  'Sapienta');
 ```
 
 ## 📱 Интеграция SMS
@@ -132,7 +132,7 @@ private function sendViaSMS(string $email, string $code): array {
     $twilio = new \Twilio\Rest\Client($sid, $token);
     $twilio->messages->create($user['phone'], [
         'from' => '+1234567890',
-        'body' => "Ваш код TestPlatform: {$code}"
+        'body' => "Ваш код Sapienta: {$code}"
     ]);
     
     return ['success' => true, 'message' => 'SMS отправлен'];

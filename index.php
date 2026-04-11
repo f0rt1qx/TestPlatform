@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TestPlatform — Честное онлайн-тестирование</title>
+  <title>Sapienta — Честное онлайн-тестирование</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
 <nav class="navbar" id="navbar">
   <div class="container">
     <a href="index.php" class="navbar-brand">
-      <img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="24" height="24"> TestPlatform
+      <img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="24" height="24"> Sapienta
     </a>
 
     <ul class="navbar-nav" id="mainNav">
@@ -75,7 +75,7 @@
 <section class="features" id="features">
   <div class="container">
     <div class="section-header fade-in">
-      <h2 data-i18n="features.title">Почему <span class="text-gradient">TestPlatform</span>?</h2>
+      <h2 data-i18n="features.title">Почему <span class="text-gradient">Sapienta</span>?</h2>
       <p data-i18n="features.subtitle">Надёжные инструменты для честной проверки знаний</p>
     </div>
 
@@ -234,7 +234,7 @@
   <div class="container">
     <div class="cta-content fade-in">
       <h2 data-i18n="cta.title">Готовы начать?</h2>
-      <p data-i18n="cta.description">Присоединяйтесь к тысячам студентов и преподавателей, которые уже используют TestPlatform для честного тестирования.</p>
+      <p data-i18n="cta.description">Присоединяйтесь к тысячам студентов и преподавателей, которые уже используют Sapienta для честного тестирования.</p>
       <div class="cta-btns">
         <a href="register.php" class="btn btn-primary btn-lg" data-guest data-i18n="cta.btn.create-account">🚀 Создать аккаунт</a>
         <a href="dashboard.php" class="btn btn-primary btn-lg hidden" data-user data-i18n="cta.btn.go-dashboard">📋 Перейти в кабинет</a>
@@ -248,7 +248,7 @@
   <div class="container">
     <div class="footer-content">
       <div class="footer-brand">
-        <h3 data-i18n="footer.brand"><img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="24" height="24"> TestPlatform</h3>
+        <h3 data-i18n="footer.brand"><img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="24" height="24"> Sapienta</h3>
         <p data-i18n="footer.description">Современная платформа для честного онлайн-тестирования</p>
         <div class="footer-social">
           <a href="#" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
@@ -277,7 +277,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p>© 2024 TestPlatform. <span data-i18n="footer.rights">Все права защищены.</span></p>
+      <p>© 2024 Sapienta. <span data-i18n="footer.rights">Все права защищены.</span></p>
     </div>
   </div>
 </footer>

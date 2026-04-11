@@ -11,7 +11,7 @@
 
 1. Откройте https://myaccount.google.com/apppasswords
 2. Выберите **Приложение** → **Почта**
-3. Выберите **Устройство** → **Другое** → введите `TestPlatform`
+3. Выберите **Устройство** → **Другое** → введите `Sapienta`
 4. Нажмите **Создать**
 5. **Скопируйте 16-значный пароль** (он показывается один раз!)
 
@@ -26,7 +26,7 @@ define('MAIL_PORT',       587);
 define('MAIL_USER',       'your-email@gmail.com');     // Ваш Gmail
 define('MAIL_PASS',       'abcd efgh ijkl mnop');      // Пароль приложения (без пробелов: abcdefghijklmnop)
 define('MAIL_FROM',       'your-email@gmail.com');
-define('MAIL_FROM_NAME',  'TestPlatform');
+define('MAIL_FROM_NAME',  'Sapienta');
 define('MAIL_ENABLED',    true);  // ← Включить!
 ```
 
@@ -57,7 +57,7 @@ define('MAIL_PORT',       587);
 define('MAIL_USER',       'your-email@yandex.ru');
 define('MAIL_PASS',       'ваш-пароль-приложения');
 define('MAIL_FROM',       'your-email@yandex.ru');
-define('MAIL_FROM_NAME',  'TestPlatform');
+define('MAIL_FROM_NAME',  'Sapienta');
 define('MAIL_ENABLED',    true);
 ```
 
@@ -71,7 +71,7 @@ define('MAIL_PORT',       587);
 define('MAIL_USER',       'your-email@mail.ru');
 define('MAIL_PASS',       'ваш-пароль-приложения');
 define('MAIL_FROM',       'your-email@mail.ru');
-define('MAIL_FROM_NAME',  'TestPlatform');
+define('MAIL_FROM_NAME',  'Sapienta');
 define('MAIL_ENABLED',    true);
 ```
 

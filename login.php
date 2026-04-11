@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-i18n="auth.login.title">Вход — TestPlatform</title>
+  <title data-i18n="auth.login.title">Вход — Sapienta</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
   <div class="auth-card">
     <div class="auth-logo">
       <a href="index.php" style="text-decoration:none;">
-        <h1><img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="32" height="32"> TestPlatform</h1>
+        <h1><img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="32" height="32"> Sapienta</h1>
       </a>
       <p data-i18n="auth.login.subtitle">Войдите в свой аккаунт</p>
     </div>

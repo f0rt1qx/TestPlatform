@@ -179,11 +179,11 @@ CREATE TABLE `logs` (
 
 -- Admin user (password: Admin123!)
 INSERT INTO `users` (`username`, `email`, `password_hash`, `role`, `first_name`, `last_name`, `email_verified`) VALUES
-('admin', 'admin@testplatform.local', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'admin', 'Администратор', 'Системы', 1);
+('admin', 'admin@sapienta.local', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'admin', 'Администратор', 'Системы', 1);
 
 -- Student user (password: Student123!)
 INSERT INTO `users` (`username`, `email`, `password_hash`, `role`, `first_name`, `last_name`, `email_verified`) VALUES
-('student1', 'student@testplatform.local', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'student', 'Иван', 'Иванов', 1);
+('student1', 'student@sapienta.local', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'student', 'Иван', 'Иванов', 1);
 
 -- Sample test
 INSERT INTO `tests` (`title`, `description`, `time_limit`, `max_attempts`, `pass_score`, `created_by`) VALUES

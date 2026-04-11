@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Профиль — TestPlatform</title>
+  <title>Профиль — Sapienta</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
 <nav class="navbar" id="navbar">
   <div class="container">
     <a href="index.php" class="navbar-brand">
-      <img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="24" height="24"> TestPlatform
+      <img src="https://img.icons8.com/ios/24/graduation-cap.png" alt="" width="24" height="24"> Sapienta
     </a>
     <ul class="navbar-nav" id="mainNav">
       <li><a href="dashboard.php">Кабинет</a></li>

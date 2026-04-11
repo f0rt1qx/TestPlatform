@@ -84,7 +84,7 @@ foreach (['public/js/config.js', 'public/js/app.js', 'public/js/anticheat.js', '
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Диагностика — TestPlatform</title>
+<title>Диагностика — Sapienta</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: system-ui, sans-serif; background: #f8fafc; color: #1e293b; padding: 30px 20px; }
@@ -109,7 +109,7 @@ a { color: #4f46e5; }
 </head>
 <body>
 <div class="container">
-  <h1>🔍 Диагностика TestPlatform</h1>
+  <h1>🔍 Диагностика Sapienta</h1>
   <p class="subtitle">Автоматическая проверка установки</p>
   
   <?php

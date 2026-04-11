@@ -1,4 +1,4 @@
-# 🎓 TestPlatform — Платформа для тестирования
+# 🎓 Sapienta — Платформа для тестирования
 
 > **Современная система онлайн-тестирования с защитой от списывания**
 
@@ -69,8 +69,8 @@ http://localhost/test-platform/
 
 | Роль | Логин | Email | Пароль |
 |------|-------|-------|--------|
-| Администратор | `admin` | admin@testplatform.local | `password` |
-| Студент | `student1` | student@testplatform.local | `password` |
+| Администратор | `admin` | admin@sapienta.local | `password` |
+| Студент | `student1` | student@sapienta.local | `password` |
 
 > ⚠️ **Смените пароли в production!**
 

@@ -25,7 +25,7 @@ if (!defined('APP_URL')) {
 }
 
 
-define('APP_NAME',  'TestPlatform');
+define('APP_NAME',  'Sapienta');
 define('APP_ENV',   'development');
 define('APP_DEBUG', true);
 

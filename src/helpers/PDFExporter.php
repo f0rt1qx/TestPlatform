@@ -144,7 +144,7 @@ tbody td {
 <body>
 
 <div class="header">
-    <h1>🎓 TestPlatform — Результаты тестирования</h1>
+    <h1>🎓 Sapienta — Результаты тестирования</h1>
     <div class="date">📅 Дата формирования: ' . date('d.m.Y H:i:s') . '</div>
 </div>';
 
@@ -208,7 +208,7 @@ tbody td {
 
         $html .= '
 <div class="footer">
-    TestPlatform © ' . date('Y') . ' | Документ сформирован автоматически | Страница 1
+    Sapienta © ' . date('Y') . ' | Документ сформирован автоматически | Страница 1
 </div>
 
 </body>
@@ -453,7 +453,7 @@ body {
 <body>
 
 <div class="header">
-    <h1>🎓 TestPlatform — Результат теста</h1>
+    <h1>🎓 Sapienta — Результат теста</h1>
     <div class="subtitle">📄 Официальный результат | Сформирован: ' . date('d.m.Y H:i:s') . '</div>
 </div>
 
@@ -550,7 +550,7 @@ body {
 
         $html .= '
 <div class="footer">
-    TestPlatform © ' . date('Y') . ' | Документ сформирован автоматически<br>
+    Sapienta © ' . date('Y') . ' | Документ сформирован автоматически<br>
     Данный документ является официальным подтверждением результатов тестирования
 </div>
 

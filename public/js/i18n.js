@@ -49,7 +49,7 @@ const i18n = {
       'hero.stats.satisfied': 'Довольных',
       
       
-      'features.title': 'Почему TestPlatform?',
+      'features.title': 'Почему Sapienta?',
       'features.subtitle': 'Надёжные инструменты для честной проверки знаний',
       'feature.anticheat.title': 'Анти-читинг система',
       'feature.anticheat.desc': 'Отслеживание переключения вкладок, копирования и подозрительного поведения в реальном времени.',
@@ -87,12 +87,12 @@ const i18n = {
       
       
       'cta.title': 'Готовы начать?',
-      'cta.description': 'Присоединяйтесь к тысячам студентов и преподавателей, которые уже используют TestPlatform для честного тестирования.',
+      'cta.description': 'Присоединяйтесь к тысячам студентов и преподавателей, которые уже используют Sapienta для честного тестирования.',
       'cta.btn.create-account': '🚀 Создать аккаунт',
       'cta.btn.go-dashboard': '📋 Перейти в кабинет',
-      
-      
-      'footer.brand': '🎓 TestPlatform',
+
+
+      'footer.brand': '🎓 Sapienta',
       'footer.description': 'Современная платформа для честного онлайн-тестирования с защитой от списывания и детальной аналитикой.',
       'footer.platform': 'Платформа',
       'footer.support': 'Поддержка',
@@ -264,7 +264,7 @@ const i18n = {
       'hero.stats.satisfied': 'Қанағаттанған',
       
       
-      'features.title': 'Неге TestPlatform?',
+      'features.title': 'Неге Sapienta?',
       'features.subtitle': 'Адал білім тексеру үшін сенімді құралдар',
       'feature.anticheat.title': 'Анти-читинг жүйесі',
       'feature.anticheat.desc': 'Қойындыларды ауыстыруды, көшіруді және күдікті әрекеттерді нақты уақытта бақылау.',
@@ -302,12 +302,12 @@ const i18n = {
       
       
       'cta.title': 'Бастауға дайынсыз ба?',
-      'cta.description': 'Адал тестілеу үшін TestPlatform қолданатын мыңдаған студенттер мен оқытушыларға қосылыңыз.',
+      'cta.description': 'Адал тестілеу үшін Sapienta қолданатын мыңдаған студенттер мен оқытушыларға қосылыңыз.',
       'cta.btn.create-account': '🚀 Аккаунт жасау',
       'cta.btn.go-dashboard': '📋 Кабинетке өту',
-      
-      
-      'footer.brand': '🎓 TestPlatform',
+
+
+      'footer.brand': '🎓 Sapienta',
       'footer.description': 'Көшіруден қорғанысымен және егжей-тегжейлі аналитикасымен адал онлайн тестілеу үшін заманауи платформа.',
       'footer.platform': 'Платформа',
       'footer.support': 'Қолдау',
@@ -488,7 +488,7 @@ const i18n = {
       'hero.stats.satisfied': 'Satisfied',
       
       
-      'features.title': 'Why TestPlatform?',
+      'features.title': 'Why Sapienta?',
       'features.subtitle': 'Reliable tools for fair knowledge assessment',
       'feature.anticheat.title': 'Anti-Cheating System',
       'feature.anticheat.desc': 'Real-time tracking of tab switching, copying, and suspicious behavior.',
@@ -526,12 +526,12 @@ const i18n = {
       
       
       'cta.title': 'Ready to Start?',
-      'cta.description': 'Join thousands of students and educators already using TestPlatform for honest testing.',
+      'cta.description': 'Join thousands of students and educators already using Sapienta for honest testing.',
       'cta.btn.create-account': '🚀 Create Account',
       'cta.btn.go-dashboard': '📋 Go to Dashboard',
       
       
-      'footer.brand': '🎓 TestPlatform',
+      'footer.brand': '🎓 Sapienta',
       'footer.description': 'Modern platform for honest online testing with anti-cheating protection and detailed analytics.',
       'footer.platform': 'Platform',
       'footer.support': 'Support',

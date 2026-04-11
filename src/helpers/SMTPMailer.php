@@ -21,8 +21,8 @@ class SMTPMailer {
         $this->smtpPort = defined('MAIL_PORT') ? MAIL_PORT : 587;
         $this->smtpUsername = defined('MAIL_USER') ? MAIL_USER : '';
         $this->smtpPassword = defined('MAIL_PASS') ? MAIL_PASS : '';
-        $this->senderAddr = defined('MAIL_FROM') ? MAIL_FROM : 'noreply@testplatform.local';
-        $this->senderName = defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : 'TestPlatform';
+        $this->senderAddr = defined('MAIL_FROM') ? MAIL_FROM : 'noreply@sapienta.local';
+        $this->senderName = defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : 'Sapienta';
         $this->useTLS = in_array($this->smtpPort, [465, 587]);
     }
 
@@ -64,7 +64,7 @@ class SMTPMailer {
         }
 
         // Step 2: EHLO
-        $ehloResponse = $this->sendCommand('EHLO testplatform.local');
+        $ehloResponse = $this->sendCommand('EHLO sapienta.local');
         if (!$ehloResponse) {
             return $this->errorResponse('EHLO command failed');
         }
@@ -79,7 +79,7 @@ class SMTPMailer {
             if (!$cryptoEnabled) {
                 return $this->errorResponse('Failed to enable TLS encryption');
             }
-            $ehloResponse2 = $this->sendCommand('EHLO testplatform.local');
+            $ehloResponse2 = $this->sendCommand('EHLO sapienta.local');
             if (!$ehloResponse2) {
                 return $this->errorResponse('Post-STARTTLS EHLO failed');
             }
@@ -224,12 +224,12 @@ class SMTPMailer {
                 return $this->errorResponse('Не удалось подключиться');
             }
 
-            $this->sendCommand('EHLO testplatform.local');
+            $this->sendCommand('EHLO sapienta.local');
 
             if ($this->useTLS && $this->smtpPort === 587) {
                 $this->sendCommand('STARTTLS');
                 stream_socket_enable_crypto($this->socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
-                $this->sendCommand('EHLO testplatform.local');
+                $this->sendCommand('EHLO sapienta.local');
             }
 
             if ($this->smtpUsername && $this->smtpPassword) {

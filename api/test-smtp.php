@@ -36,7 +36,7 @@ try {
             throw new InvalidArgumentException('Invalid email');
         }
 
-        $subject = 'Тестовое письмо TestPlatform';
+        $subject = 'Тестовое письмо Sapienta';
         $body = '<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
@@ -44,7 +44,7 @@ try {
 <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
     <tr>
         <td style="background:linear-gradient(135deg,#2563eb,#1e40af);padding:30px;text-align:center;">
-            <h1 style="margin:0;color:#fff;font-size:24px;">🎓 TestPlatform</h1>
+            <h1 style="margin:0;color:#fff;font-size:24px;">🎓 Sapienta</h1>
         </td>
     </tr>
     <tr>

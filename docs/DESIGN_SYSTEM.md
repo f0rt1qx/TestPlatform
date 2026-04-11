@@ -1,4 +1,4 @@
-# 🎨 Design System — TestPlatform
+# 🎨 Design System — Sapienta
 
 ## Обзор
 
@@ -281,4 +281,4 @@ Toast.info('Информация');
 
 ---
 
-**Создано для TestPlatform** | 2024
+**Создано для Sapienta** | 2024
