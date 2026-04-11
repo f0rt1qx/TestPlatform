@@ -589,7 +589,7 @@ textarea.form-control {
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   flex-shrink: 0;
   transition: opacity var(--transition-fast);
 }
@@ -601,22 +601,22 @@ textarea.form-control {
 }
 
 .navbar-brand img {
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
   transition: transform var(--transition-fast);
 }
 
 .navbar-logo {
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
   transition: transform var(--transition-fast);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  filter: none;
 }
 
 [data-theme="dark"] .navbar-logo {
-  filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(255, 255, 255, 0.1));
+  filter: none;
 }
 
 .navbar-brand:hover {
@@ -1211,19 +1211,19 @@ textarea.form-control {
   margin-bottom: 16px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .footer-logo {
-  width: 28px;
-  height: 28px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
   flex-shrink: 0;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+  filter: none;
 }
 
 [data-theme="dark"] .footer-logo {
-  filter: brightness(0) invert(1) drop-shadow(0 1px 2px rgba(255, 255, 255, 0.1));
+  filter: none;
 }
 
 .footer-brand p {
@@ -1338,19 +1338,19 @@ textarea.form-control {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .auth-logo-svg {
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
   flex-shrink: 0;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.1));
+  filter: none;
 }
 
 [data-theme="dark"] .auth-logo-svg {
-  filter: brightness(0) invert(1) drop-shadow(0 2px 6px rgba(255, 255, 255, 0.1));
+  filter: none;
 }
 
 .auth-logo p {
