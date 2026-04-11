@@ -3,6 +3,7 @@ config/secret.php
 .env
 .env.local
 .env.production
+.openclaude-profile.json
 
 # Логи
 logs/*.log

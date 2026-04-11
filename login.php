@@ -11,6 +11,25 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="public/css/modern.css?v=2">
+  <style>
+    .auth-card .auth-logo {
+      padding: 32px 24px 20px;
+      text-align: center;
+    }
+    .auth-card .auth-logo a {
+      display: flex;
+      justify-content: center;
+    }
+    .auth-card .auth-logo img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+    }
+    .auth-card .auth-logo p {
+      margin-top: 16px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
@@ -18,7 +37,7 @@
   <div class="auth-card">
     <div class="auth-logo">
       <a href="index.php" style="text-decoration:none;">
-        <h1><img src="src/logo.png" alt="Sapienta logo" width="80" height="80" style="width:80px;height:80px;object-fit:contain;filter:none!important;"></h1>
+        <img src="src/logogreen.png" alt="Sapienta logo" width="80" height="80" style="width:80px;height:80px;object-fit:contain;">
       </a>
       <p data-i18n="auth.login.subtitle">Войдите в свой аккаунт</p>
     </div>
