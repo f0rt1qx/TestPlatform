@@ -612,6 +612,11 @@ textarea.form-control {
   height: 32px;
   object-fit: contain;
   transition: transform var(--transition-fast);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+[data-theme="dark"] .navbar-logo {
+  filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(255, 255, 255, 0.1));
 }
 
 .navbar-brand:hover {
@@ -1214,6 +1219,11 @@ textarea.form-control {
   height: 28px;
   object-fit: contain;
   flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+[data-theme="dark"] .footer-logo {
+  filter: brightness(0) invert(1) drop-shadow(0 1px 2px rgba(255, 255, 255, 0.1));
 }
 
 .footer-brand p {
@@ -1336,6 +1346,11 @@ textarea.form-control {
   height: 48px;
   object-fit: contain;
   flex-shrink: 0;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.1));
+}
+
+[data-theme="dark"] .auth-logo-svg {
+  filter: brightness(0) invert(1) drop-shadow(0 2px 6px rgba(255, 255, 255, 0.1));
 }
 
 .auth-logo p {
