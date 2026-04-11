@@ -601,22 +601,22 @@ textarea.form-control {
 }
 
 .navbar-brand img {
-  width: 48px;
-  height: 48px;
+  width: 48px !important;
+  height: 48px !important;
   object-fit: contain;
   transition: transform var(--transition-fast);
 }
 
 .navbar-logo {
-  width: 48px;
-  height: 48px;
+  width: 48px !important;
+  height: 48px !important;
   object-fit: contain;
   transition: transform var(--transition-fast);
-  filter: none;
+  filter: none !important;
 }
 
 [data-theme="dark"] .navbar-logo {
-  filter: none;
+  filter: none !important;
 }
 
 .navbar-brand:hover {
@@ -1215,15 +1215,15 @@ textarea.form-control {
 }
 
 .footer-logo {
-  width: 40px;
-  height: 40px;
+  width: 40px !important;
+  height: 40px !important;
   object-fit: contain;
   flex-shrink: 0;
-  filter: none;
+  filter: none !important;
 }
 
 [data-theme="dark"] .footer-logo {
-  filter: none;
+  filter: none !important;
 }
 
 .footer-brand p {
@@ -1342,15 +1342,15 @@ textarea.form-control {
 }
 
 .auth-logo-svg {
-  width: 64px;
-  height: 64px;
+  width: 64px !important;
+  height: 64px !important;
   object-fit: contain;
   flex-shrink: 0;
-  filter: none;
+  filter: none !important;
 }
 
 [data-theme="dark"] .auth-logo-svg {
-  filter: none;
+  filter: none !important;
 }
 
 .auth-logo p {
