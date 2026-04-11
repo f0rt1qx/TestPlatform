@@ -84,6 +84,7 @@ foreach (['public/js/config.js', 'public/js/app.js', 'public/js/anticheat.js', '
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="src/favicon.ico" type="image/x-icon">
 <title>Диагностика — Sapienta</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
