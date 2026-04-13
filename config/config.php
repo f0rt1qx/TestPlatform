@@ -2,11 +2,11 @@
 
 
 
-define('DB_HOST',    getenv('DB_HOST')    ?: 'localhost');
+define('DB_HOST',    getenv('DB_HOST')    ?: 'sql100.infinityfree.com');
 define('DB_PORT',    getenv('DB_PORT')    ?: '3306');
-define('DB_NAME',    getenv('DB_NAME')    ?: 'test_platform');
-define('DB_USER',    getenv('DB_USER')    ?: 'root');
-define('DB_PASS',    getenv('DB_PASS')    ?: '');
+define('DB_NAME',    getenv('DB_NAME')    ?: 'if0_41654195_testplatform');
+define('DB_USER',    getenv('DB_USER')    ?: 'if0_41654195');
+define('DB_PASS',    getenv('DB_PASS')    ?: 'gAW3XYQbaw');
 define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
 
 
