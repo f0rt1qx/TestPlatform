@@ -1,6 +1,6 @@
 services:
   - type: web
     name: test-platform
-    env: php
-    startCommand: heroku-php-apache2
+    env: docker
+    dockerfilePath: Dockerfile
     plan: free
