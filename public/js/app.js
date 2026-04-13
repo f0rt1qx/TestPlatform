@@ -148,15 +148,16 @@ const API = {
   async login(username, password) {
     await this._freshCsrf();
     const csrfVal = localStorage.getItem('csrf_token');
-    if (!csrfVal) throw new Error('Не удалось получить CSRF токен');
-    return this.post('/auth.php?action=login', { login: username, password, csrf_token: csrfVal });
+    // CSRF token is optional for login (server doesn't validate it)
+    // but we still try to get one for subsequent requests
+    return this.post('/auth.php?action=login', { login: username, password, csrf_token: csrfVal || '' });
   },
 
   async register(regData) {
     await this._freshCsrf();
     const csrfVal = localStorage.getItem('csrf_token');
-    if (!csrfVal) throw new Error('Не удалось получить CSRF токен');
-    return this.post('/auth.php?action=register', { ...regData, csrf_token: csrfVal });
+    // CSRF token is optional for register
+    return this.post('/auth.php?action=register', { ...regData, csrf_token: csrfVal || '' });
   },
 
   logout() { return this.post('/auth.php?action=logout', {}); },
