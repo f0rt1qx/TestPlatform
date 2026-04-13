@@ -10,7 +10,7 @@ date_default_timezone_set('Europe/Moscow');
 
 if (APP_DEBUG) {
     error_reporting(E_ALL);
-    ini_set('display_errors', 1);
+    ini_set('display_errors', 0);  // Не выводим в браузер
     ini_set('log_errors', 1);
     ini_set('error_log', __DIR__ . '/../logs/error.log');
 } else {
@@ -133,3 +133,19 @@ function tap(mixed $value, callable $callback): mixed {
     $callback($value);
     return $value;
 }
+
+// Глобальная обработка необработанных ошибок
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    if (!(error_reporting() & $errno)) return false;
+    
+    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+              strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    
+    if ($isAjax && strpos($errfile, '/api/') !== false) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Server error: ' . $errstr]);
+        exit;
+    }
+    
+    return false;
+});
