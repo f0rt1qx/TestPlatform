@@ -3,6 +3,8 @@ var AntiCheat = (function() {
   function AntiCheat(cfg) {
     this.attemptId     = cfg.attemptId;
     this.onTerminate   = cfg.onTerminate || function() {};
+    this.onTabSwitch   = cfg.onTabSwitch || function() {};
+    this.debug         = cfg.debug || false;
     this.tabSwitches   = 0;
     this.MAX_SWITCHES  = 3;
     this._terminated   = false;
@@ -21,7 +23,8 @@ var AntiCheat = (function() {
     this._monitorVisibility();
     this._monitorFocusLoss();
     this._setupBeforeUnload();
-    this._scheduleFlush();
+    this._startFlushTimer();
+    this._initLogQueue();
 
     if (this.tabSwitches >= this.MAX_SWITCHES) {
       this._terminated = true;
@@ -32,8 +35,17 @@ var AntiCheat = (function() {
 
   AntiCheat.prototype.stop = function() {
     this._active = false;
-    this._sendPendingLogs();
+    this._flush();
     clearInterval(this._flushTimer);
+  };
+
+  AntiCheat.prototype._initLogQueue = function() {
+    this._logQueue = this._logQueue || [];
+  };
+
+  AntiCheat.prototype._queueLog = function(type, eventData, sev) {
+    this._initLogQueue();
+    this._logQueue.push({ event_type: type, data: eventData || {}, severity: sev || 'low' });
   };
 
   AntiCheat.prototype.recordQuestionStart = function() {
@@ -60,7 +72,7 @@ var AntiCheat = (function() {
         ctx._queueLog('copy_attempt', { key: ev.key }, 'low');
       }
       const devTools = ev.key === 'F12' || (ev.ctrlKey && ev.shiftKey && 'ijc'.indexOf(ev.key.toLowerCase()) !== -1);
-      if (devTools) {
+      if (devTools && !ctx.debug) {
         ev.preventDefault();
         ctx._queueLog('devtools_open', {}, 'high');
       }
@@ -101,20 +113,21 @@ var AntiCheat = (function() {
     const ctx = this;
     window.addEventListener('beforeunload', function(ev) {
       if (!ctx._active) return;
-      ctx._sendPendingLogs();
+      ctx._flush();
       ev.preventDefault();
       ev.returnValue = '';
     });
   };
 
   AntiCheat.prototype._onTabSwitch = function() {
+    this.onTabSwitch(this.tabSwitches);
     if (this.tabSwitches >= this.MAX_SWITCHES) {
       this._terminated = true;
       this._active = false;
-      this._sendPendingLogs();
+      this._flush();
       this.onTerminate();
     } else {
-      this._renderWarningModal(this.tabSwitches);
+      this._showModal(this.tabSwitches);
     }
   };
 

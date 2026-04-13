@@ -20,6 +20,111 @@
     .cheat-score.safe { color: var(--success); }
     .cheat-score.moderate { color: var(--warning); }
     .cheat-score.danger { color: var(--danger); }
+
+    /* Import modal styles */
+    .import-warning {
+      background: #fffbeb;
+      border: 1px solid #fbbf24;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+    .import-warning strong { color: #b45309; font-size: .85rem; }
+    .import-warning ul { margin: 8px 0 0 20px; color: #92400e; font-size: .85rem; line-height: 1.6; }
+    .import-warning code { background: rgba(180,83,0,.1); padding: 1px 5px; border-radius: 4px; font-size: .8rem; }
+
+    [data-theme="dark"] .import-warning {
+      background: rgba(251,191,36,.08);
+      border-color: rgba(251,191,36,.25);
+    }
+    [data-theme="dark"] .import-warning strong { color: #fbbf24; }
+    [data-theme="dark"] .import-warning ul { color: #d4a054; }
+    [data-theme="dark"] .import-warning code { background: rgba(251,191,36,.12); }
+
+    .file-upload-area { position: relative; }
+    .file-upload-area input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .file-upload-placeholder {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 18px 20px;
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      background: var(--bg-light);
+      color: var(--muted);
+      font-size: .9rem;
+      transition: all .2s ease;
+      pointer-events: none;
+    }
+    .file-upload-placeholder svg { opacity: .5; flex-shrink: 0; }
+    .file-upload-area:hover .file-upload-placeholder {
+      border-color: var(--primary, #4f46e5);
+      background: rgba(79,70,229,.04);
+    }
+    .file-upload-area:hover .file-upload-placeholder svg { opacity: .8; }
+    .file-upload-name {
+      padding: 10px 14px;
+      background: var(--bg-light);
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .file-upload-name::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--success, #22c55e);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Create test modal styles */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+    .form-row-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+    .form-checks {
+      display: flex;
+      gap: 24px;
+      padding: 12px 0;
+    }
+    .form-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: .9rem;
+      color: var(--text-gray);
+    }
+    .form-check input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary, #4f46e5);
+      cursor: pointer;
+    }
+    @media (max-width: 520px) {
+      .form-row { grid-template-columns: 1fr; }
+      .form-checks { flex-direction: column; gap: 12px; }
+    }
   </style>
 </head>
 <body>
@@ -39,7 +144,7 @@
           <select data-language-selector aria-label="Выбор языка"></select>
         </div>
       </li>
-      <li><button class="theme-toggle" data-theme-toggle title="Тема"><img src="https://img.icons8.com/ios/18/crescent-moon.png" alt="" width="18" height="18"></button></li>
+      <li><button class="theme-toggle" data-theme-toggle title="Тема"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg></button></li>
     </ul>
     <button class="burger" id="burgerBtn">
       <span></span><span></span><span></span>
@@ -52,11 +157,11 @@
 
   <!-- Tabs -->
   <div class="admin-tabs">
-    <button class="admin-tab active" onclick="switchTab('users')"><img src="https://img.icons8.com/ios/18/users.png" alt="" width="18" height="18"> Пользователи</button>
-    <button class="admin-tab" onclick="switchTab('tests')"><img src="https://img.icons8.com/ios/18/test-document.png" alt="" width="18" height="18"> Тесты</button>
-    <button class="admin-tab" onclick="switchTab('logs')"><img src="https://img.icons8.com/ios/18/log.png" alt="" width="18" height="18"> Логи</button>
-    <button class="admin-tab" onclick="switchTab('eye_tracking')"><img src="https://img.icons8.com/ios/18/visible.png" alt="" width="18" height="18"> Eye-tracking</button>
-    <button class="admin-tab" onclick="switchTab('results')"><img src="https://img.icons8.com/ios/18/bar-chart.png" alt="" width="18" height="18"> Результаты</button>
+    <button class="admin-tab active" onclick="switchTab('users')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg> Пользователи</button>
+    <button class="admin-tab" onclick="switchTab('tests')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg> Тесты</button>
+    <button class="admin-tab" onclick="switchTab('logs')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg> Логи</button>
+    <button class="admin-tab" onclick="switchTab('eye_tracking')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.964 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg> Eye-tracking</button>
+    <button class="admin-tab" onclick="switchTab('results')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg> Результаты</button>
   </div>
 
   <!-- USERS TAB -->
@@ -72,8 +177,8 @@
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
       <h3>Управление тестами</h3>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <button class="btn btn-outline" onclick="downloadTemplate()">📥 Шаблон CSV</button>
-        <button class="btn btn-primary" onclick="openModal('importTestModal')">📤 Импорт CSV</button>
+        <button class="btn btn-outline" onclick="downloadTemplate()"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg> Шаблон CSV</button>
+        <button class="btn btn-primary" onclick="openModal('importTestModal')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" /></svg> Импорт CSV</button>
         <button class="btn btn-primary" onclick="openModal('createTestModal')">+ Создать тест</button>
       </div>
     </div>
@@ -118,8 +223,8 @@
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
       <h3>Все результаты</h3>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <a href="api/admin.php?action=export_csv" class="btn btn-outline btn-sm">📥 Экспорт CSV</a>
-        <a href="api/admin.php?action=export_pdf" class="btn btn-primary btn-sm" target="_blank">📄 Экспорт PDF</a>
+        <a href="api/admin.php?action=export_csv" class="btn btn-outline btn-sm"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg> Экспорт CSV</a>
+        <a href="api/admin.php?action=export_pdf" class="btn btn-primary btn-sm" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 0v9.75m0-9.75c0-.621.504-1.125 1.125-1.125h.75c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.75m9-10.125v6.375c0 1.035-.75 1.875-1.688 2.063a48.128 48.128 0 0 1-5.062.469c-.75.075-1.5-.375-1.5-1.125V9.375c0-.75.75-1.2 1.5-1.125 1.688.15 3.375.3 5.063.469.937.187 1.687 1.031 1.687 2.063Z" /></svg> Экспорт PDF</a>
       </div>
     </div>
     <div id="resultsTable" class="table-wrap"><div class="page-loader"><div class="spinner"></div></div></div>
@@ -128,137 +233,261 @@
 
 <!-- MODAL: Create Test -->
 <div class="modal-overlay hidden" id="createTestModal">
-  <div class="modal" style="max-width:640px;">
+  <div class="modal" style="max-width:680px;">
     <div class="modal-header">
       <div class="modal-title">Создать новый тест</div>
       <button class="modal-close" onclick="closeModal('createTestModal')">✕</button>
     </div>
     <form id="createTestForm">
-      <div class="form-group">
-        <label class="form-label">Название *</label>
-        <input class="form-control" id="testTitle" placeholder="Введите название теста" required>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Описание</label>
-        <textarea class="form-control" id="testDesc" rows="3" placeholder="Краткое описание..."></textarea>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">Время (мин)</label>
-          <input class="form-control" id="testTime" type="number" value="30" min="1" max="300">
+          <label class="form-label">Название</label>
+          <input class="form-control" id="testTitle" placeholder="Введите название теста" required>
         </div>
         <div class="form-group">
-          <label class="form-label">Попытки</label>
-          <input class="form-control" id="testAttempts" type="number" value="1" min="1" max="10">
+          <label class="form-label">Описание</label>
+          <textarea class="form-control" id="testDesc" rows="3" placeholder="Краткое описание теста..."></textarea>
         </div>
-        <div class="form-group">
-          <label class="form-label">Проходной % </label>
-          <input class="form-control" id="testPassScore" type="number" value="60" min="1" max="100">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+              Время (мин)
+            </label>
+            <input class="form-control" id="testTime" type="number" value="30" min="1" max="300">
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182" /></svg>
+              Попытки
+            </label>
+            <input class="form-control" id="testAttempts" type="number" value="1" min="1" max="10">
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+              Проходной %
+            </label>
+            <input class="form-control" id="testPassScore" type="number" value="60" min="1" max="100">
+          </div>
+        </div>
+
+        <div class="form-checks">
+          <label class="form-check">
+            <input type="checkbox" id="shuffleQ" checked>
+            <span>Перемешивать вопросы</span>
+          </label>
+          <label class="form-check">
+            <input type="checkbox" id="shuffleA" checked>
+            <span>Перемешивать ответы</span>
+          </label>
         </div>
       </div>
-      <div style="display:flex;gap:20px;margin-bottom:20px;">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-          <input type="checkbox" id="shuffleQ" checked> Перемешивать вопросы
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-          <input type="checkbox" id="shuffleA" checked> Перемешивать ответы
-        </label>
-      </div>
-      <div style="display:flex;gap:12px;justify-content:flex-end;">
+
+      <div class="modal-footer">
         <button type="button" class="btn btn-ghost" onclick="closeModal('createTestModal')">Отмена</button>
-        <button type="submit" class="btn btn-primary" id="createTestBtn">Создать тест</button>
+        <button type="submit" class="btn btn-primary" id="createTestBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+          Создать тест
+        </button>
       </div>
     </form>
   </div>
 </div>
 
 <!-- MODAL: Import CSV -->
+<style>
+  #importTestModal .modal {
+    max-width: 720px !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  @media (max-width: 768px) {
+    #importTestModal .modal {
+      max-width: calc(100vw - 32px) !important;
+    }
+  }
+</style>
 <div class="modal-overlay hidden" id="importTestModal">
-  <div class="modal" style="max-width:560px;">
+  <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">📤 Импорт теста из CSV</div>
+      <div class="modal-title">Импорт теста из CSV</div>
       <button class="modal-close" onclick="closeModal('importTestModal')">✕</button>
     </div>
-    
-    <div style="padding:0 0 20px;">
+
+    <div class="modal-body">
       <p class="text-muted" style="font-size:.9rem;margin-bottom:16px;">
         Загрузите CSV файл с вопросами и ответами. Каждый вопрос должен быть в отдельной строке.
       </p>
-      
-      <div style="background:var(--bg-input);border-radius:8px;padding:16px;margin-bottom:16px;">
-        <strong style="font-size:.85rem;text-transform:uppercase;color:var(--muted);">Формат CSV:</strong>
-        <code style="display:block;font-size:.75rem;color:var(--muted);margin-top:8px;word-break:break-all;">
+
+      <div style="background:var(--bg-light);border:1px solid var(--border-light);border-radius:8px;padding:14px;margin-bottom:16px;">
+        <strong style="font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Формат CSV:</strong>
+        <code style="display:block;font-size:.75rem;color:var(--text-gray);margin-top:8px;word-break:break-all;line-height:1.5;">
           test_title, test_description, time_limit, max_attempts, pass_score, question_text, question_type, points, answer_text, is_correct
         </code>
       </div>
-      
-      <div style="background:#fffbeb;border:1px solid #fbbf24;border-radius:8px;padding:14px;margin-bottom:16px;">
-        <strong style="color:#b45309;font-size:.85rem;">⚠️ Важно:</strong>
-        <ul style="margin:8px 0 0 20px;color:#92400e;font-size:.85rem;line-height:1.6;">
+
+      <div class="import-warning">
+        <strong>⚠️ Важно:</strong>
+        <ul>
           <li>Файл должен быть в формате CSV (UTF-8)</li>
           <li>Все строки одного теста должны идти подряд</li>
           <li><code>question_type</code>: <code>single</code> (один ответ) или <code>multiple</code> (несколько)</li>
           <li><code>is_correct</code>: <code>1</code> для правильного ответа, <code>0</code> для неправильного</li>
         </ul>
       </div>
-      
+
       <form id="importForm" enctype="multipart/form-data">
         <div class="form-group">
-          <label class="form-label">Выберите CSV файл *</label>
-          <input type="file" id="csvFile" accept=".csv" required 
-                 style="display:block;width:100%;padding:10px;border:2px dashed var(--border);border-radius:8px;background:var(--bg-input);cursor:pointer;">
+          <label class="form-label">Выберите CSV файл</label>
+          <div class="file-upload-area">
+            <input type="file" id="csvFile" accept=".csv" required>
+            <div class="file-upload-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" /></svg>
+              <span>Нажмите для выбора файла</span>
+            </div>
+            <div class="file-upload-name hidden"></div>
+          </div>
         </div>
-        
+
         <div id="importProgress" class="hidden" style="text-align:center;padding:20px;">
-          <div class="spinner" style="width:32px;height:32px;border-width:3px;"></div>
+          <div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto;"></div>
           <p class="text-muted" style="margin-top:12px;">Импорт тестов...</p>
         </div>
-        
+
         <div id="importResult" class="hidden" style="margin-top:16px;"></div>
-        
-        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
-          <button type="button" class="btn btn-ghost" onclick="closeModal('importTestModal')">Отмена</button>
-          <button type="submit" class="btn btn-primary" id="importBtn">Импортировать</button>
-        </div>
       </form>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('importTestModal')">Отмена</button>
+      <button type="submit" class="btn btn-primary" id="importBtn" form="importForm">Импортировать</button>
     </div>
   </div>
 </div>
 
 <!-- MODAL: Add Question -->
+<style>
+  #addQuestionModal .modal {
+    max-width: 700px !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  @media (max-width: 768px) {
+    #addQuestionModal .modal { max-width: calc(100vw - 32px) !important; }
+  }
+
+  .answer-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    animation: fadeIn 0.2s ease;
+  }
+  .answer-row .form-control { flex: 1; margin: 0; }
+  .answer-correct {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    font-size: .85rem;
+    color: var(--text-gray);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .answer-correct input { accent-color: var(--primary, #4f46e5); cursor: pointer; width: 16px; height: 16px; }
+  .answer-remove {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    background: var(--bg-light);
+    color: var(--text-gray);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all .2s ease;
+    font-size: 1rem;
+  }
+  .answer-remove:hover { background: var(--danger); color: #fff; }
+  .answers-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .btn-add-answer {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: .85rem;
+    border-radius: 6px;
+    border: 1px dashed var(--border);
+    background: none;
+    color: var(--text-gray);
+    cursor: pointer;
+    transition: all .2s ease;
+  }
+  .btn-add-answer:hover {
+    border-color: var(--primary, #4f46e5);
+    color: var(--primary, #4f46e5);
+    background: rgba(79,70,229,.04);
+  }
+  .btn-add-answer svg { flex-shrink: 0; }
+</style>
 <div class="modal-overlay hidden" id="addQuestionModal">
-  <div class="modal" style="max-width:680px;">
+  <div class="modal">
     <div class="modal-header">
       <div class="modal-title">Добавить вопрос</div>
       <button class="modal-close" onclick="closeModal('addQuestionModal')">✕</button>
     </div>
     <form id="addQuestionForm">
       <input type="hidden" id="aqTestId">
-      <div class="form-group">
-        <label class="form-label">Вопрос *</label>
-        <textarea class="form-control" id="aqText" rows="3" required placeholder="Текст вопроса..."></textarea>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">Тип вопроса</label>
-          <select class="form-control" id="aqType">
-            <option value="single">Один правильный</option>
-            <option value="multiple">Несколько правильных</option>
-          </select>
+          <label class="form-label">Вопрос</label>
+          <textarea class="form-control" id="aqText" rows="3" required placeholder="Текст вопроса..."></textarea>
         </div>
-        <div class="form-group">
-          <label class="form-label">Баллов</label>
-          <input class="form-control" id="aqPoints" type="number" value="1" min="1">
+        <div class="form-row form-row-2">
+          <div class="form-group">
+            <label class="form-label">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
+              Тип вопроса
+            </label>
+            <select class="form-control" id="aqType">
+              <option value="single">Один правильный</option>
+              <option value="multiple">Несколько правильных</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14" style="display:inline;vertical-align:middle;margin-right:4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+              Баллов
+            </label>
+            <input class="form-control" id="aqPoints" type="number" value="1" min="1">
+          </div>
         </div>
+
+        <div class="answers-header">
+          <label class="form-label" style="margin:0;">Варианты ответов</label>
+          <button type="button" class="btn-add-answer" onclick="addAnswerRow()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+            Добавить
+          </button>
+        </div>
+        <div id="answersContainer"></div>
       </div>
 
-      <label class="form-label">Варианты ответов *</label>
-      <div id="answersContainer"></div>
-      <button type="button" class="btn btn-ghost btn-sm mt-1" onclick="addAnswerRow()">+ Добавить вариант</button>
-
-      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
+      <div class="modal-footer">
         <button type="button" class="btn btn-ghost" onclick="closeModal('addQuestionModal')">Отмена</button>
-        <button type="submit" class="btn btn-primary" id="addQBtn">Добавить</button>
+        <button type="submit" class="btn btn-primary" id="addQBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+          Добавить
+        </button>
       </div>
     </form>
   </div>
@@ -408,6 +637,21 @@
   });
 
   // Import CSV form
+
+  // Show filename on select
+  document.getElementById('csvFile').addEventListener('change', function() {
+    const placeholder = this.closest('.file-upload-area').querySelector('.file-upload-placeholder');
+    const nameEl = this.closest('.file-upload-area').querySelector('.file-upload-name');
+    if (this.files.length > 0) {
+      placeholder.classList.add('hidden');
+      nameEl.classList.remove('hidden');
+      nameEl.textContent = this.files[0].name;
+    } else {
+      placeholder.classList.remove('hidden');
+      nameEl.classList.add('hidden');
+    }
+  });
+
   document.getElementById('importForm').addEventListener('submit', async ev => {
     ev.preventDefault();
     
@@ -531,13 +775,14 @@
     const container = document.getElementById('answersContainer');
     const idx = container.children.length;
     const row = document.createElement('div');
-    row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:center;';
+    row.className = 'answer-row';
     row.innerHTML = `
-      <input class="form-control" placeholder="Вариант ответа ${idx+1}" name="ans_text_${idx}" style="flex:1;">
-      <label style="display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:.85rem;cursor:pointer;">
-        <input type="checkbox" name="ans_correct_${idx}"> Верный
+      <input class="form-control" placeholder="Вариант ответа ${idx + 1}" name="ans_text_${idx}">
+      <label class="answer-correct">
+        <input type="checkbox" name="ans_correct_${idx}">
+        Верный
       </label>
-      <button type="button" class="btn btn-sm btn-danger" onclick="this.parentNode.remove()">✕</button>
+      <button type="button" class="answer-remove" onclick="this.closest('.answer-row').remove()">✕</button>
     `;
     container.appendChild(row);
   }
@@ -764,7 +1009,7 @@
                 <td style="font-size:.85rem;">${avgDuration}ms</td>
                 <td>
                   <button class="btn btn-sm btn-outline" onclick="viewFixationDetails(${log.id})" style="padding:6px 12px;font-size:.8rem;">
-                    <img src="https://img.icons8.com/ios/18/visible.png" alt="" width="18" height="18"> Детали
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.964 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg> Детали
                   </button>
                 </td>
               </tr>

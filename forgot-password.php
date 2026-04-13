@@ -39,12 +39,6 @@
       <p class="text-muted" style="font-size:.85rem;margin-top:8px;" id="devNote"></p>
     </div>
 
-    <div class="text-center mt-3">
-      <a href="login-otp.php" style="color: var(--gradient-start); font-weight: 600; font-size: 0.9rem;">
-        <img src="https://img.icons8.com/ios/18/key--v1.png" alt="" width="18" height="18"> Войти по коду (без пароля)
-      </a>
-    </div>
-
     <div class="text-center">
       <a href="login.php" class="btn btn-ghost btn-sm">← Вернуться ко входу</a>
     </div>

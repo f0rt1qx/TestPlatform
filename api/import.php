@@ -147,34 +147,27 @@ function importFromCSVGenerator(string $filePath, int $adminId): array {
         'errors' => [],
     ];
 
-    // Generator: read and validate rows one at a time
-    $rowGenerator = (function () use ($handle, $headers): iterable {
-        $rowNum = 1;
-        while (($row = fgetcsv($handle)) !== false) {
-            $rowNum++;
-            if (count(array_filter($row, 'trim')) === 0) continue;
-            yield $rowNum => array_combine($headers, $row);
-        }
-    })();
-
-    // Accumulate grouped data from generator
     $grouped = [];
-    foreach ($rowGenerator as $rowNum => $data) {
+    $rowNum = 1;
+    while (($row = fgetcsv($handle)) !== false) {
+        $rowNum++;
+        if (count(array_filter($row, 'trim')) === 0) continue;
+        
+        $data = array_combine($headers, $row);
         $testTitle = trim($data['test_title'] ?? '');
         $questionText = trim($data['question_text'] ?? '');
         $answerText = trim($data['answer_text'] ?? '');
 
-        // Yield errors instead of throwing
         if (!$testTitle) {
-            yield ['error' => "Строка {$rowNum}: Пустое название теста"];
+            $stats['errors'][] = "Строка {$rowNum}: Пустое название теста";
             continue;
         }
         if (!$questionText) {
-            yield ['error' => "Строка {$rowNum}: Пустой текст вопроса"];
+            $stats['errors'][] = "Строка {$rowNum}: Пустой текст вопроса";
             continue;
         }
         if (!$answerText) {
-            yield ['error' => "Строка {$rowNum}: Пустой текст ответа"];
+            $stats['errors'][] = "Строка {$rowNum}: Пустой текст ответа";
             continue;
         }
 
@@ -205,81 +198,69 @@ function importFromCSVGenerator(string $filePath, int $adminId): array {
         return ['tests_created' => 0, 'questions_created' => 0, 'answers_created' => 0, 'errors' => ['Нет данных для импорта']];
     }
 
-    // Generator: process grouped data one entry at a time
     $currentTest = null;
     $currentTestId = null;
     $questionOrder = 0;
 
-    $processGenerator = (function () use ($grouped, $db, $testModel, $adminId, &$stats, &$currentTest, &$currentTestId, &$questionOrder): iterable {
-        foreach ($grouped as ['test_title' => $testTitle, 'test_description' => $description, 'time_limit' => $timeLimit, 'max_attempts' => $maxAttempts, 'pass_score' => $passScore, 'question_type' => $questionType, 'points' => $points, 'question_text' => $questionText, 'answers' => $answers]) {
+    foreach ($grouped as ['test_title' => $testTitle, 'test_description' => $description, 'time_limit' => $timeLimit, 'max_attempts' => $maxAttempts, 'pass_score' => $passScore, 'question_type' => $questionType, 'points' => $points, 'question_text' => $questionText, 'answers' => $answers]) {
 
-            if ($currentTest !== $testTitle) {
-                try {
-                    $stmt = $db->prepare('SELECT id FROM tests WHERE title = ? LIMIT 1');
-                    $stmt->execute([$testTitle]);
-                    $existing = $stmt->fetch();
+        if ($currentTest !== $testTitle) {
+            try {
+                $stmt = $db->prepare('SELECT id FROM tests WHERE title = ? LIMIT 1');
+                $stmt->execute([$testTitle]);
+                $existing = $stmt->fetch();
 
-                    if ($existing) {
-                        $currentTestId = (int)$existing['id'];
-                    } else {
-                        $testData = [
-                            'title' => $testTitle,
-                            'description' => $description,
-                            'time_limit' => $timeLimit,
-                            'max_attempts' => $maxAttempts,
-                            'pass_score' => $passScore,
-                            'shuffle_questions' => 1,
-                            'shuffle_answers' => 1,
-                            'created_by' => $adminId,
-                        ];
-                        $currentTestId = $testModel->create($testData);
-                        $stats['tests_created']++;
-                        yield ['info' => "Создан тест: {$testTitle}"];
-                    }
-
-                    $currentTest = $testTitle;
-                    $questionOrder = 0;
-                } catch (Exception $e) {
-                    yield ['error' => "Тест '{$testTitle}': " . $e->getMessage()];
-                    continue;
+                if ($existing) {
+                    $currentTestId = (int)$existing['id'];
+                } else {
+                    $testData = [
+                        'title' => $testTitle,
+                        'description' => $description,
+                        'time_limit' => $timeLimit,
+                        'max_attempts' => $maxAttempts,
+                        'pass_score' => $passScore,
+                        'shuffle_questions' => 1,
+                        'shuffle_answers' => 1,
+                        'created_by' => $adminId,
+                    ];
+                    $currentTestId = $testModel->create($testData);
+                    $stats['tests_created']++;
                 }
-            }
 
-            if (empty($answers)) {
-                yield ['error' => "Вопрос '{$testTitle}|||{$questionText}': нет вариантов ответа"];
+                $currentTest = $testTitle;
+                $questionOrder = 0;
+            } catch (Exception $e) {
+                $stats['errors'][] = "Тест '{$testTitle}': " . $e->getMessage();
                 continue;
             }
-
-            try {
-                $questionData = [
-                    'question_text' => $questionText,
-                    'question_type' => $questionType,
-                    'points' => $points,
-                    'order_num' => $questionOrder++,
-                ];
-
-                $questionId = $testModel->addQuestion($currentTestId, $questionData);
-                $stats['questions_created']++;
-                yield ['info' => "Добавлен вопрос: {$questionText}"];
-
-                foreach ($answers as $idx => ['answer_text' => $answerText, 'is_correct' => $isCorrect]) {
-                    $testModel->addAnswer($questionId, [
-                        'answer_text' => $answerText,
-                        'is_correct' => $isCorrect,
-                        'order_num' => $idx,
-                    ]);
-                    $stats['answers_created']++;
-                }
-            } catch (Exception $e) {
-                yield ['error' => "Вопрос '{$testTitle}|||{$questionText}': " . $e->getMessage()];
-            }
         }
-    })();
 
-    // Consume the process generator, collecting errors
-    foreach ($processGenerator as $yielded) {
-        if (isset($yielded['error'])) {
-            $stats['errors'][] = $yielded['error'];
+        if (empty($answers)) {
+            $stats['errors'][] = "Вопрос '{$testTitle}': нет вариантов ответа";
+            continue;
+        }
+
+        try {
+            $questionData = [
+                'question_text' => $questionText,
+                'question_type' => $questionType,
+                'points' => $points,
+                'order_num' => $questionOrder++,
+            ];
+
+            $questionId = $testModel->addQuestion($currentTestId, $questionData);
+            $stats['questions_created']++;
+
+            foreach ($answers as $idx => ['answer_text' => $answerText, 'is_correct' => $isCorrect]) {
+                $testModel->addAnswer($questionId, [
+                    'answer_text' => $answerText,
+                    'is_correct' => $isCorrect,
+                    'order_num' => $idx,
+                ]);
+                $stats['answers_created']++;
+            }
+        } catch (Exception $e) {
+            $stats['errors'][] = "Вопрос '{$testTitle}||{$questionText}': " . $e->getMessage();
         }
     }
 

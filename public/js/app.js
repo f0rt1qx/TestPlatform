@@ -119,7 +119,6 @@ const API = {
   _csrfPromise: null,
 
   async _ensureCsrf() {
-    if (localStorage.getItem('csrf_token')) return;
     if (this._csrfPromise) { await this._csrfPromise; return; }
     this._csrfPromise = (async () => {
       try {
@@ -130,7 +129,9 @@ const API = {
           const ct = resp.headers.get('content-type') || '';
           if (ct.includes('application/json')) {
             const d = await resp.json();
-            d.csrf_token && localStorage.setItem('csrf_token', d.csrf_token);
+            if (d.csrf_token) {
+              localStorage.setItem('csrf_token', d.csrf_token);
+            }
           }
         }
       } catch (e) { /* ignore */ }
@@ -139,15 +140,22 @@ const API = {
     await this._csrfPromise;
   },
 
-  async login(username, password) {
+  async _freshCsrf() {
+    this._csrfPromise = null;
     await this._ensureCsrf();
+  },
+
+  async login(username, password) {
+    await this._freshCsrf();
     const csrfVal = localStorage.getItem('csrf_token');
+    if (!csrfVal) throw new Error('Не удалось получить CSRF токен');
     return this.post('/auth.php?action=login', { login: username, password, csrf_token: csrfVal });
   },
 
   async register(regData) {
-    await this._ensureCsrf();
+    await this._freshCsrf();
     const csrfVal = localStorage.getItem('csrf_token');
+    if (!csrfVal) throw new Error('Не удалось получить CSRF токен');
     return this.post('/auth.php?action=register', { ...regData, csrf_token: csrfVal });
   },
 
@@ -303,6 +311,51 @@ function openModal(id) {
 
 function closeModal(id) {
   document.getElementById(id)?.classList.add('hidden');
+
+  // Reset import modal state
+  if (id === 'importTestModal') {
+    const form = document.getElementById('importForm');
+    if (form) form.reset();
+    const placeholder = document.querySelector('.file-upload-placeholder');
+    const nameEl = document.querySelector('.file-upload-name');
+    const result = document.getElementById('importResult');
+    const progress = document.getElementById('importProgress');
+    if (placeholder) placeholder.classList.remove('hidden');
+    if (nameEl) { nameEl.classList.add('hidden'); nameEl.textContent = ''; }
+    if (result) { result.classList.add('hidden'); result.innerHTML = ''; }
+    if (progress) progress.classList.add('hidden');
+    const btn = document.getElementById('importBtn');
+    if (btn) { btn.disabled = false; btn.textContent = 'Импортировать'; }
+  }
+
+  // Reset create test modal state
+  if (id === 'createTestModal') {
+    const form = document.getElementById('createTestForm');
+    if (form) {
+      form.reset();
+      document.getElementById('testTime').value = '30';
+      document.getElementById('testAttempts').value = '1';
+      document.getElementById('testPassScore').value = '60';
+    }
+    const btn = document.getElementById('createTestBtn');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg> Создать тест';
+    }
+  }
+
+  // Reset add question modal state
+  if (id === 'addQuestionModal') {
+    const form = document.getElementById('addQuestionForm');
+    if (form) form.reset();
+    const container = document.getElementById('answersContainer');
+    if (container) container.innerHTML = '';
+    const btn = document.getElementById('addQBtn');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg> Добавить';
+    }
+  }
 }
 
 document.addEventListener('click', e => {

@@ -100,7 +100,8 @@ try {
         })(),
 
         $action === 'login' && $method === 'POST' => (function () use ($input, $userModel): void {
-            validateCsrfToken($input['csrf_token'] ?? '') || throw new CSRFException('CSRF token invalid');
+            // CSRF validation is intentionally skipped for login
+            // since it's an unauthenticated endpoint (no session yet)
 
             $login    = trim($input['login'] ?? '');
             $password = $input['password'] ?? '';

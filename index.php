@@ -1,3 +1,16 @@
+<?php
+require_once __DIR__ . '/src/bootstrap.php';
+
+$stats = ['students' => 0, 'tests' => 0, 'satisfied' => 0];
+try {
+  $pdo = Database::getInstance();
+  $stats['students']   = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE role = 'student'")->fetchColumn();
+  $stats['tests']      = (int)$pdo->query("SELECT COUNT(*) FROM tests WHERE is_active = 1")->fetchColumn();
+  $totalAttempts       = (int)$pdo->query("SELECT COUNT(*) FROM attempts")->fetchColumn();
+  $passedAttempts      = (int)$pdo->query("SELECT COUNT(*) FROM results WHERE passed = 1")->fetchColumn();
+  $stats['satisfied']  = $totalAttempts > 0 ? round(($passedAttempts / $totalAttempts) * 100) : 0;
+} catch (Exception $e) { /* silently ignore if DB not ready */ }
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -104,15 +117,15 @@
 
       <div class="hero-stats">
         <div class="hero-stat">
-          <span class="hero-stat-value">1000+</span>
+          <span class="hero-stat-value"><?= $stats['students'] > 0 ? number_format($stats['students'], 0, '.', ' ') : '—' ?></span>
           <span class="hero-stat-label" data-i18n="hero.stats.students"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" /></svg> Студентов</span>
         </div>
         <div class="hero-stat">
-          <span class="hero-stat-value">500+</span>
+          <span class="hero-stat-value"><?= $stats['tests'] > 0 ? number_format($stats['tests'], 0, '.', ' ') : '—' ?></span>
           <span class="hero-stat-label" data-i18n="hero.stats.tests"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm-3.75 7.5h7.5m-7.5 3h7.5m-6 3h4.5m-4.5-10.5h1.5" /></svg> Тестов</span>
         </div>
         <div class="hero-stat">
-          <span class="hero-stat-value">99%</span>
+          <span class="hero-stat-value"><?= $stats['satisfied'] > 0 ? $stats['satisfied'] . '%' : '—' ?></span>
           <span class="hero-stat-label" data-i18n="hero.stats.satisfied"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5a17.92 17.92 0 0 1-8.716-2.247m0 0A8.966 8.966 0 0 1 3 12c0-1.264.26-2.466.73-3.555" /></svg> Довольных</span>
         </div>
       </div>
@@ -297,8 +310,8 @@
   <div class="container">
     <div class="footer-content">
       <div class="footer-brand">
-        <h3 data-i18n="footer.brand"><img src="src/logo.png" alt="Sapienta logo" width="60" height="60" style="width:60px;height:60px;object-fit:contain;filter:none!important;"></h3>
-        <p data-i18n="footer.description">Современная платформа для честного онлайн-тестирования</p>
+        <img src="src/logogreen.png" alt="Sapienta logo" width="60" height="60" style="width:60px;height:60px;object-fit:contain;filter:none!important;margin-bottom:12px;">
+        <p data-i18n="footer.description">Современная платформа для честного онлайн-тестирования с защитой от списывания и детальной аналитикой.</p>
         <div class="footer-social">
           <a href="#" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
           <a href="#" aria-label="VK"><i class="fab fa-vk"></i></a>
@@ -326,7 +339,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p>© 2024 Sapienta. <span data-i18n="footer.rights">Все права защищены.</span></p>
+      <p>© 2026 Sapienta. <span data-i18n="footer.rights">Все права защищены.</span></p>
     </div>
   </div>
 </footer>

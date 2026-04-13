@@ -1,0 +1,93 @@
+<div id="erd" style="padding:8px 0"></div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"Anthropic Sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '13px',
+    fontFamily: '"Anthropic Sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+  },
+});
+const { svg } = await mermaid.render('erd-svg', `erDiagram
+  USERS ||--o{ TESTS : creates
+  USERS ||--o{ ATTEMPTS : makes
+  USERS ||--o{ EVENT_LOGS : generates
+  TESTS ||--o{ QUESTIONS : contains
+  TESTS ||--o{ ATTEMPTS : has
+  QUESTIONS ||--o{ ANSWERS : has
+  ATTEMPTS ||--o{ USER_ANSWERS : stores
+  ATTEMPTS ||--o{ EVENT_LOGS : linked
+
+  USERS {
+    int id PK
+    string username
+    string email
+    string password_hash
+    enum role
+    tinyint is_blocked
+  }
+  TESTS {
+    int id PK
+    string title
+    int time_limit
+    int pass_score
+    tinyint shuffle_questions
+    tinyint shuffle_answers
+  }
+  QUESTIONS {
+    int id PK
+    int test_id FK
+    text question_text
+    enum question_type
+    int points
+  }
+  ANSWERS {
+    int id PK
+    int question_id FK
+    text answer_text
+    tinyint is_correct
+  }
+  ATTEMPTS {
+    int id PK
+    int user_id FK
+    int test_id FK
+    enum status
+    timestamp started_at
+    timestamp finished_at
+  }
+  EVENT_LOGS {
+    int id PK
+    int attempt_id FK
+    int user_id FK
+    enum event_type
+    enum severity
+    json event_data
+  }
+`);
+document.getElementById('erd').innerHTML = svg;
+document.querySelectorAll('#erd svg .node').forEach(node => {
+  const firstPath = node.querySelector('path[d]');
+  if (!firstPath) return;
+  const d = firstPath.getAttribute('d');
+  const nums = d.match(/-?[\d.]+/g)?.map(Number);
+  if (!nums || nums.length < 8) return;
+  const xs = [nums[0],nums[2],nums[4],nums[6]];
+  const ys = [nums[1],nums[3],nums[5],nums[7]];
+  const x=Math.min(...xs),y=Math.min(...ys);
+  const w=Math.max(...xs)-x,h=Math.max(...ys)-y;
+  const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+  rect.setAttribute('x',x);rect.setAttribute('y',y);
+  rect.setAttribute('width',w);rect.setAttribute('height',h);
+  rect.setAttribute('rx','8');
+  for(const a of['fill','stroke','stroke-width','class','style'])
+    if(firstPath.hasAttribute(a))rect.setAttribute(a,firstPath.getAttribute(a));
+  firstPath.replaceWith(rect);
+});
+</script>

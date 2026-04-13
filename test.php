@@ -316,7 +316,7 @@ window.AC_TEXT = {
   btn:       'Понятно, продолжить'
 };
 </script>
-<script src="public/js/anticheat.js"></script>
+<script src="public/js/anticheat.js?v=5"></script>
 <script src="public/js/eye-tracker.js"></script>
 <script>
   if (!AuthManager.isLoggedIn()) {
@@ -559,20 +559,14 @@ window.AC_TEXT = {
   function initAntiCheat() {
     antiCheat = new AntiCheat({
       attemptId: attemptId,
-      onTerminate: handleDisqualification
+      onTerminate: handleDisqualification,
+      onTabSwitch: function(count) {
+        addLog('warn', '⚠', 'Смена вкладки — зафиксировано');
+        updateStatusBadge(count);
+      }
     });
     antiCheat.start();
     antiCheat.recordQuestionStart();
-
-    // Hook into anticheat to add log entries
-    var origTrack = AntiCheat.prototype._trackVisibility;
-    // Add log entries on tab switch via override
-    var _origHandle = antiCheat._handleSwitch.bind(antiCheat);
-    antiCheat._handleSwitch = function() {
-      addLog('warn', '⚠', 'Смена вкладки — зафиксировано');
-      updateStatusBadge(antiCheat.tabSwitches);
-      _origHandle();
-    };
   }
 
   // ── EYE-TRACKING ─────────────────────────────────────────────────────────

@@ -48,6 +48,24 @@
       margin-top: 6px;
       font-weight: 600;
     }
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      color: var(--muted, #94a3b8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .2s ease;
+      z-index: 1;
+    }
+    .password-toggle:hover { color: var(--text-dark, #1e293b); }
+    .password-toggle svg { display: block; }
   </style>
 </head>
 <body>
@@ -87,7 +105,14 @@
 
       <div class="form-group">
         <label class="form-label" for="password" data-i18n="auth.register.password">Пароль *</label>
-        <input class="form-control" type="password" id="password" name="password" placeholder="Минимум 8 символов" data-i18n-placeholder="auth.register.password" autocomplete="new-password" required>
+        <div class="input-group" style="position:relative;">
+          <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></span>
+          <input class="form-control" type="password" id="password" name="password" placeholder="Минимум 8 символов" data-i18n-placeholder="auth.register.password" autocomplete="new-password" required style="padding-right:48px;">
+          <button type="button" class="password-toggle" onclick="togglePassword('password', this)" aria-label="Показать пароль">
+            <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.964 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+            <svg class="eye-closed hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
+          </button>
+        </div>
         <div class="strength-bar" id="strengthBar" style="display: none;">
           <div class="strength-fill" id="strengthProgress"></div>
         </div>
@@ -96,7 +121,14 @@
 
       <div class="form-group">
         <label class="form-label" for="password_confirm" data-i18n="auth.register.password-confirm">Подтверждение пароля *</label>
-        <input class="form-control" type="password" id="password_confirm" placeholder="Повторите пароль" data-i18n-placeholder="auth.register.password-confirm" autocomplete="new-password" required>
+        <div class="input-group" style="position:relative;">
+          <span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" /></svg></span>
+          <input class="form-control" type="password" id="password_confirm" placeholder="Повторите пароль" data-i18n-placeholder="auth.register.password-confirm" autocomplete="new-password" required style="padding-right:48px;">
+          <button type="button" class="password-toggle" onclick="togglePassword('password_confirm', this)" aria-label="Показать пароль">
+            <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.964 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+            <svg class="eye-closed hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
+          </button>
+        </div>
       </div>
 
       <div class="form-group" style="display:flex;align-items:flex-start;gap:12px;">
@@ -112,12 +144,6 @@
     <p class="text-center mt-3" style="font-size:.95rem; color: var(--text-gray);">
       <span data-i18n="auth.register.have-account">Уже есть аккаунт?</span> <a href="login.php" style="color: var(--gradient-start); font-weight: 600;" data-i18n="auth.register.login">Войти</a>
     </p>
-
-    <div class="text-center mt-3">
-      <a href="login-otp.php" style="color: var(--gradient-start); font-weight: 600; font-size: 0.9rem;">
-        <img src="https://img.icons8.com/ios/18/key--v1.png" alt="" width="18" height="18"> Войти по коду (без пароля)
-      </a>
-    </div>
   </div>
 </div>
 
@@ -230,6 +256,21 @@
       setLoading(btn, false);
     }
   });
+
+  function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const eyeOpen = btn.querySelector('.eye-open');
+    const eyeClosed = btn.querySelector('.eye-closed');
+    if (input.type === 'password') {
+      input.type = 'text';
+      eyeOpen.classList.add('hidden');
+      eyeClosed.classList.remove('hidden');
+    } else {
+      input.type = 'password';
+      eyeOpen.classList.remove('hidden');
+      eyeClosed.classList.add('hidden');
+    }
+  }
 </script>
 </body>
 </html>
