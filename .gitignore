@@ -1,5 +1,5 @@
 # Чувствительные файлы
-config/secret.php
+# config/secret.php  # Добавлен в репозиторий с дефолтным значением
 .env
 .env.local
 .env.production

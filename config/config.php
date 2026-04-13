@@ -36,12 +36,10 @@ if (file_exists($secretFile)) {
     require_once $secretFile;
 }
 if (!defined('JWT_SECRET')) {
-    
     $generatedSecret = bin2hex(random_bytes(32));
     define('JWT_SECRET', $generatedSecret);
-    
-    file_put_contents($secretFile, "<?php\n// AUTO-GENERATED JWT SECRET - DO NOT SHARE\n// Сгенерировано: " . date('Y-m-d H:i:s') . "\ndefine('JWT_SECRET', '$generatedSecret');\n");
-    chmod($secretFile, 0600);
+    @file_put_contents($secretFile, "<?php\n// AUTO-GENERATED JWT SECRET - DO NOT SHARE\n// Сгенерировано: " . date('Y-m-d H:i:s') . "\ndefine('JWT_SECRET', '$generatedSecret');\n");
+    @chmod($secretFile, 0600);
 }
 define('JWT_EXPIRE',         3600 * 24);        
 define('JWT_REFRESH_EXPIRE', 3600 * 24 * 7);   
