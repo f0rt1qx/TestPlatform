@@ -1,4 +1,4 @@
-<?php header('Content-Type: text/html; charset=utf-8'); ?>
+﻿<?php header('Content-Type: text/html; charset=utf-8'); ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="public/css/modern.css?v=2">
+  <link rel="stylesheet" href="public/css/modern.css?v=4">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -58,6 +58,25 @@
     .tp-title {
       flex: 1; font-weight: 700; font-size: .95rem;
       color: var(--text-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .tp-recording-indicator {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 20px;
+      background: #fef2f2; border: 1.5px solid #fecaca;
+      font-size: .78rem; font-weight: 700; color: #dc2626;
+      flex-shrink: 0; transition: all .3s ease;
+    }
+    .tp-recording-indicator.hidden { display: none; }
+    .recording-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #dc2626; transition: all .3s ease;
+    }
+    .recording-dot.pulse-recording {
+      animation: pulse-recording 1s ease-in-out infinite;
+    }
+    @keyframes pulse-recording {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
     }
     .tp-status {
       display: flex; align-items: center; gap: 6px;
@@ -114,6 +133,47 @@
     .tp-btn-success { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 3px 10px rgba(16,185,129,.3); }
     .tp-btn-success:hover { opacity: .9; transform: translateY(-1px); }
     .tp-btn:disabled { opacity: .4; cursor: not-allowed; transform: none !important; }
+    .tp-debug-btn {
+      position: fixed; bottom: 80px; right: 20px; z-index: 95;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--bg-light); border: 2px solid var(--border-light);
+      cursor: pointer; font-size: 1.2rem; transition: all .2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tp-debug-btn:hover { background: var(--border-light); transform: scale(1.1); }
+    .tp-debug-panel {
+      position: fixed; bottom: 140px; right: 20px; z-index: 96;
+      width: 350px; max-height: 400px; background: var(--white);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-xl);
+      border: 2px solid var(--border-light); display: none;
+      flex-direction: column; overflow: hidden;
+    }
+    .tp-debug-panel.active { display: flex; }
+    .tp-debug-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: var(--bg-light); border-bottom: 1px solid var(--border-light);
+    }
+    .tp-debug-header h4 { font-size: 0.85rem; font-weight: 700; margin: 0; }
+    .tp-debug-close {
+      width: 24px; height: 24px; border: none; background: var(--white);
+      border-radius: 6px; cursor: pointer; font-size: 1rem; color: var(--text-gray);
+    }
+    .tp-debug-body {
+      padding: 12px; overflow-y: auto; flex: 1; max-height: 350px;
+    }
+    .tp-debug-log {
+      padding: 8px 10px; border-radius: 6px; margin-bottom: 8px;
+      font-size: 0.75rem; line-height: 1.4; font-family: 'Courier New', monospace;
+      background: var(--bg-light); border-left: 3px solid var(--border-light);
+    }
+    .tp-debug-log.info { border-left-color: #4361ee; background: #e7f3ff; }
+    .tp-debug-log.success { border-left-color: #10b981; background: #d4edda; }
+    .tp-debug-log.error { border-left-color: #dc2626; background: #f8d7da; }
+    .tp-debug-log.warn { border-left-color: #ffc107; background: #fff3cd; }
+    .tp-debug-log-time { color: var(--text-gray); font-size: 0.7rem; margin-bottom: 4px; }
+    .tp-empty-state {
+      text-align: center; padding: 20px; color: var(--text-gray); font-size: 0.85rem;
+    }
     .tp-sidebar { background: var(--white); border-left: 1px solid var(--border-light); padding: 24px 20px; position: fixed; top: 64px; right: 0; width: 300px; height: calc(100vh - 64px); overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
     .tp-sidebar-section h4 { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--text-light); margin-bottom: 14px; }
     .tp-qmap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
@@ -178,6 +238,10 @@
       Sapienta
     </a>
     <div class="tp-title" id="topbarTitle"></div>
+    <div class="tp-recording-indicator hidden" id="recordingIndicator">
+      <div class="recording-dot" id="recordingDot"></div>
+      <span id="recordingText">REC</span>
+    </div>
     <div class="tp-status active" id="statusBadge">
       <div class="tp-status-dot"></div>
       <span id="statusText">Защита активна</span>
@@ -234,7 +298,7 @@
         <div class="tp-log" id="monitorLog">
           <div class="tp-log-item">
             <span class="tp-log-time" id="startTime"></span>
-            <span class="tp-log-icon">▶</span>
+            <span class="tp-log-icon">в–¶</span>
             <span class="tp-log-text"><strong>Тест начат</strong> · Мониторинг активирован</span>
           </div>
         </div>
@@ -253,6 +317,23 @@
     </div>
   </div>
 
+  <!-- Debug button -->
+  <button class="tp-debug-btn" id="debugBtn" title="Диагностика записи" onclick="toggleDebugPanel()">
+    🔧
+  </button>
+
+  <!-- Debug panel -->
+  <div class="tp-debug-panel" id="debugPanel">
+    <div class="tp-debug-header">
+      <h4>🔍 Диагностика записи</h4>
+      <button class="tp-debug-close" onclick="toggleDebugPanel()">Г—</button>
+    </div>
+    <div class="tp-debug-body" id="debugBody">
+      <div class="tp-empty-state">Нажмите «Проверить» для диагностики...</div>
+    </div>
+  </div>
+
+
 </div>
 
 <!-- RESULT UI -->
@@ -263,15 +344,15 @@
     <div class="tp-result-label" id="resultLabel"></div>
     <div class="tp-result-stats">
       <div class="tp-result-stat">
-        <div class="tp-result-stat-val" id="resScore">—</div>
+        <div class="tp-result-stat-val" id="resScore">вЂ”</div>
         <div class="tp-result-stat-lbl">Баллов</div>
       </div>
       <div class="tp-result-stat">
-        <div class="tp-result-stat-val" id="resTime">—</div>
+        <div class="tp-result-stat-val" id="resTime">вЂ”</div>
         <div class="tp-result-stat-lbl">Время</div>
       </div>
       <div class="tp-result-stat">
-        <div class="tp-result-stat-val" id="resCheat">—</div>
+        <div class="tp-result-stat-val" id="resCheat">вЂ”</div>
         <div class="tp-result-stat-lbl">Честность</div>
       </div>
     </div>
@@ -306,7 +387,8 @@
 <div class="NotificationToast-container" id="toastContainer"></div>
 
 <script src="public/js/config.js"></script>
-<script src="public/js/app.js"></script>
+<script src="public/js/app.js?v=2"></script>
+<script src="public/js/screen-recorder.js?v=3"></script>
 <script>
 window.AC_TEXT = {
   title:     'Смена вкладки',
@@ -317,7 +399,6 @@ window.AC_TEXT = {
 };
 </script>
 <script src="public/js/anticheat.js?v=5"></script>
-<script src="public/js/eye-tracker.js"></script>
 <script>
   if (!AuthManager.isLoggedIn()) {
     window.location.href = 'login.php?redirect=' + encodeURIComponent(location.href);
@@ -332,13 +413,13 @@ window.AC_TEXT = {
   var totalSeconds = 0;
   var elapsedSec   = 0;
   var antiCheat    = null;
-  var eyeTracker   = null;
+  var screenRecorder = null;
   var autoSaveInt  = null;
   var isTerminated = false;
   var isSubmitting = false;
   var currentQ     = 0;   // index into test.questions
 
-  // ── INIT ───────────────────────────────────────────────────────────────────
+  // в”Ђв”Ђ INIT в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   async function initTest() {
     try {
       var res = await API.startTest(parseInt(testId));
@@ -372,7 +453,7 @@ window.AC_TEXT = {
       startTimer();
       startAutoSave();
       initAntiCheat();
-      initEyeTracker();
+      await initScreenshotCapture();
 
       document.getElementById('testLoading').classList.add('hidden');
       document.getElementById('testUI').classList.remove('hidden');
@@ -384,7 +465,7 @@ window.AC_TEXT = {
     }
   }
 
-  // ── QUESTION MAP ───────────────────────────────────────────────────────────
+  // в”Ђв”Ђ QUESTION MAP в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function buildQuestionMap() {
     var map = document.getElementById('questionMap');
     map.innerHTML = '';
@@ -411,7 +492,7 @@ window.AC_TEXT = {
     });
   }
 
-  // ── RENDER QUESTION ────────────────────────────────────────────────────────
+  // в”Ђв”Ђ RENDER QUESTION в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function renderQuestion(idx) {
     if (!test || idx < 0 || idx >= test.questions.length) return;
     currentQ = idx;
@@ -496,7 +577,7 @@ window.AC_TEXT = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // ── ANSWER ─────────────────────────────────────────────────────────────────
+  // в”Ђв”Ђ ANSWER в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function onAnswer(qId, aId, type) {
     if (isTerminated) return;
     if (antiCheat) { antiCheat.checkAnswerSpeed(qId); antiCheat.recordQuestionStart(); }
@@ -511,7 +592,7 @@ window.AC_TEXT = {
     }
   }
 
-  // ── STATS ──────────────────────────────────────────────────────────────────
+  // в”Ђв”Ђ STATS в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function updateStats() {
     if (!test) return;
     var total    = test.questions.length;
@@ -523,7 +604,7 @@ window.AC_TEXT = {
     document.getElementById('navInfo').textContent      = 'Отвечено: ' + answered + ' / ' + total;
   }
 
-  // ── TIMER ──────────────────────────────────────────────────────────────────
+  // в”Ђв”Ђ TIMER в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function startTimer() {
     var el = document.getElementById('timer');
     timerInt = setInterval(function() {
@@ -537,7 +618,7 @@ window.AC_TEXT = {
     }, 1000);
   }
 
-  // ── AUTOSAVE ───────────────────────────────────────────────────────────────
+  // в”Ђв”Ђ AUTOSAVE в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function startAutoSave() {
     autoSaveInt = setInterval(function() {
       if (!isTerminated) localStorage.setItem('draft_' + attemptId, JSON.stringify(userAnswers));
@@ -555,13 +636,13 @@ window.AC_TEXT = {
     } catch(e) {}
   }
 
-  // ── ANTI-CHEAT ─────────────────────────────────────────────────────────────
+  // в”Ђв”Ђ ANTI-CHEAT в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function initAntiCheat() {
     antiCheat = new AntiCheat({
       attemptId: attemptId,
       onTerminate: handleDisqualification,
       onTabSwitch: function(count) {
-        addLog('warn', '⚠', 'Смена вкладки — зафиксировано');
+        addLog('warn', '⚠️', 'Смена вкладки — зафиксировано');
         updateStatusBadge(count);
       }
     });
@@ -569,30 +650,76 @@ window.AC_TEXT = {
     antiCheat.recordQuestionStart();
   }
 
-  // ── EYE-TRACKING ─────────────────────────────────────────────────────────
-  async function initEyeTracker() {
+  // в”Ђв”Ђ SCREEN RECORDING в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+  async function initScreenshotCapture() {
     try {
-      eyeTracker = new EyeTracker({
+      if (!ScreenRecorder.isSupported()) {
+        addLog('warn', '⚠️', 'Запись экрана недоступна в этом браузере');
+        return;
+      }
+
+      screenRecorder = new ScreenRecorder({
         attemptId: attemptId,
-        onGazeData: function(gazePoint) {
-          // Optional: handle individual gaze points
-          // console.log('Gaze at:', gazePoint.x, gazePoint.y);
+        userId: <?php echo isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0; ?>,
+        maxDuration: totalSeconds * 1000, // Duration matches test timer
+        chunkSize: 5 * 1024 * 1024, // 5MB chunks
+        onRecordingStart: function() {
+          addLog('info', '🎥', 'Запись экрана начата');
+          updateRecordingIndicator(true);
         },
-        onCalibrationComplete: function() {
-          addLog('info', '👁', 'Eye-tracking калиброван и активен');
+        onRecordingStop: function(data) {
+          addLog('info', '🎥', 'Запись экрана завершена (длительность: ' + Math.floor(data.duration / 1000) + 'с)');
+          updateRecordingIndicator(false);
+        },
+        onChunkUpload: function(chunkIndex) {
+          // Silent upload success
+        },
+        onError: function(error) {
+          console.error('[ScreenRecorder] Error:', error);
+          addLog('error', '❌', 'Ошибка записи экрана: ' + error.message);
         }
       });
 
-      var success = await eyeTracker.start();
-      
-      if (success) {
-        addLog('info', '👁', 'Eye-tracking инициализирован...');
+      var started = await screenRecorder.start();
+
+      if (started) {
+        addLog('info', '🎥', 'Система записи экрана активирована');
+        addDebugLog('success', '✅', 'Запись экрана успешно начата');
+
+        // Capture on suspicious events
+        if (antiCheat) {
+          var originalOnTabSwitch = antiCheat.onTabSwitch;
+          if (originalOnTabSwitch) {
+            antiCheat.onTabSwitch = function(count) {
+              originalOnTabSwitch(count);
+              addLog('warn', '🎥', 'Запись продолжается после смены вкладки');
+            };
+          }
+        }
       } else {
-        addLog('warn', '⚠', 'Eye-tracking недоступен (тест продолжится без него)');
+        addLog('warn', '⚠️', 'Не удалось начать запись экрана');
       }
-    } catch (err) {
-      console.error('[EyeTracker] Init error:', err);
-      addLog('warn', '⚠', 'Eye-tracking недоступен');
+    } catch (error) {
+      console.error('[ScreenRecorder] Init error:', error);
+      addLog('warn', '⚠️', 'Запись экрана недоступна (тест продолжится без неё)');
+    }
+  }
+
+  // Update recording indicator in UI
+  function updateRecordingIndicator(isRecording) {
+    var indicator = document.getElementById('recordingIndicator');
+    var indicatorDot = document.getElementById('recordingDot');
+    var indicatorText = document.getElementById('recordingText');
+    
+    if (!indicator || !indicatorDot || !indicatorText) return;
+    
+    if (isRecording) {
+      indicator.classList.remove('hidden');
+      indicatorDot.classList.add('pulse-recording');
+      indicatorText.textContent = 'REC';
+    } else {
+      indicator.classList.add('hidden');
+      indicatorDot.classList.remove('pulse-recording');
     }
   }
 
@@ -610,6 +737,115 @@ window.AC_TEXT = {
     while (log.children.length > 8) log.removeChild(log.lastChild);
   }
 
+  // Debug panel functions
+  function toggleDebugPanel() {
+    var panel = document.getElementById('debugPanel');
+    panel.classList.toggle('active');
+
+    if (panel.classList.contains('active')) {
+      runRecordingDiagnostic();
+    }
+  }
+
+  function addDebugLog(type, icon, message) {
+    var body = document.getElementById('debugBody');
+    var emptyState = body.querySelector('.tp-empty-state');
+    if (emptyState) emptyState.remove();
+
+    var time = new Date().toLocaleTimeString('ru');
+    var logHTML = '<div class="tp-debug-log ' + type + '">' +
+      '<div class="tp-debug-log-time">' + time + '</div>' +
+      '<div>' + icon + ' ' + message + '</div>' +
+    '</div>';
+
+    body.insertAdjacentHTML('afterbegin', logHTML);
+  }
+
+  async function runRecordingDiagnostic() {
+    var body = document.getElementById('debugBody');
+    body.innerHTML = '';
+
+    addDebugLog('info', '🔍', 'Запуск диагностики...');
+
+    // Check 1: ScreenRecorder class exists
+    if (typeof ScreenRecorder !== 'undefined') {
+      addDebugLog('success', '✅', 'Класс ScreenRecorder загружен');
+    } else {
+      addDebugLog('error', '❌', 'Класс ScreenRecorder не найден');
+      return;
+    }
+
+    // Check 2: Browser support
+    if (ScreenRecorder.isSupported()) {
+      addDebugLog('success', '✅', 'Браузер поддерживает запись');
+    } else {
+      addDebugLog('error', '❌', 'Браузер не поддерживает запись');
+      return;
+    }
+
+    // Check 3: Instance created
+    if (screenRecorder) {
+      addDebugLog('success', '✅', 'Экземпляр screenRecorder создан');
+    } else {
+      addDebugLog('warn', '⚠️', 'Экземпляр screenRecorder не создан');
+    }
+
+    // Check 4: Recording status
+    if (screenRecorder && screenRecorder.isRecording) {
+      var status = screenRecorder.getStatus();
+      addDebugLog('success', '🎥', 'Запись активна (длительность: ' + Math.floor(status.duration / 1000) + 'с, чанков: ' + status.chunks + ')');
+    } else if (screenRecorder) {
+      addDebugLog('info', 'ℹ️', 'Запись не активна');
+    }
+
+    // Check 5: Attempt ID
+    if (attemptId) {
+      addDebugLog('success', '✅', 'Attempt ID: ' + attemptId);
+    } else {
+      addDebugLog('error', '❌', 'Attempt ID не найден');
+    }
+
+    // Check 6: Check if any recordings exist
+    try {
+      addDebugLog('info', '🌐', 'Проверка записей на сервере...');
+
+      // Build headers with JWT token
+      var fetchOpts = {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
+      };
+      
+      // Try to get JWT token
+      if (typeof AuthManager !== 'undefined' && AuthManager.getToken) {
+        var token = AuthManager.getToken();
+        if (token) {
+          fetchOpts.headers['Authorization'] = 'Bearer ' + token;
+        }
+      }
+
+      var res = await fetch('api/recordings-list.php?limit=5', fetchOpts);
+      var data = await res.json();
+
+      if (data.success) {
+        if (data.recordings && data.recordings.length > 0) {
+          addDebugLog('success', '✅', 'На сервере: ' + data.total + ' записей');
+          var latest = data.recordings[0];
+          addDebugLog('info', '📹', 'Последняя запись: ' + latest.file_size_formatted + ', ' + latest.duration_formatted);
+        } else {
+          addDebugLog('warn', '⚠️', 'На сервере нет записей');
+        }
+      } else {
+        addDebugLog('error', '❌', 'Ошибка сервера: ' + data.message);
+      }
+    } catch(e) {
+      addDebugLog('error', '❌', 'Ошибка запроса: ' + e.message);
+    }
+
+    addDebugLog('success', '✅', 'Диагностика завершена');
+  }
+
   function updateStatusBadge(violations) {
     var badge = document.getElementById('statusBadge');
     var text  = document.getElementById('statusText');
@@ -622,11 +858,11 @@ window.AC_TEXT = {
     }
   }
 
-  // ── DISQUALIFY ─────────────────────────────────────────────────────────────
+  // в”Ђв”Ђ DISQUALIFY в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   async function handleDisqualification() {
     isTerminated = true;
     clearInterval(timerInt); clearInterval(autoSaveInt);
-    if (eyeTracker) eyeTracker.stop();
+    if (screenRecorder) await screenRecorder.destroy();
     localStorage.removeItem('draft_' + attemptId);
     document.getElementById('testUI').classList.add('hidden');
     try {
@@ -635,7 +871,7 @@ window.AC_TEXT = {
     document.getElementById('disqualifyScreen').classList.remove('hidden');
   }
 
-  // ── SUBMIT ─────────────────────────────────────────────────────────────────
+  // в”Ђв”Ђ SUBMIT в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function confirmSubmit() {
     var total    = test.questions.length;
     var answered = test.questions.filter(function(q) {
@@ -654,7 +890,7 @@ window.AC_TEXT = {
     isSubmitting = true;
     clearInterval(timerInt); clearInterval(autoSaveInt);
     if (antiCheat) antiCheat.stop();
-    if (eyeTracker) eyeTracker.stop();
+    if (screenRecorder) await screenRecorder.destroy();
 
     var btn = document.getElementById('finishBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Отправляем...'; }
@@ -671,7 +907,7 @@ window.AC_TEXT = {
     }
   }
 
-  // ── RESULT ─────────────────────────────────────────────────────────────────
+  // в”Ђв”Ђ RESULT в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function showResult(result) {
     document.getElementById('testUI').classList.add('hidden');
     document.getElementById('resultUI').classList.remove('hidden');
@@ -697,7 +933,7 @@ window.AC_TEXT = {
     }
   }
 
-  // ── HELPERS ────────────────────────────────────────────────────────────────
+  // в”Ђв”Ђ HELPERS в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function escHtml(str) {
     var d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML;
   }
@@ -708,7 +944,7 @@ window.AC_TEXT = {
     return many;
   }
 
-  // ── EXPORT PDF ─────────────────────────────────────────────────────────────
+  // в”Ђв”Ђ EXPORT PDF в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
   function exportResultPDF() {
     if (!attemptId) {
       NotificationToast.error('Не удалось найти ID попытки');
@@ -721,3 +957,4 @@ window.AC_TEXT = {
 </script>
 </body>
 </html>
+

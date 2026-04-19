@@ -1,0 +1,5 @@
+# Ignore all uploaded files
+*
+!.gitignore
+!README.md
+!screenshots/.htaccess

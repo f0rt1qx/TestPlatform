@@ -16,6 +16,10 @@ class ValidationException extends InvalidArgumentException {
 class AuthException extends RuntimeException {
     protected int $httpCode = 401;
     public function getHttpCode(): int { return $this->httpCode; }
+    public function withHttpCode(int $code): self {
+        $this->httpCode = $code;
+        return $this;
+    }
 }
 
 class ConflictException extends RuntimeException {
@@ -34,11 +38,10 @@ $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
 $input  = json_decode(file_get_contents('php://input'), true) ?? [];
 
-$userModel = new UserModel();
-
 try {
     match (true) {
-        $action === 'register' && $method === 'POST' => (function () use ($input, $userModel): void {
+        $action === 'register' && $method === 'POST' => (function () use ($input): void {
+            $userModel = new UserModel();
             !empty($input['csrf_token']) && !validateCsrfToken($input['csrf_token']) && throw new CSRFException('CSRF token invalid');
 
             $username  = trim($input['username'] ?? '');
@@ -86,12 +89,15 @@ try {
                     'httponly' => true,
                     'samesite' => 'Strict',
                 ]);
+                $_SESSION['user_id'] = (int)$userId;
+                $_SESSION['username'] = $username;
+                $_SESSION['role'] = 'student';
 
                 jsonResponse([
                     'success'    => true,
                     'message'    => 'Регистрация успешна',
-                    'token'      => $token,
                     'user'       => ['id' => $userId, 'username' => $username, 'role' => 'student'],
+                    'token'      => $token,
                     'csrf_token' => generateCsrfToken(),
                 ]);
             } catch (Exception $e) {
@@ -99,7 +105,8 @@ try {
             }
         })(),
 
-        $action === 'login' && $method === 'POST' => (function () use ($input, $userModel): void {
+        $action === 'login' && $method === 'POST' => (function () use ($input): void {
+            $userModel = new UserModel();
             // CSRF validation is intentionally skipped for login
             // since it's an unauthenticated endpoint (no session yet)
 
@@ -128,14 +135,10 @@ try {
                 throw new AuthException('Неверный логин или пароль');
             }
             if ($user['is_blocked']) {
-                $ex = new AuthException('Аккаунт заблокирован');
-                $ex->httpCode = 403;
-                throw $ex;
+                throw (new AuthException('Аккаунт заблокирован'))->withHttpCode(403);
             }
             if (!$user['is_active']) {
-                $ex = new AuthException('Аккаунт деактивирован');
-                $ex->httpCode = 403;
-                throw $ex;
+                throw (new AuthException('Аккаунт деактивирован'))->withHttpCode(403);
             }
 
             unset($_SESSION['rate_limit:' . $rateKey]);
@@ -154,6 +157,9 @@ try {
                 'httponly' => true,
                 'samesite' => 'Strict',
             ]);
+            $_SESSION['user_id'] = (int)$user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['role'] = $user['role'];
 
             jsonResponse([
                 'success'    => true,
@@ -178,10 +184,13 @@ try {
                 'httponly' => true,
                 'samesite' => 'Strict',
             ]);
+            unset($_SESSION['user_id'], $_SESSION['username'], $_SESSION['role']);
+            session_regenerate_id(true);
             jsonResponse(['success' => true, 'message' => 'Вы вышли из системы']);
         })(),
 
-        $action === 'me' && $method === 'GET' => (function () use ($userModel): void {
+        $action === 'me' && $method === 'GET' => (function (): void {
+            $userModel = new UserModel();
             $payload = AuthMiddleware::require();
             $user = $userModel->findById($payload['sub']);
             if (!$user) {
@@ -209,4 +218,9 @@ try {
     jsonResponse(['success' => false, 'message' => $e->getMessage()], $e->getHttpCode());
 } catch (CSRFException $e) {
     jsonResponse(['success' => false, 'message' => $e->getMessage()], $e->getHttpCode());
+} catch (Throwable $e) {
+    jsonResponse([
+        'success' => false,
+        'message' => APP_DEBUG ? ('Server error: ' . $e->getMessage()) : 'Ошибка сервера',
+    ], 500);
 }

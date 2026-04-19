@@ -23,7 +23,7 @@ try {
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="public/css/modern.css?v=2">
+  <link rel="stylesheet" href="public/css/modern.css?v=4">
   <style>
     /* === Index page button styles === */
 
@@ -71,6 +71,91 @@ try {
     .tests-preview .test-card-actions .btn-primary:hover {
       color: #fff;
     }
+
+    /* Force stable theme switch on this page */
+    .nav-theme-slot {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 48px !important;
+      min-width: 48px !important;
+      height: 26px !important;
+      margin: 0 0 0 6px !important;
+      padding: 0 !important;
+      flex: 0 0 48px !important;
+    }
+    .theme-toggle[data-theme-toggle] {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 48px !important;
+      min-width: 48px !important;
+      max-width: 48px !important;
+      height: 26px !important;
+      min-height: 26px !important;
+      max-height: 26px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      transform: none !important;
+      transition: none !important;
+      overflow: visible !important;
+      line-height: 0 !important;
+      vertical-align: middle !important;
+    }
+    .theme-toggle[data-theme-toggle]:hover,
+    .theme-toggle[data-theme-toggle]:active,
+    .theme-toggle[data-theme-toggle]:focus {
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      transform: none !important;
+      transition: none !important;
+      outline: none !important;
+    }
+    .theme-toggle[data-theme-toggle] .theme-toggle-track {
+      display: block !important;
+      position: relative !important;
+      width: 48px !important;
+      min-width: 48px !important;
+      max-width: 48px !important;
+      height: 26px !important;
+      min-height: 26px !important;
+      max-height: 26px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border-radius: 999px !important;
+      background: linear-gradient(135deg, rgba(0, 200, 83, 0.22), rgba(105, 240, 174, 0.34)) !important;
+      border: 1px solid rgba(0, 200, 83, 0.22) !important;
+      box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.22) !important;
+      transform: none !important;
+      transition: none !important;
+      overflow: hidden !important;
+    }
+    .theme-toggle[data-theme-toggle] .theme-toggle-thumb {
+      position: absolute !important;
+      top: 50% !important;
+      left: 2px !important;
+      width: 20px !important;
+      height: 20px !important;
+      margin: 0 !important;
+      border-radius: 50% !important;
+      background: linear-gradient(135deg, #ffe082 0%, #fbbf24 100%) !important;
+      box-shadow: 0 10px 18px rgba(251, 191, 36, 0.28) !important;
+      transform: translateY(-50%) !important;
+      transition: left 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.24s ease, box-shadow 0.24s ease !important;
+    }
+    [data-theme="dark"] .theme-toggle[data-theme-toggle] .theme-toggle-track {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(14, 116, 144, 0.88)) !important;
+      border-color: rgba(125, 211, 252, 0.26) !important;
+    }
+    [data-theme="dark"] .theme-toggle[data-theme-toggle] .theme-toggle-thumb {
+      left: 24px !important;
+      background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%) !important;
+      box-shadow: 0 10px 18px rgba(96, 165, 250, 0.24) !important;
+    }
   </style>
 </head>
 <body>
@@ -94,7 +179,7 @@ try {
           <select data-language-selector aria-label="Выбор языка"></select>
         </div>
       </li>
-      <li><button class="theme-toggle" data-theme-toggle title="Сменить тему"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg></button></li>
+      <li class="nav-theme-slot"><button class="theme-toggle" data-theme-toggle title="Сменить тему"><span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-thumb"></span></span></button></li>
     </ul>
 
     <button class="burger" aria-label="Меню" id="burgerBtn">
@@ -348,7 +433,7 @@ try {
 
 <script src="public/js/config.js"></script>
 <script src="public/js/i18n.js"></script>
-<script src="public/js/app.js"></script>
+<script src="public/js/app.js?v=2"></script>
 <script>
 // Navbar hide on scroll down, show on scroll up
 let lastScrollY = window.scrollY;

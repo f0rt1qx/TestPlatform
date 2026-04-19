@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="public/css/modern.css?v=2">
+  <link rel="stylesheet" href="public/css/modern.css?v=4">
   <style>
     /* === Profile top-bar === */
     body {
@@ -112,22 +112,84 @@
       color: var(--gradient-start, #00c853);
     }
     .topbar-theme-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      border: 1px solid var(--border-light, #e2e8f0);
-      background: transparent;
-      color: var(--text-gray, #64748b);
-      cursor: pointer;
-      transition: all 0.2s;
+      margin-left: 0;
     }
     .topbar-theme-btn:hover {
-      background: var(--bg-light, #f1f5f9);
-      color: var(--gradient-start, #00c853);
-      border-color: var(--gradient-start, #00c853);
+      transform: none;
+    }
+    .topbar-theme-slot {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 48px !important;
+      min-width: 48px !important;
+      height: 26px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      flex-shrink: 0 !important;
+    }
+    .topbar-theme-btn[data-theme-toggle] {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 48px !important;
+      min-width: 48px !important;
+      max-width: 48px !important;
+      height: 26px !important;
+      min-height: 26px !important;
+      max-height: 26px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      transform: none !important;
+      transition: none !important;
+      overflow: visible !important;
+      line-height: 0 !important;
+      vertical-align: middle !important;
+    }
+    .topbar-theme-btn[data-theme-toggle]:hover,
+    .topbar-theme-btn[data-theme-toggle]:active,
+    .topbar-theme-btn[data-theme-toggle]:focus {
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      transform: none !important;
+      transition: none !important;
+      outline: none !important;
+    }
+    .topbar-theme-btn[data-theme-toggle] .theme-toggle-track {
+      display: block !important;
+      position: relative !important;
+      width: 48px !important;
+      min-width: 48px !important;
+      max-width: 48px !important;
+      height: 26px !important;
+      min-height: 26px !important;
+      max-height: 26px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border-radius: 999px !important;
+      background: linear-gradient(135deg, rgba(0, 200, 83, 0.22), rgba(105, 240, 174, 0.34)) !important;
+      border: 1px solid rgba(0, 200, 83, 0.22) !important;
+      box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.22) !important;
+      transform: none !important;
+      transition: none !important;
+      overflow: hidden !important;
+    }
+    .topbar-theme-btn[data-theme-toggle] .theme-toggle-thumb {
+      position: absolute !important;
+      top: 50% !important;
+      left: 2px !important;
+      width: 20px !important;
+      height: 20px !important;
+      margin: 0 !important;
+      border-radius: 50% !important;
+      background: linear-gradient(135deg, #ffe082 0%, #fbbf24 100%) !important;
+      box-shadow: 0 10px 18px rgba(251, 191, 36, 0.28) !important;
+      transform: translateY(-50%) !important;
+      transition: left 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.24s ease, box-shadow 0.24s ease !important;
     }
     /* Profile content offset */
     .profile-content {
@@ -164,11 +226,19 @@
       border-color: var(--gradient-start, #00c853);
     }
     [data-theme="dark"] .topbar-theme-btn {
-      border-color: #334155;
-      color: #94a3b8;
+      color: #e2e8f0;
     }
     [data-theme="dark"] .topbar-theme-btn:hover {
-      background: #0f172a;
+      transform: none;
+    }
+    [data-theme="dark"] .topbar-theme-btn[data-theme-toggle] .theme-toggle-track {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(14, 116, 144, 0.88)) !important;
+      border-color: rgba(125, 211, 252, 0.26) !important;
+    }
+    [data-theme="dark"] .topbar-theme-btn[data-theme-toggle] .theme-toggle-thumb {
+      left: 24px !important;
+      background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%) !important;
+      box-shadow: 0 10px 18px rgba(96, 165, 250, 0.24) !important;
     }
 
     /* Mobile */
@@ -182,6 +252,313 @@
       .topbar-back {
         padding: 8px 10px;
       }
+    }
+    .birthdate-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #birthDate {
+      min-height: 52px;
+      letter-spacing: 0.02em;
+      font-variant-numeric: tabular-nums;
+      padding-right: 56px;
+    }
+
+    .birthdate-trigger {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(0, 200, 83, 0.18);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0, 200, 83, 0.10), rgba(105, 240, 174, 0.18));
+      color: var(--gradient-start);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .birthdate-trigger:hover {
+      background: linear-gradient(135deg, rgba(0, 200, 83, 0.18), rgba(105, 240, 174, 0.28));
+      border-color: rgba(0, 200, 83, 0.35);
+      transform: translateY(-50%) scale(1.03);
+    }
+
+    .birthdate-trigger svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .birthdate-popup {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      z-index: 60;
+      width: 320px;
+      padding: 16px;
+      background: var(--white);
+      border: 1px solid rgba(0, 200, 83, 0.10);
+      border-radius: 20px;
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.12), 0 10px 24px rgba(0, 200, 83, 0.10);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(10px) scale(0.96);
+      transform-origin: top left;
+      transition: opacity 0.22s ease, transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.22s ease;
+    }
+
+    .birthdate-popup.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
+
+    .birthdate-popup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .birthdate-popup-title {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 1rem;
+    }
+
+    .birthdate-popup-controls {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      position: relative;
+    }
+
+    .birthdate-chip {
+      min-width: 0;
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-light);
+      background: var(--white);
+      color: var(--text-dark);
+      font-weight: 600;
+      outline: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .birthdate-chip.month {
+      flex: 1;
+    }
+
+    .birthdate-chip.year {
+      width: 92px;
+      flex-shrink: 0;
+    }
+
+    .birthdate-chip:hover,
+    .birthdate-chip.is-open {
+      border-color: var(--gradient-start);
+      box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.08);
+    }
+
+    .birthdate-chip svg {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    .birthdate-chip.is-open svg {
+      transform: rotate(180deg);
+    }
+
+    .birthdate-overlay-list {
+      position: absolute;
+      top: 48px;
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.12), 0 8px 18px rgba(0, 200, 83, 0.08);
+      padding: 8px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px) scale(0.96);
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.22s ease, visibility 0.18s ease;
+      z-index: 5;
+    }
+
+    .birthdate-overlay-list.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .birthdate-overlay-list.months {
+      left: 0;
+      width: 180px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .birthdate-overlay-list.years {
+      right: 0;
+      width: 108px;
+      max-height: 220px;
+      overflow-y: auto;
+      display: grid;
+      gap: 6px;
+    }
+
+    .birthdate-overlay-item {
+      min-height: 34px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-dark);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      padding: 0 10px;
+      text-align: center;
+    }
+
+    .birthdate-overlay-item:hover {
+      background: rgba(0, 200, 83, 0.08);
+      color: var(--gradient-start);
+    }
+
+    .birthdate-overlay-item.is-active {
+      background: var(--gradient-primary);
+      color: #fff;
+      box-shadow: 0 8px 16px rgba(0, 200, 83, 0.18);
+    }
+
+    .birthdate-nav {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      border: 1px solid var(--border-light);
+      background: var(--white);
+      color: var(--text-dark);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .birthdate-nav:hover {
+      border-color: var(--gradient-start);
+      color: var(--gradient-start);
+      background: rgba(0, 200, 83, 0.06);
+    }
+
+    .birthdate-weekdays,
+    .birthdate-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+
+    .birthdate-weekday {
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-gray);
+      padding: 6px 0;
+    }
+
+    .birthdate-day {
+      height: 38px;
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text-dark);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .birthdate-day:hover:not(:disabled) {
+      background: rgba(0, 200, 83, 0.08);
+      color: var(--gradient-start);
+    }
+
+    .birthdate-day.is-today {
+      background: rgba(0, 200, 83, 0.10);
+      color: var(--gradient-start);
+    }
+
+    .birthdate-day.is-selected {
+      background: var(--gradient-primary);
+      color: #fff;
+      box-shadow: 0 10px 18px rgba(0, 200, 83, 0.20);
+    }
+
+    .birthdate-day.is-other-month {
+      color: var(--text-light);
+    }
+
+    .birthdate-day:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .birthdate-popup-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .birthdate-footer-btn {
+      flex: 1;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border-light);
+      background: var(--white);
+      color: var(--text-dark);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .birthdate-footer-btn:hover {
+      border-color: var(--gradient-start);
+      color: var(--gradient-start);
+    }
+
+    [data-theme="dark"] .birthdate-trigger {
+      border-color: rgba(105, 240, 174, 0.18);
+      background: linear-gradient(135deg, rgba(0, 200, 83, 0.12), rgba(105, 240, 174, 0.12));
+    }
+
+    [data-theme="dark"] .birthdate-popup,
+    [data-theme="dark"] .birthdate-nav,
+    [data-theme="dark"] .birthdate-footer-btn,
+    [data-theme="dark"] .birthdate-chip,
+    [data-theme="dark"] .birthdate-overlay-list {
+      background: var(--white);
+      border-color: var(--border-light);
     }
   </style>
 </head>
@@ -206,9 +583,11 @@
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" /></svg>
       <span>Кабинет</span>
     </a>
-    <button class="topbar-theme-btn" data-theme-toggle title="Тема">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg>
-    </button>
+    <div class="topbar-theme-slot">
+      <button class="topbar-theme-btn" data-theme-toggle title="Тема">
+        <span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-thumb"></span></span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -290,7 +669,51 @@
         </div>
         <div class="form-group">
           <label class="form-label">Дата рождения</label>
-          <input class="form-control" type="date" id="birthDate">
+          <div class="birthdate-group">
+            <input class="form-control" type="text" id="birthDate" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" maxlength="10">
+            <button type="button" class="birthdate-trigger" id="birthDateTrigger" aria-label="Выбрать дату">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 2v4m8-4v4M3 10h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/>
+              </svg>
+            </button>
+            <input type="hidden" id="birthDateIso">
+            <div class="birthdate-popup" id="birthDatePopup">
+              <div class="birthdate-popup-header">
+                <button type="button" class="birthdate-nav" id="birthDatePrev" aria-label="Предыдущий месяц">‹</button>
+                <div class="birthdate-popup-controls">
+                  <button type="button" class="birthdate-chip month" id="birthDateMonthChip">
+                    <span id="birthDateMonthLabel"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                    </svg>
+                  </button>
+                  <button type="button" class="birthdate-chip year" id="birthDateYearChip">
+                    <span id="birthDateYearLabel"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                    </svg>
+                  </button>
+                  <div class="birthdate-overlay-list months" id="birthDateMonthList"></div>
+                  <div class="birthdate-overlay-list years" id="birthDateYearList"></div>
+                </div>
+                <button type="button" class="birthdate-nav" id="birthDateNext" aria-label="Следующий месяц">›</button>
+              </div>
+              <div class="birthdate-weekdays">
+                <div class="birthdate-weekday">Пн</div>
+                <div class="birthdate-weekday">Вт</div>
+                <div class="birthdate-weekday">Ср</div>
+                <div class="birthdate-weekday">Чт</div>
+                <div class="birthdate-weekday">Пт</div>
+                <div class="birthdate-weekday">Сб</div>
+                <div class="birthdate-weekday">Вс</div>
+              </div>
+              <div class="birthdate-days" id="birthDateDays"></div>
+              <div class="birthdate-popup-footer">
+                <button type="button" class="birthdate-footer-btn" id="birthDateClear">Очистить</button>
+                <button type="button" class="birthdate-footer-btn" id="birthDateToday">Сегодня</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="form-grid">
@@ -398,7 +821,7 @@
 
 <script src="public/js/config.js"></script>
 <script src="public/js/i18n.js"></script>
-<script src="public/js/app.js"></script>
+<script src="public/js/app.js?v=2"></script>
 <script>
   if (!AuthManager.isLoggedIn()) {
     window.location.href = 'login.php?redirect=' + encodeURIComponent(location.href);
@@ -407,7 +830,272 @@
   let profile = {};
   let currentTab = 'info';
 
+  function formatIsoToDisplay(isoDate) {
+    if (!isoDate) return '';
+    const parts = isoDate.split('-');
+    if (parts.length !== 3) return isoDate;
+    return `${parts[2]}.${parts[1]}.${parts[0]}`;
+  }
+
+  function formatDisplayToIso(displayDate) {
+    if (!displayDate) return '';
+    const parts = displayDate.split('.');
+    if (parts.length !== 3) return '';
+    return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+  }
+
+  function applyBirthDateMask(value) {
+    const digits = String(value || '').replace(/\D/g, '').slice(0, 8);
+    let out = '';
+    if (digits.length > 0) out += digits.slice(0, 2);
+    if (digits.length >= 3) out += '.' + digits.slice(2, 4);
+    if (digits.length >= 5) out += '.' + digits.slice(4, 8);
+    return out;
+  }
+
+  function isValidDisplayDate(displayDate) {
+    if (!/^\d{2}\.\d{2}\.\d{4}$/.test(displayDate)) return false;
+    const [day, month, year] = displayDate.split('.').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+  }
+
+  function syncBirthDateFieldsFromDisplay() {
+    const displayInput = document.getElementById('birthDate');
+    const isoInput = document.getElementById('birthDateIso');
+    const displayValue = displayInput.value.trim();
+
+    if (isValidDisplayDate(displayValue)) {
+      isoInput.value = formatDisplayToIso(displayValue);
+    } else if (!displayValue) {
+      isoInput.value = '';
+    }
+  }
+
+  function initBirthDateControls() {
+    const displayInput = document.getElementById('birthDate');
+    const isoInput = document.getElementById('birthDateIso');
+    const trigger = document.getElementById('birthDateTrigger');
+    const popup = document.getElementById('birthDatePopup');
+    const days = document.getElementById('birthDateDays');
+    const monthChip = document.getElementById('birthDateMonthChip');
+    const yearChip = document.getElementById('birthDateYearChip');
+    const monthLabel = document.getElementById('birthDateMonthLabel');
+    const yearLabel = document.getElementById('birthDateYearLabel');
+    const monthList = document.getElementById('birthDateMonthList');
+    const yearList = document.getElementById('birthDateYearList');
+    const prevBtn = document.getElementById('birthDatePrev');
+    const nextBtn = document.getElementById('birthDateNext');
+    const clearBtn = document.getElementById('birthDateClear');
+    const todayBtn = document.getElementById('birthDateToday');
+
+    if (!displayInput || !isoInput || !trigger || !popup || !days || !monthChip || !yearChip || !monthLabel || !yearLabel || !monthList || !yearList || !prevBtn || !nextBtn || !clearBtn || !todayBtn || displayInput.dataset.maskReady === '1') return;
+    displayInput.dataset.maskReady = '1';
+
+    const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+    const calendarState = {
+      viewDate: new Date(),
+      selectedIso: ''
+    };
+    const today = new Date();
+    const maxYear = today.getFullYear();
+    const minYear = maxYear - 120;
+
+    function closeOverlayLists() {
+      monthList.classList.remove('open');
+      yearList.classList.remove('open');
+      monthChip.classList.remove('is-open');
+      yearChip.classList.remove('is-open');
+    }
+
+    function populateCalendarLists() {
+      monthList.innerHTML = monthNames
+        .map((name, index) => `<button type="button" class="birthdate-overlay-item" data-month="${index}">${name}</button>`)
+        .join('');
+
+      let yearsHtml = '';
+      for (let year = maxYear; year >= minYear; year--) {
+        yearsHtml += `<button type="button" class="birthdate-overlay-item" data-year="${year}">${year}</button>`;
+      }
+      yearList.innerHTML = yearsHtml;
+    }
+
+    function openPopup() {
+      popup.classList.add('open');
+      renderCalendar();
+    }
+
+    function closePopup() {
+      popup.classList.remove('open');
+    }
+
+    function setSelectedIso(isoValue) {
+      calendarState.selectedIso = isoValue || '';
+      isoInput.value = calendarState.selectedIso;
+      displayInput.value = formatIsoToDisplay(calendarState.selectedIso);
+      if (calendarState.selectedIso) {
+        const [year, month] = calendarState.selectedIso.split('-').map(Number);
+        calendarState.viewDate = new Date(year, month - 1, 1);
+      }
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const year = calendarState.viewDate.getFullYear();
+      const month = calendarState.viewDate.getMonth();
+      monthLabel.textContent = monthNames[month];
+      yearLabel.textContent = String(year);
+
+      monthList.querySelectorAll('[data-month]').forEach((item) => {
+        item.classList.toggle('is-active', parseInt(item.dataset.month, 10) === month);
+      });
+      yearList.querySelectorAll('[data-year]').forEach((item) => {
+        item.classList.toggle('is-active', parseInt(item.dataset.year, 10) === year);
+      });
+
+      const firstDay = new Date(year, month, 1);
+      const startWeekDay = (firstDay.getDay() + 6) % 7;
+      const firstGridDate = new Date(year, month, 1 - startWeekDay);
+      const todayIso = new Date().toISOString().split('T')[0];
+
+      let html = '';
+      for (let i = 0; i < 42; i++) {
+        const current = new Date(firstGridDate);
+        current.setDate(firstGridDate.getDate() + i);
+
+        const iso = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}-${String(current.getDate()).padStart(2, '0')}`;
+        const isOtherMonth = current.getMonth() !== month;
+        const isToday = iso === todayIso;
+        const isSelected = iso === calendarState.selectedIso;
+        const disabled = current > new Date();
+
+        html += `<button type="button" class="birthdate-day${isOtherMonth ? ' is-other-month' : ''}${isToday ? ' is-today' : ''}${isSelected ? ' is-selected' : ''}" data-iso="${iso}" ${disabled ? 'disabled' : ''}>${current.getDate()}</button>`;
+      }
+
+      days.innerHTML = html;
+    }
+
+    displayInput.addEventListener('input', () => {
+      const masked = applyBirthDateMask(displayInput.value);
+      displayInput.value = masked;
+      syncBirthDateFieldsFromDisplay();
+      if (isValidDisplayDate(masked)) {
+        calendarState.selectedIso = formatDisplayToIso(masked);
+        const [year, month] = calendarState.selectedIso.split('-').map(Number);
+        calendarState.viewDate = new Date(year, month - 1, 1);
+        renderCalendar();
+      }
+    });
+
+    displayInput.addEventListener('blur', () => {
+      const value = displayInput.value.trim();
+      if (value && !isValidDisplayDate(value)) {
+        NotificationToast.error('Введите дату в формате ДД.ММ.ГГГГ');
+      }
+      syncBirthDateFieldsFromDisplay();
+    });
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (popup.classList.contains('open')) {
+        closePopup();
+        closeOverlayLists();
+      } else {
+        openPopup();
+      }
+    });
+
+    prevBtn.addEventListener('click', () => {
+      calendarState.viewDate = new Date(calendarState.viewDate.getFullYear(), calendarState.viewDate.getMonth() - 1, 1);
+      renderCalendar();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      const candidate = new Date(calendarState.viewDate.getFullYear(), calendarState.viewDate.getMonth() + 1, 1);
+      const thisMonth = new Date();
+      const currentMonthStart = new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1);
+      if (candidate <= currentMonthStart) {
+        calendarState.viewDate = candidate;
+        renderCalendar();
+      }
+    });
+
+    monthChip.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const willOpen = !monthList.classList.contains('open');
+      closeOverlayLists();
+      if (willOpen) {
+        monthList.classList.add('open');
+        monthChip.classList.add('is-open');
+      }
+    });
+
+    yearChip.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const willOpen = !yearList.classList.contains('open');
+      closeOverlayLists();
+      if (willOpen) {
+        yearList.classList.add('open');
+        yearChip.classList.add('is-open');
+      }
+    });
+
+    monthList.addEventListener('click', (e) => {
+      const button = e.target.closest('[data-month]');
+      if (!button) return;
+      calendarState.viewDate = new Date(calendarState.viewDate.getFullYear(), parseInt(button.dataset.month, 10), 1);
+      closeOverlayLists();
+      renderCalendar();
+    });
+
+    yearList.addEventListener('click', (e) => {
+      const button = e.target.closest('[data-year]');
+      if (!button) return;
+      calendarState.viewDate = new Date(parseInt(button.dataset.year, 10), calendarState.viewDate.getMonth(), 1);
+      closeOverlayLists();
+      renderCalendar();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      displayInput.value = '';
+      isoInput.value = '';
+      calendarState.selectedIso = '';
+      closeOverlayLists();
+      renderCalendar();
+      closePopup();
+    });
+
+    todayBtn.addEventListener('click', () => {
+      const today = new Date();
+      setSelectedIso(today.toISOString().split('T')[0]);
+      closePopup();
+    });
+
+    days.addEventListener('click', (e) => {
+      const button = e.target.closest('.birthdate-day[data-iso]');
+      if (!button || button.disabled) return;
+      setSelectedIso(button.dataset.iso);
+      closeOverlayLists();
+      closePopup();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!popup.contains(e.target) && !trigger.contains(e.target) && e.target !== displayInput) {
+        closeOverlayLists();
+        closePopup();
+      }
+    });
+
+    displayInput.addEventListener('focus', () => {
+      renderCalendar();
+    });
+
+    populateCalendarLists();
+    renderCalendar();
+  }
+
   // Load profile on page load
+  initBirthDateControls();
   loadProfile();
 
   async function loadProfile() {
@@ -442,7 +1130,9 @@
       document.getElementById('phone').value = profile.phone || '';
       document.getElementById('city').value = profile.city || '';
       document.getElementById('website').value = profile.website || '';
-      document.getElementById('birthDate').value = profile.birth_date || '';
+      document.getElementById('birthDate').value = formatIsoToDisplay(profile.birth_date || '');
+      document.getElementById('birthDateIso').value = profile.birth_date || '';
+      document.getElementById('birthDate').dispatchEvent(new Event('input'));
       document.getElementById('socialVk').value = profile.social_vk || '';
       document.getElementById('socialTg').value = profile.social_tg || '';
 
@@ -535,12 +1225,17 @@
     const btn = document.getElementById('saveProfileBtn');
     setLoading(btn, true);
     try {
+      syncBirthDateFieldsFromDisplay();
+      const birthDateValue = document.getElementById('birthDate').value.trim();
+      if (birthDateValue && !isValidDisplayDate(birthDateValue)) {
+        throw new Error('Введите корректную дату в формате ДД.ММ.ГГГГ');
+      }
       await API.post('/profile.php?action=update', {
         bio: document.getElementById('bio').value,
         phone: document.getElementById('phone').value,
         city: document.getElementById('city').value,
         website: document.getElementById('website').value,
-        birth_date: document.getElementById('birthDate').value,
+        birth_date: document.getElementById('birthDateIso').value || formatDisplayToIso(document.getElementById('birthDate').value),
         social_vk: document.getElementById('socialVk').value,
         social_tg: document.getElementById('socialTg').value,
         first_name: document.getElementById('firstName').value,
@@ -626,7 +1321,7 @@
     document.getElementById('avatarProgress').classList.remove('hidden');
 
     try {
-      const response = await fetch((window.APP_URL || '') + '/api/profile.php?action=upload_avatar', {
+    const response = await fetch((window.APP_URL || '') + '/profile.php?action=upload_avatar', {
         method: 'POST',
         body: formData,
         credentials: 'include',

@@ -184,15 +184,34 @@ const i18n = {
       'admin.users': 'Пользователи',
       'admin.tests': 'Тесты',
       'admin.logs': 'Логи',
+      'admin.recordings': 'Записи',
+      'admin.recordings-title': 'Записи экрана',
+      'admin.recordings-open-full': 'Открыть в полном экране',
+      'admin.recordings-empty-desc': 'Записи появятся здесь, когда студенты начнут проходить тесты',
+      'admin.recordings-total': 'Всего записей',
+      'admin.recordings-size': 'Общий размер',
+      'admin.recordings-student': 'Студент',
+      'admin.recordings-duration': 'Длительность',
+      'admin.recordings-unknown': 'Неизвестно',
+      'admin.recordings-view': 'Смотреть',
+      'admin.recordings-show-all': 'Показать все',
+      'admin.recordings-items': 'записей',
+      'admin.recordings-load-error': 'Ошибка загрузки записей',
+      'admin.recordings-seconds-short': 'с',
       'admin.results': 'Результаты',
       'admin.create-test': '+ Создать тест',
       'admin.import-csv': 'Импорт CSV',
       'admin.download-template': 'Шаблон CSV',
       'admin.export-csv': 'Экспорт CSV',
+      'admin.export-pdf': 'Экспорт PDF',
       'admin.user-management': 'Управление пользователями',
       'admin.test-management': 'Управление тестами',
       'admin.logs-title': 'Логи анти-читинг системы',
+      'admin.logs-event': 'Событие',
+      'admin.logs-severity': 'Важность',
       'admin.results-title': 'Все результаты',
+      'admin.results-honesty': 'Честность',
+      'admin.results-minutes-short': 'м',
       
       
       'table.test': 'Тест',
@@ -444,15 +463,34 @@ const i18n = {
       'admin.users': 'Пайдаланушылар',
       'admin.tests': 'Тесттер',
       'admin.logs': 'Логтар',
+      'admin.recordings': 'Жазбалар',
+      'admin.recordings-title': 'Экран жазбалары',
+      'admin.recordings-open-full': 'Толық экранда ашу',
+      'admin.recordings-empty-desc': 'Студенттер тест тапсыра бастағанда жазбалар осында пайда болады',
+      'admin.recordings-total': 'Барлық жазбалар',
+      'admin.recordings-size': 'Жалпы көлемі',
+      'admin.recordings-student': 'Студент',
+      'admin.recordings-duration': 'Ұзақтығы',
+      'admin.recordings-unknown': 'Белгісіз',
+      'admin.recordings-view': 'Қарау',
+      'admin.recordings-show-all': 'Барлығын көрсету',
+      'admin.recordings-items': 'жазба',
+      'admin.recordings-load-error': 'Жазбаларды жүктеу қатесі',
+      'admin.recordings-seconds-short': 'с',
       'admin.results': 'Нәтижелер',
       'admin.create-test': '+ Тест жасау',
       'admin.import-csv': 'CSV импорттау',
       'admin.download-template': 'CSV үлгісі',
       'admin.export-csv': 'CSV экспорттау',
+      'admin.export-pdf': 'PDF экспорттау',
       'admin.user-management': 'Пайдаланушыларды басқару',
       'admin.test-management': 'Тесттерді басқару',
       'admin.logs-title': 'Анти-читинг жүйесінің логтары',
+      'admin.logs-event': 'Оқиға',
+      'admin.logs-severity': 'Маңыздылығы',
       'admin.results-title': 'Барлық нәтижелер',
+      'admin.results-honesty': 'Адалдық',
+      'admin.results-minutes-short': 'м',
       'table.user': 'Пайдаланушы',
       'table.email': 'Email',
       'table.role': 'Рөл',
@@ -668,15 +706,34 @@ const i18n = {
       'admin.users': 'Users',
       'admin.tests': 'Tests',
       'admin.logs': 'Logs',
+      'admin.recordings': 'Recordings',
+      'admin.recordings-title': 'Screen Recordings',
+      'admin.recordings-open-full': 'Open Full Screen',
+      'admin.recordings-empty-desc': 'Recordings will appear here when students start taking tests',
+      'admin.recordings-total': 'Total recordings',
+      'admin.recordings-size': 'Total size',
+      'admin.recordings-student': 'Student',
+      'admin.recordings-duration': 'Duration',
+      'admin.recordings-unknown': 'Unknown',
+      'admin.recordings-view': 'View',
+      'admin.recordings-show-all': 'Show all',
+      'admin.recordings-items': 'recordings',
+      'admin.recordings-load-error': 'Failed to load recordings',
+      'admin.recordings-seconds-short': 's',
       'admin.results': 'Results',
       'admin.create-test': '+ Create Test',
       'admin.import-csv': 'Import CSV',
       'admin.download-template': 'CSV Template',
       'admin.export-csv': 'Export CSV',
+      'admin.export-pdf': 'Export PDF',
       'admin.user-management': 'User Management',
       'admin.test-management': 'Test Management',
       'admin.logs-title': 'Anti-Cheating System Logs',
+      'admin.logs-event': 'Event',
+      'admin.logs-severity': 'Severity',
       'admin.results-title': 'All Results',
+      'admin.results-honesty': 'Integrity',
+      'admin.results-minutes-short': 'm',
       'table.user': 'User',
       'table.email': 'Email',
       'table.role': 'Role',
@@ -713,6 +770,7 @@ const i18n = {
     
     
     this.translatePage();
+    window.dispatchEvent(new CustomEvent('i18n:changed', { detail: { lang } }));
     
     console.log('[i18n] Применен язык:', lang);
   },
@@ -741,6 +799,18 @@ const i18n = {
       const translation = this.t(key);
       if (translation) {
         el.setAttribute('placeholder', translation);
+      }
+    });
+
+    const titled = document.querySelectorAll('[data-i18n-title]');
+    titled.forEach(el => {
+      const key = el.getAttribute('data-i18n-title');
+      const translation = this.t(key);
+      if (translation) {
+        el.setAttribute('title', translation);
+        if (el.hasAttribute('aria-label')) {
+          el.setAttribute('aria-label', translation);
+        }
       }
     });
 

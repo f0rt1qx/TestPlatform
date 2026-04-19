@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="public/css/modern.css?v=2">
+  <link rel="stylesheet" href="public/css/modern.css?v=4">
   <style>
     /* === Dashboard layout: fixed sidebar + main content === */
     body {
@@ -135,20 +135,113 @@
       width: 100%;
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 14px 18px;
-      border-radius: var(--radius-md, 12px);
-      border: none;
-      background: transparent;
-      color: var(--text-gray, #64748b);
-      font-weight: 500;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 200, 83, 0.12);
+      background: linear-gradient(135deg, rgba(0, 200, 83, 0.05), rgba(105, 240, 174, 0.08));
+      color: var(--text-dark, #1e293b);
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: background-color 0.22s ease, border-color 0.22s ease, color 0.22s ease, box-shadow 0.22s ease;
+      position: relative;
+      overflow: hidden;
+      transform: none !important;
     }
     .sidebar-footer .theme-toggle:hover {
-      background: var(--bg-light, #f1f5f9);
+      background: linear-gradient(135deg, rgba(0, 200, 83, 0.08), rgba(105, 240, 174, 0.14));
       color: var(--gradient-start, #00c853);
+      border-color: rgba(0, 200, 83, 0.24);
+      box-shadow: 0 12px 24px rgba(0, 200, 83, 0.10);
       transform: none !important;
+    }
+    .sidebar-footer .theme-toggle:active {
+      transform: none !important;
+    }
+    .sidebar-footer .theme-toggle::before {
+      display: none;
+    }
+    .sidebar-footer .theme-toggle::after {
+      display: none;
+    }
+    .sidebar-theme-copy {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      min-width: 0;
+      position: relative;
+      z-index: 2;
+    }
+    .sidebar-theme-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: inherit;
+    }
+    .sidebar-theme-state {
+      font-size: 0.78rem;
+      color: var(--text-gray, #64748b);
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+    .sidebar-theme-switch {
+      width: 62px;
+      height: 34px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(0, 200, 83, 0.22), rgba(105, 240, 174, 0.34));
+      border: 1px solid rgba(0, 200, 83, 0.22);
+      position: relative;
+      flex-shrink: 0;
+      box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.28), 0 8px 18px rgba(0, 200, 83, 0.16);
+      transition: background 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
+    }
+    .sidebar-theme-switch::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08));
+    }
+    .sidebar-theme-switch::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 6px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      transform: translateY(-50%);
+      background: linear-gradient(135deg, #ffe082 0%, #fbbf24 100%);
+      box-shadow: 0 10px 18px rgba(251, 191, 36, 0.24);
+      transition: left 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.24s ease, box-shadow 0.24s ease;
+    }
+    [data-theme="dark"] .sidebar-theme-state {
+      color: var(--text-gray, #94a3b8);
+    }
+    [data-theme="dark"] .sidebar-footer .theme-toggle {
+      border-color: rgba(148, 163, 184, 0.14);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.55), rgba(30, 41, 59, 0.72));
+      color: var(--text-dark, #f1f5f9);
+      box-shadow: none;
+    }
+    [data-theme="dark"] .sidebar-footer .theme-toggle:hover {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.88), rgba(51, 65, 85, 0.92));
+      border-color: rgba(96, 165, 250, 0.26);
+      color: #93c5fd;
+    }
+    [data-theme="dark"] .sidebar-theme-switch {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(14, 116, 144, 0.88));
+      border-color: rgba(125, 211, 252, 0.26);
+      box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.05), 0 8px 18px rgba(14, 165, 233, 0.18);
+    }
+    [data-theme="dark"] .sidebar-theme-switch::before {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+    }
+    [data-theme="dark"] .sidebar-theme-switch::after {
+      left: 34px;
+      background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+      box-shadow: 0 10px 18px rgba(96, 165, 250, 0.22);
     }
     .sidebar-footer .lang-selector {
       width: 100%;
@@ -493,8 +586,11 @@
       </div>
       <div class="sidebar-footer-item">
         <button class="theme-toggle" data-theme-toggle title="Тема">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg>
-          <span>Тема</span>
+          <span class="sidebar-theme-copy">
+            <span class="sidebar-theme-title">Тема</span>
+            <span class="sidebar-theme-state" data-theme-state-label>Светлая</span>
+          </span>
+          <span class="sidebar-theme-switch" aria-hidden="true"></span>
         </button>
       </div>
       <div class="sidebar-footer-item">
@@ -609,11 +705,19 @@
 
 <script src="public/js/config.js"></script>
 <script src="public/js/i18n.js"></script>
-<script src="public/js/app.js"></script>
+<script src="public/js/app.js?v=2"></script>
 <script>
-  if (!AuthManager.isLoggedIn()) {
+  (async () => {
+    if (AuthManager.isLoggedIn()) return;
+    try {
+      const me = await API.getMe();
+      if (me && me.success && me.user) {
+        AuthManager.saveUser(me.user);
+        return;
+      }
+    } catch (_) {}
     window.location.href = 'login.php?redirect=' + encodeURIComponent(location.href);
-  }
+  })();
 
   let currentTab = 'overview';
   let allResults = [];

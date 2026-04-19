@@ -168,6 +168,28 @@ CREATE TABLE `logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
+-- SCREENSHOTS
+-- ============================================================
+CREATE TABLE `screenshots` (
+  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `attempt_id` INT UNSIGNED NOT NULL,
+  `user_id` INT UNSIGNED NOT NULL,
+  `file_path` VARCHAR(500) NOT NULL COMMENT 'Relative path to screenshot file',
+  `file_size` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'File size in bytes',
+  `type` ENUM('manual', 'auto') NOT NULL DEFAULT 'manual' COMMENT 'Capture type',
+  `reason` VARCHAR(255) DEFAULT NULL COMMENT 'Reason for capture',
+  `event_data` JSON DEFAULT NULL COMMENT 'Associated event data for auto captures',
+  `capture_count` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Sequential capture number',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`attempt_id`) REFERENCES `attempts`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+  INDEX `idx_attempt` (`attempt_id`),
+  INDEX `idx_user` (`user_id`),
+  INDEX `idx_created_at` (`created_at`),
+  INDEX `idx_type` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Test session screenshots for anti-cheat monitoring';
+
+-- ============================================================
 -- SAMPLE DATA
 -- ============================================================
 

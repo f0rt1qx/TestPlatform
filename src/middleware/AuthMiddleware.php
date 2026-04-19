@@ -28,11 +28,27 @@ class AuthMiddleware {
         $authHeaderVal = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
 
         if (preg_match('/Bearer\s+(.+)/i', $authHeaderVal, $matches)) {
-            return self::validateToken($matches[1]);
+            $headerPayload = self::validateToken($matches[1]);
+            if ($headerPayload) {
+                return $headerPayload;
+            }
+        }
+
+        // Prefer server-side session for page/API consistency.
+        $sessionPayload = self::validateSessionUser();
+        if ($sessionPayload) {
+            return $sessionPayload;
         }
 
         $cookieToken = $_COOKIE['auth_token'] ?? '';
-        return $cookieToken !== '' ? self::validateToken($cookieToken) : null;
+        if ($cookieToken !== '') {
+            $cookiePayload = self::validateToken($cookieToken);
+            if ($cookiePayload) {
+                return $cookiePayload;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -89,6 +105,32 @@ class AuthMiddleware {
             $isActive  = $accountRecord['is_active'] ?? false;
 
             return (!$accountRecord || $isBlocked || !$isActive) ? null : $tokenBody;
+        } catch (RuntimeException $e) {
+            return null;
+        }
+    }
+
+    private static function validateSessionUser(): ?array {
+        $sessionUserId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+        if ($sessionUserId <= 0) {
+            return null;
+        }
+
+        try {
+            $dbConn = Database::getInstance();
+            $stmt = $dbConn->prepare('SELECT id, username, role, is_blocked, is_active FROM users WHERE id = ? LIMIT 1');
+            $stmt->execute([$sessionUserId]);
+            $user = $stmt->fetch();
+
+            if (!$user || (int)$user['is_blocked'] === 1 || (int)$user['is_active'] !== 1) {
+                return null;
+            }
+
+            return [
+                'sub' => (int)$user['id'],
+                'username' => $user['username'],
+                'role' => $user['role'],
+            ];
         } catch (RuntimeException $e) {
             return null;
         }

@@ -1,16 +1,16 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="src/favicon.ico" type="image/x-icon">
-  <title>Админ-панель — Sapienta</title>
+  <title data-i18n="admin.title">Админ-панель — Sapienta</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="public/css/modern.css?v=2">
+  <link rel="stylesheet" href="public/css/modern.css?v=4">
   <style>
     .severity-high   { color: var(--danger);  font-weight:700; }
     .severity-medium { color: var(--warning); font-weight:700; }
@@ -125,6 +125,91 @@
       .form-row { grid-template-columns: 1fr; }
       .form-checks { flex-direction: column; gap: 12px; }
     }
+
+    /* Force stable theme switch on this page */
+    .nav-theme-slot {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 48px !important;
+      min-width: 48px !important;
+      height: 26px !important;
+      margin: 0 0 0 6px !important;
+      padding: 0 !important;
+      flex: 0 0 48px !important;
+    }
+    .theme-toggle[data-theme-toggle] {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 48px !important;
+      min-width: 48px !important;
+      max-width: 48px !important;
+      height: 26px !important;
+      min-height: 26px !important;
+      max-height: 26px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      transform: none !important;
+      transition: none !important;
+      overflow: visible !important;
+      line-height: 0 !important;
+      vertical-align: middle !important;
+    }
+    .theme-toggle[data-theme-toggle]:hover,
+    .theme-toggle[data-theme-toggle]:active,
+    .theme-toggle[data-theme-toggle]:focus {
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      transform: none !important;
+      transition: none !important;
+      outline: none !important;
+    }
+    .theme-toggle[data-theme-toggle] .theme-toggle-track {
+      display: block !important;
+      position: relative !important;
+      width: 48px !important;
+      min-width: 48px !important;
+      max-width: 48px !important;
+      height: 26px !important;
+      min-height: 26px !important;
+      max-height: 26px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border-radius: 999px !important;
+      background: linear-gradient(135deg, rgba(0, 200, 83, 0.22), rgba(105, 240, 174, 0.34)) !important;
+      border: 1px solid rgba(0, 200, 83, 0.22) !important;
+      box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.22) !important;
+      transform: none !important;
+      transition: none !important;
+      overflow: hidden !important;
+    }
+    .theme-toggle[data-theme-toggle] .theme-toggle-thumb {
+      position: absolute !important;
+      top: 50% !important;
+      left: 2px !important;
+      width: 20px !important;
+      height: 20px !important;
+      margin: 0 !important;
+      border-radius: 50% !important;
+      background: linear-gradient(135deg, #ffe082 0%, #fbbf24 100%) !important;
+      box-shadow: 0 10px 18px rgba(251, 191, 36, 0.28) !important;
+      transform: translateY(-50%) !important;
+      transition: left 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.24s ease, box-shadow 0.24s ease !important;
+    }
+    [data-theme="dark"] .theme-toggle[data-theme-toggle] .theme-toggle-track {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(14, 116, 144, 0.88)) !important;
+      border-color: rgba(125, 211, 252, 0.26) !important;
+    }
+    [data-theme="dark"] .theme-toggle[data-theme-toggle] .theme-toggle-thumb {
+      left: 24px !important;
+      background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%) !important;
+      box-shadow: 0 10px 18px rgba(96, 165, 250, 0.24) !important;
+    }
   </style>
 </head>
 <body>
@@ -136,15 +221,15 @@
       <img src="src/logo.png" alt="Sapienta logo" width="56" height="56" class="navbar-logo">
     </a>
     <ul class="navbar-nav" id="mainNav">
-      <li><a href="dashboard.php">Кабинет</a></li>
-      <li><a href="admin.php" class="active">Админ</a></li>
-      <li><a href="#" onclick="AuthManager.logout()">Выйти</a></li>
+      <li><a href="dashboard.php" data-i18n="nav.dashboard">Кабинет</a></li>
+      <li><a href="admin.php" class="active" data-i18n="nav.admin">Админ</a></li>
+      <li><a href="#" onclick="AuthManager.logout()" data-i18n="nav.logout">Выйти</a></li>
       <li>
         <div class="lang-selector">
           <select data-language-selector aria-label="Выбор языка"></select>
         </div>
       </li>
-      <li><button class="theme-toggle" data-theme-toggle title="Тема"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg></button></li>
+      <li class="nav-theme-slot"><button class="theme-toggle" data-theme-toggle title="Тема" data-i18n-title="common.theme"><span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-thumb"></span></span></button></li>
     </ul>
     <button class="burger" id="burgerBtn">
       <span></span><span></span><span></span>
@@ -153,21 +238,21 @@
 </nav>
 
 <div class="container" style="padding:32px 20px;">
-  <div class="page-title">⚙️ Админ-панель</div>
+  <div class="page-title"><span>⚙️</span> <span data-i18n="admin.title">Админ-панель</span></div>
 
   <!-- Tabs -->
   <div class="admin-tabs">
-    <button class="admin-tab active" onclick="switchTab('users')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg> Пользователи</button>
-    <button class="admin-tab" onclick="switchTab('tests')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg> Тесты</button>
-    <button class="admin-tab" onclick="switchTab('logs')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg> Логи</button>
-    <button class="admin-tab" onclick="switchTab('eye_tracking')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.964 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg> Eye-tracking</button>
-    <button class="admin-tab" onclick="switchTab('results')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg> Результаты</button>
+    <button class="admin-tab active" onclick="switchTab('users')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg> <span data-i18n="admin.users">Пользователи</span></button>
+    <button class="admin-tab" onclick="switchTab('tests')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg> <span data-i18n="admin.tests">Тесты</span></button>
+    <button class="admin-tab" onclick="switchTab('logs')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg> <span data-i18n="admin.logs">Логи</span></button>
+    <button class="admin-tab" onclick="switchTab('recordings')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg> <span data-i18n="admin.recordings">Записи</span></button>
+    <button class="admin-tab" onclick="switchTab('results')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg> <span data-i18n="admin.results">Результаты</span></button>
   </div>
 
   <!-- USERS TAB -->
   <div id="tab-users">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-      <h3>Управление пользователями</h3>
+      <h3 data-i18n="admin.user-management">Управление пользователями</h3>
     </div>
     <div id="usersTable" class="table-wrap"><div class="page-loader"><div class="spinner"></div></div></div>
   </div>
@@ -175,11 +260,11 @@
   <!-- TESTS TAB -->
   <div id="tab-tests" class="hidden">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-      <h3>Управление тестами</h3>
+      <h3 data-i18n="admin.test-management">Управление тестами</h3>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <button class="btn btn-outline" onclick="downloadTemplate()"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg> Шаблон CSV</button>
-        <button class="btn btn-primary" onclick="openModal('importTestModal')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" /></svg> Импорт CSV</button>
-        <button class="btn btn-primary" onclick="openModal('createTestModal')">+ Создать тест</button>
+        <button class="btn btn-outline" onclick="downloadTemplate()"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg> <span data-i18n="admin.download-template">Шаблон CSV</span></button>
+        <button class="btn btn-primary" onclick="openModal('importTestModal')"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" /></svg> <span data-i18n="admin.import-csv">Импорт CSV</span></button>
+        <button class="btn btn-primary" onclick="openModal('createTestModal')"><span data-i18n="admin.create-test">+ Создать тест</span></button>
       </div>
     </div>
     <div id="testsTable" class="table-wrap"><div class="page-loader"><div class="spinner"></div></div></div>
@@ -187,44 +272,32 @@
 
   <!-- LOGS TAB -->
   <div id="tab-logs" class="hidden">
-    <h3 style="margin-bottom:20px;">Логи анти-читинг системы</h3>
+    <h3 style="margin-bottom:20px;" data-i18n="admin.logs-title">Логи анти-читинг системы</h3>
     <div id="logsTable" class="table-wrap"><div class="page-loader"><div class="spinner"></div></div></div>
   </div>
 
-  <!-- EYE-TRACKING TAB -->
-  <div id="tab-eye_tracking" class="hidden">
+  <!-- RECORDINGS TAB -->
+  <div id="tab-recordings" class="hidden">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-      <h3>👁️ Данные eye-tracking</h3>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <select id="eyeTestFilter" onchange="loadEyeTrackingData()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border-light);font-size:0.9rem;">
-          <option value="">Все тесты</option>
-        </select>
-        <select id="eyeAttemptFilter" onchange="loadEyeTrackingData()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border-light);font-size:0.9rem;">
-          <option value="">Все попытки</option>
-        </select>
+      <h3><i class="fas fa-video"></i> <span data-i18n="admin.recordings-title">Записи экрана</span></h3>
+      <a href="recordings.php" class="btn btn-outline" target="_blank">
+        <i class="fas fa-external-link-alt"></i> <span data-i18n="admin.recordings-open-full">Открыть в полном экране</span>
+      </a>
+    </div>
+    <div id="recordingsList" class="table-wrap">
+      <div style="background:var(--white);border-radius:var(--radius-lg);padding:40px;text-align:center;">
+        <i class="fas fa-video" style="font-size:3rem;opacity:0.3;margin-bottom:16px;"></i>
+        <p style="color:var(--text-gray);font-weight:600;" data-i18n="common.loading">Загрузка...</p>
       </div>
     </div>
-    
-    <!-- Stats Summary -->
-    <div id="eyeStatsSummary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;"></div>
-    
-    <!-- Visualization -->
-    <div id="eyeVisualization" style="background:var(--white);border-radius:var(--radius-lg);padding:24px;margin-bottom:24px;box-shadow:var(--shadow-md);display:none;">
-      <h4 style="margin-bottom:16px;">📊 Визуализация фиксаций</h4>
-      <canvas id="eyeHeatmapCanvas" width="800" height="600" style="width:100%;border-radius:8px;background:#f8fafc;"></canvas>
-    </div>
-    
-    <!-- Detailed Data -->
-    <div id="eyeTrackingTable" class="table-wrap"><div class="page-loader"><div class="spinner"></div></div></div>
   </div>
-
   <!-- RESULTS TAB -->
   <div id="tab-results" class="hidden">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-      <h3>Все результаты</h3>
+      <h3 data-i18n="admin.results-title">Все результаты</h3>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <a href="api/admin.php?action=export_csv" class="btn btn-outline btn-sm"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg> Экспорт CSV</a>
-        <a href="api/admin.php?action=export_pdf" class="btn btn-primary btn-sm" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 0v9.75m0-9.75c0-.621.504-1.125 1.125-1.125h.75c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.75m9-10.125v6.375c0 1.035-.75 1.875-1.688 2.063a48.128 48.128 0 0 1-5.062.469c-.75.075-1.5-.375-1.5-1.125V9.375c0-.75.75-1.2 1.5-1.125 1.688.15 3.375.3 5.063.469.937.187 1.687 1.031 1.687 2.063Z" /></svg> Экспорт PDF</a>
+        <a href="api/admin.php?action=export_csv" class="btn btn-outline btn-sm"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg> <span data-i18n="admin.export-csv">Экспорт CSV</span></a>
+        <a href="api/admin.php?action=export_pdf" class="btn btn-primary btn-sm" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 0v9.75m0-9.75c0-.621.504-1.125 1.125-1.125h.75c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.75m9-10.125v6.375c0 1.035-.75 1.875-1.688 2.063a48.128 48.128 0 0 1-5.062.469c-.75.075-1.5-.375-1.5-1.125V9.375c0-.75.75-1.2 1.5-1.125 1.688.15 3.375.3 5.063.469.937.187 1.687 1.031 1.687 2.063Z" /></svg> <span data-i18n="admin.export-pdf">Экспорт PDF</span></a>
       </div>
     </div>
     <div id="resultsTable" class="table-wrap"><div class="page-loader"><div class="spinner"></div></div></div>
@@ -497,7 +570,7 @@
 
 <script src="public/js/config.js"></script>
 <script src="public/js/i18n.js"></script>
-<script src="public/js/app.js"></script>
+<script src="public/js/app.js?v=2"></script>
 <script>
   // AuthManager guard
   document.addEventListener('DOMContentLoaded', () => {
@@ -512,10 +585,16 @@
     window.location.href = (window.APP_URL || '') + '/api/import.php?action=template';
   }
 
-  const allTabs = ['users','tests','logs','results'];
+  const allTabs = ['users','tests','logs','recordings','results'];
   let loadedTabs = {};
+  let currentAdminTab = 'users';
+
+  function tr(key, fallback = '') {
+    return (window.i18n && typeof window.i18n.t === 'function') ? window.i18n.t(key) : fallback;
+  }
 
   function switchTab(name) {
+    currentAdminTab = name;
     allTabs.forEach(t => {
       document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
     });
@@ -526,15 +605,26 @@
   }
 
   async function loadTab(tab) {
+    currentAdminTab = tab;
     if (loadedTabs[tab]) return;
     loadedTabs[tab] = true;
 
     if (tab === 'users') await loadUsers();
     if (tab === 'tests') await loadTests();
     if (tab === 'logs')  await loadLogs();
-    if (tab === 'eye_tracking') await loadEyeTrackingData();
+    if (tab === 'recordings') await loadRecordings();
+
     if (tab === 'results') await loadResults();
   }
+
+  async function rerenderAdminLanguage() {
+    loadedTabs[currentAdminTab] = false;
+    await loadTab(currentAdminTab);
+  }
+
+  window.addEventListener('i18n:changed', () => {
+    rerenderAdminLanguage().catch(() => {});
+  });
 
   // ── Users ──────────────────────────────────────────────────────────────────
   async function loadUsers() {
@@ -543,7 +633,7 @@
       const users = res.users || [];
       document.getElementById('usersTable').innerHTML = `
         <table>
-          <thead><tr><th>ID</th><th>Пользователь</th><th>Email</th><th>Роль</th><th>Статус</th><th>Дата</th><th>Действия</th></tr></thead>
+          <thead><tr><th>ID</th><th>${tr('table.user', 'Пользователь')}</th><th>${tr('table.email', 'Email')}</th><th>${tr('table.role', 'Роль')}</th><th>${tr('table.status', 'Статус')}</th><th>${tr('table.date', 'Дата')}</th><th>${tr('table.actions', 'Действия')}</th></tr></thead>
           <tbody>
             ${users.map(u => `
               <tr>
@@ -552,14 +642,14 @@
                 <td>${e(u.email)}</td>
                 <td><span class="badge ${u.role === 'admin' ? 'badge-warning' : 'badge-info'}">${u.role}</span></td>
                 <td>
-                  ${u.is_blocked ? '<span class="badge badge-danger">Блок</span>' : '<span class="badge badge-success">Активен</span>'}
-                  ${u.email_verified ? '' : '<span class="badge badge-warning" style="margin-left:4px;">Email не подтверждён</span>'}
+                  ${u.is_blocked ? `<span class="badge badge-danger">${tr('table.block', 'Блок')}</span>` : `<span class="badge badge-success">${tr('admin.active', 'Активен')}</span>`}
+                  ${u.email_verified ? '' : `<span class="badge badge-warning" style="margin-left:4px;">${tr('admin.email-unverified', 'Email не подтвержден')}</span>`}
                 </td>
                 <td class="text-muted" style="font-size:.8rem;">${new Date(u.created_at).toLocaleDateString('ru')}</td>
                 <td>
                   <button class="btn btn-sm ${u.is_blocked ? 'btn-success' : 'btn-danger'}"
                           onclick="toggleBlock(${u.id}, ${!u.is_blocked})">
-                    ${u.is_blocked ? 'Разблокировать' : 'Заблокировать'}
+                    ${u.is_blocked ? tr('table.unblock', 'Разблокировать') : tr('table.block', 'Заблокировать')}
                   </button>
                 </td>
               </tr>
@@ -575,7 +665,7 @@
   async function toggleBlock(userId, block) {
     try {
       await API.blockUser(userId, block);
-      NotificationToast.success(block ? 'Пользователь заблокирован' : 'Пользователь разблокирован');
+      NotificationToast.success(block ? tr('admin.user-blocked', 'Пользователь заблокирован') : tr('admin.user-unblocked', 'Пользователь разблокирован'));
       loadedTabs.users = false;
       loadUsers();
     } catch(e) { NotificationToast.error(e.message); }
@@ -588,20 +678,20 @@
       const tests = res.tests || [];
       document.getElementById('testsTable').innerHTML = `
         <table>
-          <thead><tr><th>ID</th><th>Название</th><th>Вопросы</th><th>Время</th><th>Попытки</th><th>Статус</th><th>Действия</th></tr></thead>
+          <thead><tr><th>ID</th><th>${tr('admin.test-name', 'Название')}</th><th>${tr('admin.questions', 'Вопросы')}</th><th>${tr('table.time', 'Время')}</th><th>${tr('table.attempt', 'Попытки')}</th><th>${tr('table.status', 'Статус')}</th><th>${tr('table.actions', 'Действия')}</th></tr></thead>
           <tbody>
             ${tests.map(t => `
               <tr>
                 <td>#${t.id}</td>
                 <td><strong>${e(t.title)}</strong></td>
                 <td>${t.question_count}</td>
-                <td>${t.time_limit} мин</td>
+                <td>${t.time_limit} ${tr('tests.meta.minutes', 'мин')}</td>
                 <td>${t.max_attempts}</td>
-                <td><span class="badge ${t.is_active ? 'badge-success' : 'badge-danger'}">${t.is_active ? 'Активен' : 'Скрыт'}</span></td>
+                <td><span class="badge ${t.is_active ? 'badge-success' : 'badge-danger'}">${t.is_active ? tr('admin.active', 'Активен') : tr('admin.hidden', 'Скрыт')}</span></td>
                 <td style="display:flex;gap:6px;flex-wrap:wrap;">
-                  <button class="btn btn-sm btn-ghost" onclick="openAddQuestion(${t.id})">+ Вопрос</button>
-                  <button class="btn btn-sm btn-ghost" onclick="toggleTestActive(${t.id}, ${!t.is_active})">${t.is_active ? 'Скрыть' : 'Показать'}</button>
-                  <button class="btn btn-sm btn-danger" onclick="deleteTest(${t.id})">Удалить</button>
+                  <button class="btn btn-sm btn-ghost" onclick="openAddQuestion(${t.id})">+ ${tr('admin.question', 'Вопрос')}</button>
+                  <button class="btn btn-sm btn-ghost" onclick="toggleTestActive(${t.id}, ${!t.is_active})">${t.is_active ? tr('admin.hide', 'Скрыть') : tr('admin.show', 'Показать')}</button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteTest(${t.id})">${tr('table.delete', 'Удалить')}</button>
                 </td>
               </tr>
             `).join('')}
@@ -628,7 +718,7 @@
         shuffle_questions: document.getElementById('shuffleQ').checked ? 1 : 0,
         shuffle_answers:   document.getElementById('shuffleA').checked ? 1 : 0,
       });
-      NotificationToast.success('Тест создан!');
+      NotificationToast.success(tr('admin.test-created', 'Тест создан'));
       closeModal('createTestModal');
       loadedTabs.tests = false;
       loadTests();
@@ -659,12 +749,12 @@
     const file = fileInput.files[0];
     
     if (!file) {
-      NotificationToast.error('Выберите файл');
+      NotificationToast.error(tr('admin.choose-file', 'Выберите файл'));
       return;
     }
     
     if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
-      NotificationToast.error('Только CSV файлы');
+      NotificationToast.error(tr('admin.only-csv', 'Только CSV файлы'));
       return;
     }
     
@@ -680,7 +770,7 @@
     const result = document.getElementById('importResult');
     
     btn.disabled = true;
-    btn.textContent = 'Импорт...';
+    btn.textContent = tr('admin.importing', 'Импорт...');
     progress.classList.remove('hidden');
     result.classList.add('hidden');
     result.innerHTML = '';
@@ -695,24 +785,24 @@
       const data = await response.json();
       
       if (!data.success) {
-        throw new Error(data.message || 'Ошибка импорта');
+        throw new Error(data.message || tr('admin.import-error', 'Ошибка импорта'));
       }
       
       // Показываем результат
       const stats = data.data || {};
       result.innerHTML = `
         <div class="alert alert-success" style="margin:0;">
-          <strong>✅ Импорт завершён!</strong><br>
-          Создано тестов: <strong>${stats.tests_created || 0}</strong><br>
-          Создано вопросов: <strong>${stats.questions_created || 0}</strong><br>
-          Создано ответов: <strong>${stats.answers_created || 0}</strong>
+          <strong>✅ ${tr('admin.import-complete', 'Импорт завершен')}</strong><br>
+          ${tr('admin.tests-created', 'Создано тестов')}: <strong>${stats.tests_created || 0}</strong><br>
+          ${tr('admin.questions-created', 'Создано вопросов')}: <strong>${stats.questions_created || 0}</strong><br>
+          ${tr('admin.answers-created', 'Создано ответов')}: <strong>${stats.answers_created || 0}</strong>
         </div>
       `;
       
       if (stats.errors && stats.errors.length > 0) {
         result.innerHTML += `
           <div class="alert alert-warning" style="margin-top:12px;max-height:200px;overflow-y:auto;">
-            <strong>⚠️ Ошибки:</strong><br>
+            <strong>⚠️ ${tr('common.error', 'Ошибки')}:</strong><br>
             <ul style="margin:8px 0 0 20px;font-size:.85rem;">
               ${stats.errors.map(e => `<li>${e}</li>`).join('')}
             </ul>
@@ -723,7 +813,7 @@
       result.classList.remove('hidden');
       fileInput.value = '';
       
-      NotificationToast.success('Тесты импортированы!');
+      NotificationToast.success(tr('admin.tests-imported', 'Тесты импортированы'));
       loadedTabs.tests = false;
       
       // Закрываем через 2 секунды если успешно
@@ -738,16 +828,16 @@
       NotificationToast.error(err.message);
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Импортировать';
+      btn.textContent = tr('admin.import-button', 'Импортировать');
       progress.classList.add('hidden');
     }
   });
 
   async function deleteTest(id) {
-    if (!confirm('Удалить тест? Все вопросы и результаты будут удалены.')) return;
+    if (!confirm(tr('admin.confirm-delete-test', 'Удалить тест? Все вопросы и результаты будут удалены.'))) return;
     try {
       await API.deleteTest(id);
-      NotificationToast.success('Тест удалён');
+      NotificationToast.success(tr('admin.test-deleted', 'Тест удален'));
       loadedTabs.tests = false;
       loadTests();
     } catch(e) { NotificationToast.error(e.message); }
@@ -777,10 +867,10 @@
     const row = document.createElement('div');
     row.className = 'answer-row';
     row.innerHTML = `
-      <input class="form-control" placeholder="Вариант ответа ${idx + 1}" name="ans_text_${idx}">
+      <input class="form-control" placeholder="${tr('admin.answer-option', 'Вариант ответа')} ${idx + 1}" name="ans_text_${idx}">
       <label class="answer-correct">
         <input type="checkbox" name="ans_correct_${idx}">
-        Верный
+        ${tr('admin.correct', 'Верный')}
       </label>
       <button type="button" class="answer-remove" onclick="this.closest('.answer-row').remove()">✕</button>
     `;
@@ -797,7 +887,7 @@
       const correct = row.querySelector('[name^="ans_correct"]').checked;
       if (text) answers.push({ answer_text: text, is_correct: correct ? 1 : 0 });
     }
-    if (!answers.length) { NotificationToast.error('Добавьте хотя бы один вариант'); return; }
+    if (!answers.length) { NotificationToast.error(tr('admin.add-answer-required', 'Добавьте хотя бы один вариант')); return; }
 
     const btn = document.getElementById('addQBtn');
     setLoading(btn, true);
@@ -809,7 +899,7 @@
         points:        parseInt(document.getElementById('aqPoints').value),
         answers,
       });
-      NotificationToast.success('Вопрос добавлен!');
+      NotificationToast.success(tr('admin.question-added', 'Вопрос добавлен'));
       closeModal('addQuestionModal');
       loadedTabs.tests = false;
       loadTests();
@@ -824,11 +914,11 @@
       const logs = res.logs || [];
       document.getElementById('logsTable').innerHTML = `
         <table>
-          <thead><tr><th>Время</th><th>Пользователь</th><th>Тест</th><th>Событие</th><th>Важность</th></tr></thead>
+          <thead><tr><th>${tr('table.time', 'Время')}</th><th>${tr('table.user', 'Пользователь')}</th><th>${tr('table.test', 'Тест')}</th><th>${tr('admin.logs-event', 'Событие')}</th><th>${tr('admin.logs-severity', 'Важность')}</th></tr></thead>
           <tbody>
             ${logs.map(l => `
               <tr>
-                <td class="text-muted" style="font-size:.8rem;white-space:nowrap;">${new Date(l.created_at).toLocaleString('ru')}</td>
+                <td class="text-muted" style="font-size:.8rem;white-space:nowrap;">${new Date(l.created_at).toLocaleString()}</td>
                 <td>${e(l.username)}</td>
                 <td style="font-size:.85rem;">${e(l.test_title)}</td>
                 <td><span class="log-event">${l.event_type}</span></td>
@@ -843,236 +933,115 @@
     }
   }
 
-  // ── Eye-Tracking Data ─────────────────────────────────────────────────────
-  async function loadEyeTrackingData() {
+  // ── Recordings ────────────────────────────────────────────────────────────
+  async function loadRecordings() {
     try {
-      const testFilter = document.getElementById('eyeTestFilter').value;
-      const attemptFilter = document.getElementById('eyeAttemptFilter').value;
+      // Build headers with JWT token if available
+      const headers = {
+        'Accept': 'application/json'
+      };
+      
+      // Try to get JWT token from AuthManager
+      const token = AuthManager && AuthManager.getToken ? AuthManager.getToken() : null;
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
 
-      const res = await API.adminEyeTracking({
-        test_id: testFilter || null,
-        attempt_id: attemptFilter || null
+      const res = await fetch('api/recordings-list.php', {
+        credentials: 'include',
+        headers: headers
       });
+      const data = await res.json();
       
-      const eyeData = res.data || [];
-      
-      // Update test filter dropdown
-      if (!document.getElementById('eyeTestFilter').dataset.loaded) {
-        const tests = res.tests || [];
-        const select = document.getElementById('eyeTestFilter');
-        tests.forEach(test => {
-          const opt = document.createElement('option');
-          opt.value = test.id;
-          opt.textContent = test.title;
-          select.appendChild(opt);
-        });
-        document.getElementById('eyeTestFilter').dataset.loaded = 'true';
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to load recordings');
       }
 
-      // Calculate stats
-      const stats = calculateEyeTrackingStats(eyeData);
-      
-      // Display stats summary
-      displayEyeStatsSummary(stats);
-      
-      // Display table
-      displayEyeTrackingTable(eyeData);
-      
-      // Draw visualization
-      if (eyeData.length > 0) {
-        document.getElementById('eyeVisualization').style.display = 'block';
-        drawEyeHeatmap(eyeData);
+      const recordings = data.recordings || [];
+      const stats = data.stats || {};
+
+      if (recordings.length === 0) {
+        document.getElementById('recordingsList').innerHTML = `
+          <div style="background:var(--white);border-radius:var(--radius-lg);padding:60px;text-align:center;">
+            <i class="fas fa-video-slash" style="font-size:4rem;opacity:0.3;margin-bottom:20px;"></i>
+            <p style="color:var(--text-gray);font-weight:600;font-size:1.1rem;">${tr('table.no-records', 'Записей пока нет')}</p>
+            <p style="color:var(--text-gray);font-size:0.9rem;margin-top:8px;">${tr('admin.recordings-empty-desc', 'Записи появятся здесь, когда студенты начнут проходить тесты')}</p>
+          </div>
+        `;
+        return;
       }
 
-    } catch(err) {
-      document.getElementById('eyeTrackingTable').innerHTML = `<div class="alert alert-error">${err.message}</div>`;
-    }
-  }
-
-  function calculateEyeTrackingStats(data) {
-    let totalFixations = 0;
-    let totalDuration = 0;
-    let fixationCount = 0;
-    const userStats = {};
-
-    data.forEach(log => {
-      const eventData = typeof log.event_data === 'string' 
-        ? JSON.parse(log.event_data) 
-        : log.event_data;
-      
-      const fixations = eventData.fixations || [];
-      const count = eventData.count || fixations.length;
-      
-      totalFixations += count;
-      
-      fixations.forEach(fix => {
-        if (fix.duration) {
-          totalDuration += fix.duration;
-          fixationCount++;
-        }
-      });
-
-      const userId = log.user_id;
-      if (!userStats[userId]) {
-        userStats[userId] = {
-          username: log.username,
-          test: log.test_title,
-          fixations: 0,
-          attempts: 0
-        };
+      let statsHTML = '';
+      if (stats.total_recordings) {
+        statsHTML = `
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
+            <div style="background:var(--white);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);">
+              <div style="font-size:2rem;font-weight:800;color:var(--gradient-start);">${stats.total_recordings}</div>
+              <div style="font-size:0.85rem;color:var(--text-gray);font-weight:600;">${tr('admin.recordings-total', 'Всего записей')}</div>
+            </div>
+            <div style="background:var(--white);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);">
+              <div style="font-size:2rem;font-weight:800;color:var(--gradient-start);">${stats.total_size ? Math.round(stats.total_size / 1024 / 1024) + ' MB' : '0 MB'}</div>
+              <div style="font-size:0.85rem;color:var(--text-gray);font-weight:600;">${tr('admin.recordings-size', 'Общий размер')}</div>
+            </div>
+          </div>
+        `;
       }
-      userStats[userId].fixations += count;
-      userStats[userId].attempts++;
-    });
 
-    return {
-      totalFixations,
-      avgDuration: fixationCount > 0 ? Math.round(totalDuration / fixationCount) : 0,
-      uniqueUsers: Object.keys(userStats).length,
-      recordsCount: data.length,
-      userStats
-    };
-  }
-
-  function displayEyeStatsSummary(stats) {
-    const container = document.getElementById('eyeStatsSummary');
-    
-    if (stats.recordsCount === 0) {
-      container.innerHTML = `
-        <div style="grid-column:1/-1;padding:40px;text-align:center;background:var(--bg-light);border-radius:var(--radius-lg);">
-          <div style="font-size:3rem;margin-bottom:12px;">👁️</div>
-          <div style="font-size:1.1rem;font-weight:700;color:var(--text-dark);margin-bottom:8px;">Нет данных eye-tracking</div>
-          <div style="color:var(--text-gray);font-size:0.9rem;">Данные появятся после прохождения тестов с включённым eye-tracking</div>
-        </div>
-      `;
-      return;
-    }
-
-    container.innerHTML = `
-      <div style="background:var(--white);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border-light);">
-        <div style="font-size:2rem;font-weight:800;color:var(--gradient-primary);margin-bottom:4px;">${stats.totalFixations.toLocaleString()}</div>
-        <div style="font-size:0.8rem;color:var(--text-gray);font-weight:600;">Всего фиксаций</div>
-      </div>
-      <div style="background:var(--white);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border-light);">
-        <div style="font-size:2rem;font-weight:800;color:#10b981;margin-bottom:4px;">${stats.avgDuration}ms</div>
-        <div style="font-size:0.8rem;color:var(--text-gray);font-weight:600;">Средняя длительность</div>
-      </div>
-      <div style="background:var(--white);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border-light);">
-        <div style="font-size:2rem;font-weight:800;color:#8b5cf6;margin-bottom:4px;">${stats.uniqueUsers}</div>
-        <div style="font-size:0.8rem;color:var(--text-gray);font-weight:600;">Уникальных пользователей</div>
-      </div>
-      <div style="background:var(--white);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);border:1px solid var(--border-light);">
-        <div style="font-size:2rem;font-weight:800;color:#f59e0b;margin-bottom:4px;">${stats.recordsCount}</div>
-        <div style="font-size:0.8rem;color:var(--text-gray);font-weight:600;">Записей в логе</div>
-      </div>
-    `;
-  }
-
-  function displayEyeTrackingTable(data) {
-    const container = document.getElementById('eyeTrackingTable');
-    
-    if (data.length === 0) {
-      container.innerHTML = '';
-      return;
-    }
-
-    container.innerHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>Время</th>
-            <th>Пользователь</th>
-            <th>Тест</th>
-            <th>Фиксаций</th>
-            <th>Средняя длительность</th>
-            <th>Действия</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${data.map(log => {
-            const eventData = typeof log.event_data === 'string' 
-              ? JSON.parse(log.event_data) 
-              : log.event_data;
-            
-            const fixations = eventData.fixations || [];
-            const count = eventData.count || fixations.length;
-            const avgDuration = fixations.length > 0 
-              ? Math.round(fixations.reduce((sum, f) => sum + (f.duration || 0), 0) / fixations.length) 
-              : 0;
-
-            return `
+      document.getElementById('recordingsList').innerHTML = `
+        ${statsHTML}
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>${tr('admin.recordings-student', 'Студент')}</th>
+              <th>${tr('table.test', 'Тест')}</th>
+              <th>${tr('admin.recordings-size', 'Размер')}</th>
+              <th>${tr('admin.recordings-duration', 'Длительность')}</th>
+              <th>${tr('table.date', 'Дата')}</th>
+              <th>${tr('table.actions', 'Действия')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${recordings.slice(0, 10).map(r => `
               <tr>
-                <td style="font-size:.8rem;white-space:nowrap;">${new Date(log.created_at).toLocaleString('ru')}</td>
-                <td><strong>${e(log.username)}</strong><br><span class="text-muted" style="font-size:.8rem;">ID: ${log.user_id}</span></td>
-                <td style="font-size:.9rem;">${e(log.test_title || '—')}</td>
-                <td><span style="background:#ede9fe;color:#7c3aed;padding:4px 10px;border-radius:6px;font-weight:700;font-size:.85rem;">${count}</span></td>
-                <td style="font-size:.85rem;">${avgDuration}ms</td>
+                <td>#${r.id}</td>
                 <td>
-                  <button class="btn btn-sm btn-outline" onclick="viewFixationDetails(${log.id})" style="padding:6px 12px;font-size:.8rem;">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.964 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg> Детали
-                  </button>
+                  <div style="font-weight:600;">${e(r.username || tr('admin.recordings-unknown', 'Неизвестно'))}</div>
+                  <div style="font-size:0.8rem;color:var(--text-gray);">${e(r.email || '')}</div>
+                </td>
+                <td>
+                  <div style="font-weight:600;">${e(r.test_title || tr('admin.recordings-unknown', 'Неизвестно'))}</div>
+                  <div style="font-size:0.8rem;color:var(--text-gray);">${tr('table.attempt', 'Попытка')} #${r.attempt_id}</div>
+                </td>
+                <td style="color:var(--text-gray);">${r.file_size ? (r.file_size / 1024 / 1024).toFixed(2) + ' MB' : '—'}</td>
+                <td style="color:var(--text-gray);font-variant-numeric:tabular-nums;">${r.duration ? Math.round(r.duration / 1000) + tr('admin.recordings-seconds-short', 'с') : '—'}</td>
+                <td style="color:var(--text-gray);font-size:0.85rem;">${new Date(r.created_at).toLocaleString()}</td>
+                <td>
+                  <a href="recordings.php?recording_id=${r.id}" class="btn btn-primary" style="padding:8px 16px;font-size:0.85rem;" target="_blank">
+                    <i class="fas fa-play"></i> ${tr('admin.recordings-view', 'Смотреть')}
+                  </a>
                 </td>
               </tr>
-            `;
-          }).join('')}
-        </tbody>
-      </table>
-    `;
+            `).join('')}
+          </tbody>
+        </table>
+        ${recordings.length > 10 ? `
+          <div style="text-align:center;padding:20px;">
+            <a href="recordings.php" class="btn btn-outline" target="_blank">
+              ${tr('admin.recordings-show-all', 'Показать все')} ${recordings.length} ${tr('admin.recordings-items', 'записей')} <i class="fas fa-external-link-alt"></i>
+            </a>
+          </div>
+        ` : ''}
+      `;
+    } catch(err) {
+      document.getElementById('recordingsList').innerHTML = `
+        <div class="alert alert-error">
+          <i class="fas fa-exclamation-circle"></i>
+          ${tr('admin.recordings-load-error', 'Ошибка загрузки записей')}: ${err.message}
+        </div>
+      `;
+    }
   }
-
-  function drawEyeHeatmap(data) {
-    const canvas = document.getElementById('eyeHeatmapCanvas');
-    const ctx = canvas.getContext('2d');
-    
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Collect all fixation points
-    const points = [];
-    data.forEach(log => {
-      const eventData = typeof log.event_data === 'string' 
-        ? JSON.parse(log.event_data) 
-        : log.event_data;
-      
-      const fixations = eventData.fixations || [];
-      fixations.forEach(fix => {
-        if (fix.startX && fix.startY) {
-          points.push({ x: fix.startX, y: fix.startY, duration: fix.duration || 100 });
-        }
-      });
-    });
-
-    if (points.length === 0) return;
-
-    // Draw heatmap
-    points.forEach(point => {
-      const radius = Math.max(20, point.duration / 10);
-      const alpha = Math.min(0.6, point.duration / 1000);
-      
-      const gradient = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius);
-      gradient.addColorStop(0, `rgba(99, 102, 241, ${alpha})`);
-      gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
-      
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(point.x, point.y, radius, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    // Draw fixation points
-    points.forEach(point => {
-      ctx.fillStyle = '#6366f1';
-      ctx.beginPath();
-      ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
-      ctx.fill();
-    });
-  }
-
-  function viewFixationDetails(logId) {
-    NotificationToast.info('Просмотр деталей фиксации #' + logId);
-    // TODO: Implement modal with detailed fixation data
-  }
-
   // ── Results ───────────────────────────────────────────────────────────────
   async function loadResults() {
     try {
@@ -1080,7 +1049,7 @@
       const results = res.results || [];
       document.getElementById('resultsTable').innerHTML = `
         <table>
-          <thead><tr><th>Пользователь</th><th>Тест</th><th>Попытка</th><th>%</th><th>Статус</th><th>Честность</th><th>Время</th><th>Дата</th></tr></thead>
+          <thead><tr><th>${tr('table.user', 'Пользователь')}</th><th>${tr('table.test', 'Тест')}</th><th>${tr('table.attempt', 'Попытка')}</th><th>%</th><th>${tr('table.status', 'Статус')}</th><th>${tr('admin.results-honesty', 'Честность')}</th><th>${tr('table.time', 'Время')}</th><th>${tr('table.date', 'Дата')}</th></tr></thead>
           <tbody>
             ${results.map(r => {
               const cheat = parseInt(r.cheat_score);
@@ -1091,10 +1060,10 @@
                   <td style="font-size:.9rem;">${e(r.test_title)}</td>
                   <td>${r.attempt_number}</td>
                   <td><strong>${parseFloat(r.percentage).toFixed(1)}%</strong></td>
-                  <td><span class="badge ${r.passed==1?'badge-success':'badge-danger'}">${r.passed==1?'Сдан':'Нет'}</span></td>
+                  <td><span class="badge ${r.passed==1?'badge-success':'badge-danger'}">${r.passed==1 ? tr('table.passed', 'Сдан') : tr('table.failed', 'Нет')}</span></td>
                   <td><span class="cheat-score ${cc}">${cheat}</span></td>
-                  <td class="text-muted" style="font-size:.8rem;">${Math.floor(r.time_spent/60)}м ${r.time_spent%60}с</td>
-                  <td class="text-muted" style="font-size:.8rem;">${new Date(r.created_at).toLocaleDateString('ru')}</td>
+                  <td class="text-muted" style="font-size:.8rem;">${Math.floor(r.time_spent/60)}${tr('admin.results-minutes-short', 'м')} ${r.time_spent%60}${tr('admin.recordings-seconds-short', 'с')}</td>
+                  <td class="text-muted" style="font-size:.8rem;">${new Date(r.created_at).toLocaleDateString()}</td>
                 </tr>
               `;
             }).join('')}
@@ -1134,6 +1103,11 @@
     burgerBtn.classList.toggle('active');
     mainNav.classList.toggle('open');
   });
+
 </script>
 </body>
 </html>
+
+
+
+

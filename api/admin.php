@@ -163,14 +163,6 @@ match (true) {
         jsonResponse(['success' => true, 'logs' => $resultModel->getAllLogs(500), 'csrf_token' => generateCsrfToken()])
     )(),
 
-    $action === 'eye_tracking' && $method === 'GET' => (function () use ($resultModel, $testModel): void {
-        $testId    = isset($_GET['test_id']) ? (int)$_GET['test_id'] : null;
-        $attemptId = isset($_GET['attempt_id']) ? (int)$_GET['attempt_id'] : null;
-        $eyeData   = $resultModel->getEyeTrackingLogs(500, $testId, $attemptId);
-        $tests     = $testModel->getAll(false);
-        jsonResponse(['success' => true, 'data' => $eyeData, 'tests' => $tests, 'csrf_token' => generateCsrfToken()]);
-    })(),
-
     $action === 'results' && $method === 'GET' => (fn() =>
         jsonResponse(['success' => true, 'results' => $resultModel->getAllResults(500), 'csrf_token' => generateCsrfToken()])
     )(),

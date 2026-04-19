@@ -44,7 +44,7 @@ if (session_status() === PHP_SESSION_NONE) {
         'path'     => '/',
         'secure'   => $isHttps,
         'httponly' => true,
-        'samesite' => 'Strict',
+        'samesite' => 'Lax',
     ]);
     session_start();
 }
@@ -55,7 +55,16 @@ function setSecurityHeaders(): void {
     header('X-Content-Type-Options: nosniff');
     header('X-XSS-Protection: 1; mode=block');
     header('Referrer-Policy: strict-origin-when-cross-origin');
-    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; connect-src 'self' https://api.vk.com;");
+    header(
+        "Content-Security-Policy: "
+        . "default-src 'self'; "
+        . "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://webgazer.cs.brown.edu; "
+        . "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; "
+        . "font-src 'self' https://fonts.gstatic.com; "
+        . "connect-src 'self' https://api.vk.com https://webgazer.cs.brown.edu; "
+        . "img-src 'self' data: blob:; "
+        . "media-src 'self' blob:;"
+    );
 }
 
 

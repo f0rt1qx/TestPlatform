@@ -6,19 +6,20 @@ require_once __DIR__ . '/../src/bootstrap.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-$smtpOp = $_GET['action'] ?? '';
-$smtpReqBody = json_decode(file_get_contents('php://input'), true) ?? [];
+$action = $_GET['action'] ?? '';
+$input = json_decode(file_get_contents('php://input'), true) ?? [];
 
 if (!APP_DEBUG) {
-    echo json_encode(['success' => false, 'message' => 'Disabled in production']);
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Disabled in production'], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
 require_once __DIR__ . '/../src/helpers/SMTPMailer.php';
 
-$mailSender = new SMTPMailer();
+$mailer = new SMTPMailer();
 
-$formatJson = static function (array $mailResult): void {
+$respond = static function (array $mailResult): void {
     echo json_encode($mailResult, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit;
 };
@@ -26,7 +27,7 @@ $formatJson = static function (array $mailResult): void {
 try {
     if ($action === 'connect') {
         $result = $mailer->testConnection();
-        $encodeResponse($result);
+        $respond($result);
     }
 
     if ($action === 'send') {
@@ -68,18 +69,21 @@ try {
 </html>';
 
         $result = $mailer->send($email, $subject, $body, true);
-        $encodeResponse($result);
+        $respond($result);
     }
 
     throw new RuntimeException('Unknown action');
 
 } catch (InvalidArgumentException $e) {
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
     exit;
 } catch (RuntimeException $e) {
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
     exit;
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()], JSON_UNESCAPED_UNICODE);
     exit;
 }

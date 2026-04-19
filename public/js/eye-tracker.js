@@ -16,6 +16,7 @@ var EyeTracker = (function() {
     this._lastGazeTime   = 0;
     this.FIXATION_DURATION = 100; 
     this.SAMPLE_RATE     = 100; 
+    this._calibrationSamples = [];
   }
 
   EyeTracker.prototype.start = async function() {
@@ -69,6 +70,24 @@ var EyeTracker = (function() {
       
       this._startLogFlush();
 
+      // Write a startup marker so admin panel can see that eye-tracking was enabled
+      // even if the browser provides no stable gaze points.
+      if (this.attemptId && typeof API !== 'undefined') {
+        API.logEvent({
+          attempt_id: this.attemptId,
+          event_type: 'eye_fixations',
+          data: {
+            fixations: [],
+            count: 0,
+            phase: 'started',
+            calibrated: true,
+            ts: Date.now()
+          }
+        }).catch(function(err) {
+          console.error('[EyeTracker] Failed to log start marker:', err);
+        });
+      }
+
       return true;
 
     } catch (err) {
@@ -110,15 +129,17 @@ var EyeTracker = (function() {
     var points = [];
     var currentIndex = 0;
     var clickCount = 0;
-    var requiredClicks = 5;
+    var requiredClicks = 1;
+    var autoMode = false;
+    var autoTimer = null;
 
     
     var container = document.createElement('div');
     container.id = 'eye-calibration-overlay';
     container.style.cssText = 
-      'position:fixed;inset:0;z-index:99998;background:rgba(15,23,42,0.95);' +
+      'position:fixed;inset:0;z-index:2147483647;background:rgba(15,23,42,0.95);' +
       'display:flex;align-items:center;justify-content:center;flex-direction:column;' +
-      'font-family:Inter,system-ui,sans-serif;backdrop-filter:blur(8px);';
+      'font-family:Inter,system-ui,sans-serif;backdrop-filter:blur(8px);pointer-events:auto;';
 
     container.innerHTML =
       '<div style="text-align:center;max-width:600px;padding:40px;">' +
@@ -136,6 +157,7 @@ var EyeTracker = (function() {
           '<div id="calibration-progress-fill" style="background:linear-gradient(90deg,#6366f1,#8b5cf6);height:100%;width:0%;transition:width 0.3s;"></div>' +
         '</div>' +
         '<p id="calibration-hint" style="color:#64748b;font-size:0.9rem;">Точка 1 из 9</p>' +
+        '<button id="calibration-auto-btn" type="button" style="margin-top:14px;padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:#e5e7eb;cursor:pointer;pointer-events:auto;">Автокалибровка</button>' +
       '</div>';
 
     document.body.appendChild(container);
@@ -156,10 +178,23 @@ var EyeTracker = (function() {
         'left:' + pos.x + ';top:' + pos.y + ';' +
         'transform:translate(-50%,-50%);display:none;' +
         'box-shadow:0 0 20px rgba(239,68,68,0.6);' +
-        'transition:transform 0.2s,background 0.2s;';
+        'transition:transform 0.2s,background 0.2s;' +
+        'z-index:2147483647;pointer-events:auto;touch-action:none;';
       
-      point.addEventListener('click', function() {
+      const handlePointPress = function(ev) {
+        if (ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+        }
         clickCount++;
+
+        // Feed calibration click to WebGazer and keep local sample for fallback visualization.
+        var rect = this.getBoundingClientRect();
+        var px = Math.round(rect.left + rect.width / 2);
+        var py = Math.round(rect.top + rect.height / 2);
+        var ts = Date.now();
+        self._calibrationSamples.push({ x: px, y: py, timestamp: ts });
+        self._calibrateAtPoint(px, py);
         
         
         this.style.transform = 'translate(-50%,-50%) scale(1.3)';
@@ -189,16 +224,49 @@ var EyeTracker = (function() {
           if (currentIndex < positions.length) {
             document.getElementById('cal-point-' + currentIndex).style.display = 'block';
           } else {
+            if (autoTimer) {
+              clearInterval(autoTimer);
+              autoTimer = null;
+            }
             
             setTimeout(function() {
               onComplete();
             }, 500);
           }
         }
-      });
+      };
+
+      point.addEventListener('pointerdown', handlePointPress, { passive: false });
+      point.addEventListener('click', handlePointPress, { passive: false });
+      point.addEventListener('touchstart', handlePointPress, { passive: false });
 
       container.appendChild(point);
     });
+
+    // Ensure center instruction block never steals clicks from calibration points.
+    var intro = container.firstElementChild;
+    if (intro) {
+      intro.style.pointerEvents = 'none';
+    }
+    var autoBtn = document.getElementById('calibration-auto-btn');
+    if (autoBtn) {
+      autoBtn.style.pointerEvents = 'auto';
+      autoBtn.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        autoMode = true;
+        this.textContent = 'Автокалибровка включена';
+        this.disabled = true;
+      });
+    }
+
+    autoTimer = setInterval(function() {
+      if (currentIndex >= positions.length) return;
+      if (!autoMode) return;
+      var currentPoint = document.getElementById('cal-point-' + currentIndex);
+      if (!currentPoint) return;
+      currentPoint.dispatchEvent(new Event('pointerdown', { bubbles: true, cancelable: true }));
+    }, 450);
 
     
     document.getElementById('cal-point-0').style.display = 'block';
@@ -216,6 +284,21 @@ var EyeTracker = (function() {
           this._calibrationContainer.remove();
         }
       }, 300);
+    }
+  };
+
+  EyeTracker.prototype._calibrateAtPoint = function(x, y) {
+    if (!this._webgazer) return;
+    try {
+      if (typeof this._webgazer.recordScreenPosition === 'function') {
+        this._webgazer.recordScreenPosition(x, y, 'click');
+        return;
+      }
+      if (typeof this._webgazer.calibratePoint === 'function') {
+        this._webgazer.calibratePoint(x, y);
+      }
+    } catch (e) {
+      console.warn('[EyeTracker] Calibration click failed:', e);
     }
   };
 
@@ -287,10 +370,59 @@ var EyeTracker = (function() {
   EyeTracker.prototype._flushData = function() {
     if (this._gazePoints.length === 0 && this._fixations.length === 0) return;
 
+    const gazePointsToFlush = this._gazePoints.slice();
     const fixationsToFlush = this._fixations.slice();
-    const pointsCount = this._gazePoints.length;
+    const pointsCount = gazePointsToFlush.length;
 
+    this._gazePoints = [];
     this._fixations = [];
+
+    // Fallback: if eye tracker produced gaze points but no stable fixations yet,
+    // still write a lightweight event so admin can see activity.
+    if (fixationsToFlush.length === 0 && pointsCount > 0) {
+      const firstPoint = gazePointsToFlush[0];
+      const lastPoint = gazePointsToFlush[gazePointsToFlush.length - 1];
+      fixationsToFlush.push({
+        startX: firstPoint.x,
+        startY: firstPoint.y,
+        endX: lastPoint.x,
+        endY: lastPoint.y,
+        startTime: firstPoint.timestamp,
+        endTime: lastPoint.timestamp,
+        duration: Math.max(0, lastPoint.timestamp - firstPoint.timestamp),
+        points: gazePointsToFlush.slice(0, 20)
+      });
+    }
+
+    // Fallback #2: no gaze points at all, use calibration samples so admin sees at least calibration map.
+    if (fixationsToFlush.length === 0 && this._calibrationSamples.length > 0) {
+      const grouped = {};
+      this._calibrationSamples.forEach(sample => {
+        const key = sample.x + ':' + sample.y;
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(sample);
+      });
+
+      Object.keys(grouped).forEach(key => {
+        const samples = grouped[key];
+        const first = samples[0];
+        const last = samples[samples.length - 1];
+        fixationsToFlush.push({
+          startX: first.x,
+          startY: first.y,
+          endX: last.x,
+          endY: last.y,
+          startTime: first.timestamp,
+          endTime: last.timestamp,
+          duration: Math.max(100, last.timestamp - first.timestamp),
+          calibration: true,
+          clicks: samples.length,
+          points: samples
+        });
+      });
+
+      this._calibrationSamples = [];
+    }
 
     if (fixationsToFlush.length > 0 && this.attemptId) {
       typeof API !== 'undefined' && API.logEvent({
@@ -298,7 +430,8 @@ var EyeTracker = (function() {
         event_type: 'eye_fixations',
         data: {
           fixations: fixationsToFlush,
-          count: fixationsToFlush.length
+          count: fixationsToFlush.length,
+          gaze_points_count: pointsCount
         }
       }).catch(err => console.error('[EyeTracker] Failed to log fixations:', err));
     }

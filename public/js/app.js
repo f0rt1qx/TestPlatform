@@ -1,4 +1,4 @@
-const ThemeManager = {
+﻿const ThemeManager = {
   currentTheme: null,
 
   init() {
@@ -27,6 +27,123 @@ const ThemeManager = {
 };
 ThemeManager.init();
 
+ThemeManager._animTimer = null;
+ThemeManager._ensureToggleMarkup = function (toggleEl) {
+  if (!toggleEl.querySelector('.theme-toggle-track')) {
+    toggleEl.innerHTML = '<span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-thumb"></span></span>';
+  }
+  return {
+    track: toggleEl.querySelector('.theme-toggle-track'),
+    thumb: toggleEl.querySelector('.theme-toggle-thumb')
+  };
+};
+
+ThemeManager._applyInlineToggleStyles = function (toggleEl, activeTheme) {
+  const isDashboardToggle = toggleEl.classList.contains('theme-toggle') && !!toggleEl.querySelector('[data-theme-state-label]');
+  if (isDashboardToggle) {
+    return;
+  }
+
+  const { track, thumb } = this._ensureToggleMarkup(toggleEl);
+  if (!track || !thumb) {
+    return;
+  }
+
+  Object.assign(toggleEl.style, {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '48px',
+    minWidth: '48px',
+    maxWidth: '48px',
+    height: '26px',
+    minHeight: '26px',
+    maxHeight: '26px',
+    margin: '0',
+    padding: '0',
+    border: 'none',
+    background: 'transparent',
+    boxShadow: 'none',
+    transform: 'none',
+    transition: 'none',
+    overflow: 'visible',
+    lineHeight: '0',
+    verticalAlign: 'middle',
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    outline: 'none'
+  });
+
+  Object.assign(track.style, {
+    display: 'block',
+    position: 'relative',
+    width: '48px',
+    minWidth: '48px',
+    maxWidth: '48px',
+    height: '26px',
+    minHeight: '26px',
+    maxHeight: '26px',
+    margin: '0',
+    padding: '0',
+    borderRadius: '999px',
+    background: activeTheme === 'dark'
+      ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(14, 116, 144, 0.88))'
+      : 'linear-gradient(135deg, rgba(0, 200, 83, 0.22), rgba(105, 240, 174, 0.34))',
+    border: activeTheme === 'dark'
+      ? '1px solid rgba(125, 211, 252, 0.26)'
+      : '1px solid rgba(0, 200, 83, 0.22)',
+    boxShadow: 'inset 0 1px 4px rgba(255, 255, 255, 0.22)',
+    transform: 'none',
+    transition: 'none',
+    overflow: 'hidden'
+  });
+
+  Object.assign(thumb.style, {
+    position: 'absolute',
+    top: '50%',
+    left: activeTheme === 'dark' ? '24px' : '2px',
+    width: '20px',
+    height: '20px',
+    margin: '0',
+    borderRadius: '50%',
+    background: activeTheme === 'dark'
+      ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
+      : 'linear-gradient(135deg, #ffe082 0%, #fbbf24 100%)',
+    boxShadow: activeTheme === 'dark'
+      ? '0 10px 18px rgba(96, 165, 250, 0.24)'
+      : '0 10px 18px rgba(251, 191, 36, 0.28)',
+    transform: 'translateY(-50%)',
+    transition: 'left 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.24s ease, box-shadow 0.24s ease'
+  });
+};
+
+ThemeManager._refreshToggleState = function () {
+  const activeTheme = document.documentElement.getAttribute('data-theme');
+  for (const toggleEl of document.querySelectorAll('[data-theme-toggle]')) {
+    toggleEl.setAttribute('aria-pressed', activeTheme === 'dark' ? 'true' : 'false');
+    toggleEl.dataset.themeState = activeTheme;
+    this._applyInlineToggleStyles(toggleEl, activeTheme);
+    const stateLabel = toggleEl.querySelector('[data-theme-state-label]');
+    if (stateLabel) {
+      stateLabel.textContent = activeTheme === 'dark' ? 'Тёмная' : 'Светлая';
+    }
+  }
+};
+
+ThemeManager.apply = function (themeName) {
+  document.documentElement.classList.add('theme-animating');
+  document.documentElement.setAttribute('data-theme', themeName);
+  localStorage.setItem('theme', themeName);
+  this.currentTheme = themeName;
+  this._refreshToggleState();
+  clearTimeout(this._animTimer);
+  this._animTimer = setTimeout(() => {
+    document.documentElement.classList.remove('theme-animating');
+  }, 320);
+};
+
+ThemeManager._refreshToggleState();
+
 document.addEventListener('DOMContentLoaded', () => {
   for (const btn of document.querySelectorAll('[data-theme-toggle]')) {
     btn.addEventListener('click', e => { e.preventDefault(); ThemeManager.toggle(); });
@@ -50,7 +167,7 @@ const NotificationToast = {
 
   show(msg, kind = 'info', duration = 4000) {
     this.init();
-    const iconMap = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+    const iconMap = { success: 'вњ…', error: 'вќЊ', warning: 'вљ пёЏ', info: 'в„№пёЏ' };
     const el = document.createElement('div');
     el.className = `toast ${kind}`;
     el.innerHTML = `<span>${iconMap[kind] ?? iconMap.info}</span><span>${msg}</span>`;
@@ -73,10 +190,12 @@ const API = {
   },
 
   _getAuthHeaders() {
-    const hdr = { 'Content-Type': 'application/json' };
-    const t = AuthManager.getToken();
-    t && (hdr['Authorization'] = `Bearer ${t}`);
-    return hdr;
+    const headers = { 'Content-Type': 'application/json' };
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    return headers;
   },
 
   async request(endpoint, method = 'GET', payload = null) {
@@ -92,21 +211,21 @@ const API = {
     try {
       httpResponse = await fetch(reqUrl, fetchOpts);
     } catch (netErr) {
-      throw new Error('Ошибка сети. Проверьте что XAMPP запущен.');
+      throw new Error('РћС€РёР±РєР° СЃРµС‚Рё. РџСЂРѕРІРµСЂСЊС‚Рµ С‡С‚Рѕ XAMPP Р·Р°РїСѓС‰РµРЅ.');
     }
 
     const ct = httpResponse.headers.get('content-type') ?? '';
     ct.includes('application/json') || (() => {
       throw new Error(
-        `Сервер вернул HTML вместо JSON. Проверьте:\n` +
-        `1. Apache и MySQL запущены в XAMPP\n` +
-        `2. Файл ${reqUrl} существует\n` +
-        `3. APP_URL = "${window.APP_URL}" верный`
+        `РЎРµСЂРІРµСЂ РІРµСЂРЅСѓР» HTML РІРјРµСЃС‚Рѕ JSON. РџСЂРѕРІРµСЂСЊС‚Рµ:\n` +
+        `1. Apache Рё MySQL Р·Р°РїСѓС‰РµРЅС‹ РІ XAMPP\n` +
+        `2. Р¤Р°Р№Р» ${reqUrl} СЃСѓС‰РµСЃС‚РІСѓРµС‚\n` +
+        `3. APP_URL = "${window.APP_URL}" РІРµСЂРЅС‹Р№`
       );
     })();
 
     const responseData = await httpResponse.json();
-    httpResponse.ok || (() => { throw new Error(responseData.message ?? 'Ошибка сервера'); })();
+    httpResponse.ok || (() => { throw new Error(responseData.message ?? 'РћС€РёР±РєР° СЃРµСЂРІРµСЂР°'); })();
 
     return responseData;
   },
@@ -184,12 +303,6 @@ const API = {
   adminUsers() { return this.get('/admin.php?action=users'); },
   adminTests() { return this.get('/admin.php?action=tests'); },
   adminLogs() { return this.get('/admin.php?action=logs'); },
-  adminEyeTracking(prms = {}) {
-    const qp = new URLSearchParams();
-    if (prms.test_id) qp.set('test_id', prms.test_id);
-    if (prms.attempt_id) qp.set('attempt_id', prms.attempt_id);
-    return this.get('/admin.php?action=eye_tracking&' + qp.toString());
-  },
   adminResults() { return this.get('/admin.php?action=results'); },
 
   async createTest(testData) {
@@ -221,6 +334,7 @@ const API = {
 
 const AuthManager = {
   _cachedToken: null,
+  _cachedUser: null,
 
   getToken() {
     this._cachedToken ??= localStorage.getItem('auth_token') ?? this._readCookie('auth_token');
@@ -237,16 +351,40 @@ const AuthManager = {
     localStorage.setItem('auth_token', tok);
   },
 
+  getUser() {
+    if (this._cachedUser) return this._cachedUser;
+    const raw = localStorage.getItem('auth_user');
+    if (!raw) return null;
+    try {
+      this._cachedUser = JSON.parse(raw);
+      return this._cachedUser;
+    } catch (_) {
+      localStorage.removeItem('auth_user');
+      return null;
+    }
+  },
+
+  saveUser(user) {
+    this._cachedUser = user ?? null;
+    if (user) {
+      localStorage.setItem('auth_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('auth_user');
+    }
+  },
+
   async login(username, password) {
     const apiResp = await API.login(username, password);
-    apiResp.success && apiResp.token && this.saveToken(apiResp.token);
+    apiResp.token && this.saveToken(apiResp.token);
+    apiResp.success && apiResp.user && this.saveUser(apiResp.user);
     apiResp.csrf_token && localStorage.setItem('csrf_token', apiResp.csrf_token);
     return apiResp;
   },
 
   async register(regPayload) {
     const apiResp = await API.register(regPayload);
-    apiResp.success && apiResp.token && this.saveToken(apiResp.token);
+    apiResp.token && this.saveToken(apiResp.token);
+    apiResp.success && apiResp.user && this.saveUser(apiResp.user);
     apiResp.csrf_token && localStorage.setItem('csrf_token', apiResp.csrf_token);
     return apiResp;
   },
@@ -256,23 +394,29 @@ const AuthManager = {
       console.warn('Logout API call failed:', err);
     } finally {
       this._cachedToken = null;
+      this._cachedUser = null;
       localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
       localStorage.removeItem('csrf_token');
       document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       window.location.href = (window.APP_URL ?? '') + '/index.php';
     }
   },
 
-  isLoggedIn() { return !!this.getToken(); },
+  isLoggedIn() {
+    return !!(this.getUser() || this.getToken());
+  },
 
   getPayload() {
     const tok = this.getToken();
-    tok || (() => { return null; })();
+    if (!tok) {
+      return this.getUser();
+    }
     try {
       const b64 = tok.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
       return JSON.parse(atob(b64));
     } catch (e) {
-      return null;
+      return this.getUser();
     }
   },
 
@@ -297,7 +441,7 @@ const AuthManager = {
 
 function setLoading(btn, loading) {
   loading
-    ? (btn.dataset.origText = btn.innerHTML, btn.innerHTML = '<span class="spinner" style="width:18px;height:18px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span>Загрузка...', btn.disabled = true)
+    ? (btn.dataset.origText = btn.innerHTML, btn.innerHTML = '<span class="spinner" style="width:18px;height:18px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span>Р—Р°РіСЂСѓР·РєР°...', btn.disabled = true)
     : (btn.innerHTML = btn.dataset.origText ?? btn.innerHTML, btn.disabled = false);
 }
 
@@ -326,7 +470,7 @@ function closeModal(id) {
     if (result) { result.classList.add('hidden'); result.innerHTML = ''; }
     if (progress) progress.classList.add('hidden');
     const btn = document.getElementById('importBtn');
-    if (btn) { btn.disabled = false; btn.textContent = 'Импортировать'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'РРјРїРѕСЂС‚РёСЂРѕРІР°С‚СЊ'; }
   }
 
   // Reset create test modal state
@@ -341,7 +485,7 @@ function closeModal(id) {
     const btn = document.getElementById('createTestBtn');
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg> Создать тест';
+      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg> РЎРѕР·РґР°С‚СЊ С‚РµСЃС‚';
     }
   }
 
@@ -354,7 +498,7 @@ function closeModal(id) {
     const btn = document.getElementById('addQBtn');
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg> Добавить';
+      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg> Р”РѕР±Р°РІРёС‚СЊ';
     }
   }
 }
@@ -370,3 +514,4 @@ async function initCsrfToken() {
 document.readyState === 'loading'
   ? document.addEventListener('DOMContentLoaded', initCsrfToken)
   : initCsrfToken();
+

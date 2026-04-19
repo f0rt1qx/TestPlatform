@@ -1,14 +1,33 @@
 <?php
 
+// DB defaults:
+// - localhost/XAMPP -> local MySQL
+// - InfinityFree hosting -> hosting MySQL
+// Any DB_* environment variable overrides these defaults.
+$httpHost = strtolower($_SERVER['HTTP_HOST'] ?? '');
+$isLocalHost = in_array($httpHost, ['localhost', '127.0.0.1', '::1'], true) || str_starts_with($httpHost, 'localhost:');
 
+$defaultDbHost = 'localhost';
+$defaultDbPort = '3306';
+$defaultDbName = 'test_platform';
+$defaultDbUser = 'root';
+$defaultDbPass = '';
 
-define('DB_HOST',    getenv('DB_HOST')    ?: 'sql100.infinityfree.com');
-define('DB_PORT',    getenv('DB_PORT')    ?: '3306');
-define('DB_NAME',    getenv('DB_NAME')    ?: 'if0_41654195_testplatformdb');
-define('DB_USER',    getenv('DB_USER')    ?: 'if0_41654195');
-define('DB_PASS',    getenv('DB_PASS')    ?: 'gAW3XYQbaw');
+// On any non-local host use hosting DB by default.
+if (!$isLocalHost) {
+    $defaultDbHost = 'sql100.infinityfree.com';
+    $defaultDbPort = '3306';
+    $defaultDbName = 'if0_41654195_testplatformdbb';
+    $defaultDbUser = 'if0_41654195';
+    $defaultDbPass = 'gAW3XYQbaw';
+}
+
+define('DB_HOST',    getenv('DB_HOST')    ?: $defaultDbHost);
+define('DB_PORT',    getenv('DB_PORT')    ?: $defaultDbPort);
+define('DB_NAME',    getenv('DB_NAME')    ?: $defaultDbName);
+define('DB_USER',    getenv('DB_USER')    ?: $defaultDbUser);
+define('DB_PASS',    getenv('DB_PASS')    ?: $defaultDbPass);
 define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
-
 
 if (!defined('APP_URL')) {
     $scheme   = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
@@ -24,52 +43,77 @@ if (!defined('APP_URL')) {
     define('APP_URL', $scheme . '://' . $host . rtrim($subPath, '/'));
 }
 
-
 define('APP_NAME',  'Sapienta');
-define('APP_ENV',   'development');
-define('APP_DEBUG', true);
 
+$appEnv = getenv('APP_ENV') ?: 'development';
+$appDebugEnv = getenv('APP_DEBUG');
+$appDebug = $appDebugEnv !== false
+    ? (filter_var($appDebugEnv, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false)
+    : false;
 
+define('APP_ENV',   $appEnv);
+define('APP_DEBUG', $appDebug);
 
 $secretFile = __DIR__ . '/secret.php';
-if (file_exists($secretFile)) {
-    require_once $secretFile;
+$jwtSecretFromEnv = getenv('JWT_SECRET') ?: '';
+if ($jwtSecretFromEnv !== '') {
+    define('JWT_SECRET', $jwtSecretFromEnv);
+} else {
+    if (file_exists($secretFile)) {
+        require_once $secretFile;
+    }
+    if (!defined('JWT_SECRET')) {
+        // Stable fallback for environments where secret.php cannot be written.
+        // Override with env JWT_SECRET on production for best security.
+        $stableFallback = hash('sha256', DB_HOST . '|' . DB_NAME . '|' . DB_USER . '|sapienta-jwt-v1');
+        define('JWT_SECRET', $stableFallback);
+
+        $secretPhp = "<?php\n// JWT SECRET (generated fallback)\ndefine('JWT_SECRET', '$stableFallback');\n";
+        @file_put_contents($secretFile, $secretPhp);
+        @chmod($secretFile, 0600);
+    }
 }
-if (!defined('JWT_SECRET')) {
-    $generatedSecret = bin2hex(random_bytes(32));
-    define('JWT_SECRET', $generatedSecret);
-    @file_put_contents($secretFile, "<?php\n// AUTO-GENERATED JWT SECRET - DO NOT SHARE\n// Сгенерировано: " . date('Y-m-d H:i:s') . "\ndefine('JWT_SECRET', '$generatedSecret');\n");
-    @chmod($secretFile, 0600);
+define('JWT_EXPIRE',         3600 * 24);
+define('JWT_REFRESH_EXPIRE', 3600 * 24 * 7);
+
+$mailHost = getenv('MAIL_HOST') ?: 'smtp.gmail.com';
+$mailPort = (int)(getenv('MAIL_PORT') ?: 587);
+$mailUser = getenv('MAIL_USER') ?: '';
+$mailPass = getenv('MAIL_PASS') ?: '';
+$mailFrom = getenv('MAIL_FROM') ?: ($mailUser ?: 'no-reply@localhost');
+$mailFromName = getenv('MAIL_FROM_NAME') ?: APP_NAME;
+
+$mailEnabledEnv = getenv('MAIL_ENABLED');
+$mailEnabled = $mailEnabledEnv !== false
+    ? (filter_var($mailEnabledEnv, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false)
+    : false;
+
+// Never enable SMTP if credentials are missing.
+if ($mailEnabled && ($mailUser === '' || $mailPass === '')) {
+    $mailEnabled = false;
 }
-define('JWT_EXPIRE',         3600 * 24);        
-define('JWT_REFRESH_EXPIRE', 3600 * 24 * 7);   
 
-
-define('MAIL_HOST',      'smtp.gmail.com');
-define('MAIL_PORT',      587);
-define('MAIL_USER',      'flaymov09@gmail.com');
-define('MAIL_PASS',      'rjcedeuzbzpjvrut');
-define('MAIL_FROM',      'flaymov09@gmail.com');
-define('MAIL_FROM_NAME', APP_NAME);
-define('MAIL_ENABLED',   true);     
-
+define('MAIL_HOST',      $mailHost);
+define('MAIL_PORT',      $mailPort);
+define('MAIL_USER',      $mailUser);
+define('MAIL_PASS',      $mailPass);
+define('MAIL_FROM',      $mailFrom);
+define('MAIL_FROM_NAME', $mailFromName);
+define('MAIL_ENABLED',   $mailEnabled);
 
 define('RECAPTCHA_SITE_KEY', '');
 define('RECAPTCHA_SECRET',   '');
 define('RECAPTCHA_ENABLED',  false);
 
-
-define('BCRYPT_COST',       12);
-define('SESSION_LIFETIME',  3600 * 2);
+define('BCRYPT_COST',        12);
+define('SESSION_LIFETIME',   3600 * 2);
 define('MAX_LOGIN_ATTEMPTS', 5);
 define('LOGIN_LOCKOUT_TIME', 900);
-
 
 define('ANTICHEAT_TAB_SWITCH_WARN',  2);
 define('ANTICHEAT_TAB_SWITCH_MAX',   5);
 define('ANTICHEAT_RAPID_ANSWER_SEC', 3);
 define('ANTICHEAT_CHEAT_THRESHOLD',  40);
-
 
 define('ROOT_PATH',   dirname(__DIR__));
 define('SRC_PATH',    ROOT_PATH . '/src');
