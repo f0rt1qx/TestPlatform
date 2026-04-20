@@ -273,11 +273,3 @@ chmod 777 logs/
 - [sql/database.sql](sql/database.sql) — Схема БД
 
 ---
-
-## 📄 Лицензия
-
-MIT License
-
----
-
-**Разработано с ❤️ для современного образования**
