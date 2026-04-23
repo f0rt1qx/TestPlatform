@@ -703,9 +703,9 @@
 
 <div class="NotificationToast-container" id="toastContainer"></div>
 
-<script src="public/js/config.js"></script>
-<script src="public/js/i18n.js"></script>
-<script src="public/js/app.js?v=2"></script>
+<script src="public/js/config.js?v=3"></script>
+<script src="public/js/i18n.js?v=3"></script>
+<script src="public/js/app.js?v=3"></script>
 <script>
   (async () => {
     if (AuthManager.isLoggedIn()) return;

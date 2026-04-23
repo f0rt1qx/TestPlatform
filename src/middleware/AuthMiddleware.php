@@ -95,19 +95,19 @@ class AuthMiddleware {
     private static function validateToken(string $rawToken): ?array {
         try {
             $tokenBody = JWT::decode($rawToken);
-
-            $dbConn = Database::getInstance();
-            $stmt = $dbConn->prepare('SELECT is_blocked, is_active FROM users WHERE id = ?');
-            $stmt->execute([$tokenBody['sub']]);
-            $accountRecord = $stmt->fetch();
-
-            $isBlocked = $accountRecord['is_blocked'] ?? true;
-            $isActive  = $accountRecord['is_active'] ?? false;
-
-            return (!$accountRecord || $isBlocked || !$isActive) ? null : $tokenBody;
         } catch (RuntimeException $e) {
             return null;
         }
+
+        $dbConn = Database::getInstance();
+        $stmt = $dbConn->prepare('SELECT is_blocked, is_active FROM users WHERE id = ?');
+        $stmt->execute([$tokenBody['sub']]);
+        $accountRecord = $stmt->fetch();
+
+        $isBlocked = $accountRecord['is_blocked'] ?? true;
+        $isActive  = $accountRecord['is_active'] ?? false;
+
+        return (!$accountRecord || $isBlocked || !$isActive) ? null : $tokenBody;
     }
 
     private static function validateSessionUser(): ?array {
@@ -116,23 +116,19 @@ class AuthMiddleware {
             return null;
         }
 
-        try {
-            $dbConn = Database::getInstance();
-            $stmt = $dbConn->prepare('SELECT id, username, role, is_blocked, is_active FROM users WHERE id = ? LIMIT 1');
-            $stmt->execute([$sessionUserId]);
-            $user = $stmt->fetch();
+        $dbConn = Database::getInstance();
+        $stmt = $dbConn->prepare('SELECT id, username, role, is_blocked, is_active FROM users WHERE id = ? LIMIT 1');
+        $stmt->execute([$sessionUserId]);
+        $user = $stmt->fetch();
 
-            if (!$user || (int)$user['is_blocked'] === 1 || (int)$user['is_active'] !== 1) {
-                return null;
-            }
-
-            return [
-                'sub' => (int)$user['id'],
-                'username' => $user['username'],
-                'role' => $user['role'],
-            ];
-        } catch (RuntimeException $e) {
+        if (!$user || (int)$user['is_blocked'] === 1 || (int)$user['is_active'] !== 1) {
             return null;
         }
+
+        return [
+            'sub' => (int)$user['id'],
+            'username' => $user['username'],
+            'role' => $user['role'],
+        ];
     }
 }

@@ -5,7 +5,11 @@
 // - InfinityFree hosting -> hosting MySQL
 // Any DB_* environment variable overrides these defaults.
 $httpHost = strtolower($_SERVER['HTTP_HOST'] ?? '');
-$isLocalHost = in_array($httpHost, ['localhost', '127.0.0.1', '::1'], true) || str_starts_with($httpHost, 'localhost:');
+$isCli = PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg';
+$isLocalHost = $isCli
+    || $httpHost === ''
+    || in_array($httpHost, ['localhost', '127.0.0.1', '::1'], true)
+    || str_starts_with($httpHost, 'localhost:');
 
 $defaultDbHost = 'localhost';
 $defaultDbPort = '3306';

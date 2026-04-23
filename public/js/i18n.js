@@ -1,4 +1,4 @@
-const i18n = {
+﻿const i18n = {
   
   currentLang: 'ru',
   
@@ -17,9 +17,9 @@ const i18n = {
   
   
   languageFlags: {
-    ru: '🇷🇺',
-    kk: '🇰🇿',
-    en: '🇬🇧'
+    ru: 'RU',
+    kk: 'KZ',
+    en: 'EN'
   },
 
   
@@ -799,18 +799,6 @@ const i18n = {
       const translation = this.t(key);
       if (translation) {
         el.setAttribute('placeholder', translation);
-      }
-    });
-
-    const titled = document.querySelectorAll('[data-i18n-title]');
-    titled.forEach(el => {
-      const key = el.getAttribute('data-i18n-title');
-      const translation = this.t(key);
-      if (translation) {
-        el.setAttribute('title', translation);
-        if (el.hasAttribute('aria-label')) {
-          el.setAttribute('aria-label', translation);
-        }
       }
     });
 

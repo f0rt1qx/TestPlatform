@@ -167,16 +167,53 @@ const NotificationToast = {
 
   show(msg, kind = 'info', duration = 4000) {
     this.init();
-    const iconMap = { success: 'вњ…', error: 'вќЊ', warning: 'вљ пёЏ', info: 'в„№пёЏ' };
+    const iconMap = {
+      success: '✓',
+      error: '!',
+      warning: '•',
+      info: 'i'
+    };
+    const titleMap = {
+      success: 'Успешно',
+      error: 'Ошибка',
+      warning: 'Внимание',
+      info: 'Уведомление'
+    };
     const el = document.createElement('div');
     el.className = `toast ${kind}`;
-    el.innerHTML = `<span>${iconMap[kind] ?? iconMap.info}</span><span>${msg}</span>`;
+    el.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+    el.innerHTML = `
+      <div class="toast-icon" aria-hidden="true">${iconMap[kind] ?? iconMap.info}</div>
+      <div class="toast-copy">
+        <div class="toast-title">${titleMap[kind] ?? titleMap.info}</div>
+        <div class="toast-message"></div>
+      </div>
+      <button type="button" class="toast-close" aria-label="Закрыть">×</button>
+    `;
+    el.querySelector('.toast-message').textContent = String(msg ?? '');
     this._container.appendChild(el);
 
-    setTimeout(() => {
-      el.style.animation = 'fadeOut .3s ease forwards';
-      setTimeout(() => el.remove(), 300);
-    }, duration);
+    const closeBtn = el.querySelector('.toast-close');
+    let removeTimer = null;
+
+    const removeToast = () => {
+      if (!el.isConnected) return;
+      el.style.animation = 'fadeOut 0.25s ease forwards';
+      setTimeout(() => {
+        if (el.isConnected) el.remove();
+      }, 250);
+    };
+
+    closeBtn && closeBtn.addEventListener('click', removeToast);
+    el.addEventListener('click', ev => {
+      if (ev.target === el) removeToast();
+    });
+    el.addEventListener('mouseenter', () => clearTimeout(removeTimer));
+    el.addEventListener('mouseleave', () => {
+      removeTimer = setTimeout(removeToast, 1600);
+    });
+
+    removeTimer = setTimeout(removeToast, duration);
   },
 
   success(m) { this.show(m, 'success'); },
@@ -440,9 +477,19 @@ const AuthManager = {
 };
 
 function setLoading(btn, loading) {
-  loading
-    ? (btn.dataset.origText = btn.innerHTML, btn.innerHTML = '<span class="spinner" style="width:18px;height:18px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span>Р—Р°РіСЂСѓР·РєР°...', btn.disabled = true)
-    : (btn.innerHTML = btn.dataset.origText ?? btn.innerHTML, btn.disabled = false);
+  if (loading) {
+    const loadingText = (window.i18n && typeof window.i18n.t === 'function')
+      ? window.i18n.t('common.loading')
+      : 'Загрузка...';
+
+    btn.dataset.origText = btn.innerHTML;
+    btn.innerHTML = `<span class="spinner" style="width:18px;height:18px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span>${loadingText}`;
+    btn.disabled = true;
+    return;
+  }
+
+  btn.innerHTML = btn.dataset.origText ?? btn.innerHTML;
+  btn.disabled = false;
 }
 
 function clearErrors(form) {

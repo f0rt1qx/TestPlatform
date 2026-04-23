@@ -568,9 +568,9 @@
 
 <div class="NotificationToast-container" id="toastContainer"></div>
 
-<script src="public/js/config.js"></script>
-<script src="public/js/i18n.js"></script>
-<script src="public/js/app.js?v=2"></script>
+<script src="public/js/config.js?v=3"></script>
+<script src="public/js/i18n.js?v=3"></script>
+<script src="public/js/app.js?v=3"></script>
 <script>
   // AuthManager guard
   document.addEventListener('DOMContentLoaded', () => {
@@ -590,7 +590,16 @@
   let currentAdminTab = 'users';
 
   function tr(key, fallback = '') {
-    return (window.i18n && typeof window.i18n.t === 'function') ? window.i18n.t(key) : fallback;
+    if (!window.i18n || typeof window.i18n.t !== 'function') {
+      return fallback || key;
+    }
+
+    const translated = window.i18n.t(key);
+    if (!translated || translated === key) {
+      return fallback || key;
+    }
+
+    return translated;
   }
 
   function switchTab(name) {

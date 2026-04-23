@@ -344,15 +344,15 @@
     <div class="tp-result-label" id="resultLabel"></div>
     <div class="tp-result-stats">
       <div class="tp-result-stat">
-        <div class="tp-result-stat-val" id="resScore">вЂ”</div>
+        <div class="tp-result-stat-val" id="resScore">—</div>
         <div class="tp-result-stat-lbl">Баллов</div>
       </div>
       <div class="tp-result-stat">
-        <div class="tp-result-stat-val" id="resTime">вЂ”</div>
+        <div class="tp-result-stat-val" id="resTime">—</div>
         <div class="tp-result-stat-lbl">Время</div>
       </div>
       <div class="tp-result-stat">
-        <div class="tp-result-stat-val" id="resCheat">вЂ”</div>
+        <div class="tp-result-stat-val" id="resCheat">—</div>
         <div class="tp-result-stat-lbl">Честность</div>
       </div>
     </div>
